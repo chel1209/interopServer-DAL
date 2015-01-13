@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="src" path="src/services"/>
+	<classpathentry kind="src" path="src/common"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="dalserver/lib/collections-generic-4.01.jar"/>
+	<classpathentry kind="lib" path="dalserver/lib/com-generationjava-io-xml.jar"/>
+	<classpathentry kind="lib" path="dalserver/lib/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="dalserver/lib/dalclient-core.jar"/>
+	<classpathentry kind="lib" path="dalserver/lib/javax.persistence-2.0.0.jar"/>
+	<classpathentry kind="lib" path="dalserver/lib/nanohttpd.jar"/>
+	<classpathentry kind="lib" path="dalserver/lib/pearcan-dart-7.0.1.jar"/>
+	<classpathentry kind="lib" path="dalserver/lib/zxing-core.jar"/>
+	<classpathentry kind="lib" path="dalserver/lib/zxing-javase.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

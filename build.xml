@@ -1,0 +1,193 @@
+<project name="dalexplore" default="dalserver-bin.zip" basedir=".">
+
+  <property name="build.dir" value="${basedir}/build" />
+  <property name="common-src.dir" value="${basedir}/src/common" />
+  <property name="main-src.dir" value="${basedir}/src/main" />
+  <property name="services-src.dir" value="${basedir}/src/services" />
+  <property name="test-src.dir" value="${basedir}/src/test" />
+
+  <!-- ================================================================ -->
+
+<!--  <target name="dalserver-bin.zip" depends="dalserver.jar,dalserver-services.jar"> -->
+  <target name="dalserver-bin.zip">
+    <zip destfile="dalserver-bin.zip"
+	 basedir="${basedir}"
+	 includes="dalserver/dalserver.jar dalserver/lib/* dalserver/plugins/* dalserver/www/**"
+	 />
+  </target>
+
+  <!-- ================================================================ -->
+
+  <path id="dalserver-common.class.path">
+    <fileset dir="dalserver/lib">
+      <include name="collections-generic-4.01.jar" />
+      <include name="commons-codec-1.6.jar" />
+      <include name="dalclient-core.jar" />
+      <include name="javax.persistence-2.0.0.jar" />
+      <include name="nanohttpd.jar" />
+    </fileset>
+  </path>
+
+  <target name="prepare-dalserver-common">
+    <delete dir="${build.dir}/common" />
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${build.dir}/common" />
+  </target>
+
+  <target name="dalserver-common.jar" depends="prepare-dalserver-common">
+
+    <javac includeantruntime="false"
+	   debug="true" source="1.7" target="1.7"
+	   destdir="${build.dir}/common">
+
+      <classpath refid="dalserver-common.class.path" />
+
+      <src path="${common-src.dir}" />
+
+      <include name="com/diversityarrays/dal/*/*.java" />
+      <include name="com/diversityarrays/util/*.java" />
+    </javac>
+
+    <jar destfile="dalserver/lib/dalserver-common.jar" basedir="${build.dir}/common">
+    </jar>
+
+  </target>
+
+  <!-- ================================================================ -->
+
+  <path id="dalserver.build.class.path">
+
+    <fileset dir="dalserver/lib">
+      <include name="dalserver-common.jar" />
+
+      <include name="collections-generic-4.01.jar" />
+      <include name="com-generationjava-io-xml.jar" />
+      <include name="commons-codec-1.6.jar" />
+
+      <include name="dalclient-core.jar" />
+
+      <include name="javax.persistence-2.0.0.jar" />
+      <include name="nanohttpd.jar" />
+      <include name="pearcan-dart-7.0.1.jar" />
+      <include name="zxing-core.jar" />
+      <include name="zxing-javase.jar" />
+
+    </fileset>
+  </path>
+
+  <target name="prepare-dalserver">
+    <delete dir="${build.dir}/dalserver" />
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${build.dir}/dalserver" />
+  </target>
+
+  <!-- for the MANIFEST Class-Path -->
+  <path id="dalserver.runlibs">
+    <pathelement location="lib/dalserver-common.jar" />
+
+    <pathelement location="lib/collections-generic-4.01.jar" />
+    <pathelement location="lib/com-generationjava-io-xml.jar" />
+    <pathelement location="lib/commons-codec-1.6.jar" />
+    <pathelement location="lib/dalclient-core.jar" />
+    <pathelement location="lib/javax.persistence-2.0.0.jar" />
+    <pathelement location="lib/nanohttpd.jar" />
+    <pathelement location="lib/pearcan-dart-7.0.1.jar" />
+    <pathelement location="lib/zxing-core.jar" />
+    <pathelement location="lib/zxing-javase.jar" />
+
+    <!-- So that DALClient can run -->
+    <pathelement location="lib/dalclient-javase.jar" />
+    <pathelement location="lib/commons-logging-1.1.3.jar" />
+    <pathelement location="lib/httpclient-4.3.jar" />
+    <pathelement location="lib/httpcore-4.3.jar" />
+    <pathelement location="lib/httpmime-4.3.jar" />
+
+    <pathelement location="lib/mysql-connector-java-5.1.29-bin.jar" />
+
+    <!-- PLUGINS/SERVICES -->
+    <pathelement location="plugins/dalserver-services.jar" />
+  </path>
+
+  <pathconvert property="dalserver_manifest_cp" pathsep=" " refid="dalserver.runlibs">
+    <map from="${basedir}/lib"     to="lib" />
+    <map from="${basedir}/plugins" to="plugins" />
+  </pathconvert>
+
+  <target name="dalserver.jar" depends="dalserver-common.jar,prepare-dalserver">
+    <javac includeantruntime="false"
+	   debug="true" source="1.7" target="1.7"
+	   destdir="${build.dir}/dalserver">
+
+      <classpath refid="dalserver.build.class.path" />
+      <src path="${main-src.dir}" />
+
+      <include name="com/diversityarrays/dal/server/*.java" />
+      <include name="com/diversityarrays/dal/service/*.java" />
+
+      <include name="com/diversityarrays/dal/db/*.java" />
+      <include name="com/diversityarrays/dal/db/*/*.java" />
+      <include name="com/diversityarrays/dal/entity/*.java" />
+
+      <include name="com/diversityarrays/util/*.java" />
+    </javac>
+
+    <copy todir="${build.dir}/dalserver/com/diversityarrays/dal/server/">
+      <fileset dir="${main-src.dir}/com/diversityarrays/dal/server/" includes="*.png" />
+    </copy>
+
+    <jar destfile="dalserver/dalserver.jar" basedir="${build.dir}/dalserver">
+      <manifest>
+	<attribute name="Main-Class"
+		   value="com.diversityarrays.dal.server.DalServer" />
+	<attribute name="Class-Path"
+		   value="${dalserver_manifest_cp} dalserver/plugins/dalserver-services.jar" />
+      </manifest>
+    </jar>
+  </target>
+
+
+  <!-- ================================================================ -->
+
+  <path id="dalservices.build.class.path">
+    <fileset dir="dalserver/lib">
+      <include name="dalclient-core.jar" />
+      <include name="dalserver-common.jar" />
+      <include name="collections-generic-4.01.jar" />
+      <include name="javax.persistence-2.0.0.jar" />
+      <include name="nanohttpd.jar" />
+      <include name="pearcan-dart-7.0.1.jar" />
+    </fileset>
+  </path>
+
+  <target name="prepare-dalserver-services">
+    <delete dir="${build.dir}/services" />
+    <mkdir dir="${build.dir}" />
+    <mkdir dir="${build.dir}/services" />
+  </target>
+
+  <target name="dalserver-services.jar" depends="dalserver.jar,prepare-dalserver-services">
+    <javac includeantruntime="false"
+	   debug="true" source="1.7" target="1.7"
+	   destdir="${build.dir}/services">
+
+      <classpath refid="dalservices.build.class.path" />
+
+      <src path="${services-src.dir}" />
+
+      <include name="com/diversityarrays/dal/db/*.java" />
+      <include name="com/diversityarrays/dal/db/bms/BMS_DalDbProviderService.java" />
+      <include name="com/diversityarrays/dal/db/kddart/KddartDalDbProviderService.java" />
+    </javac>
+
+    <jar destfile="dalserver/plugins/dalserver-services.jar" basedir="${build.dir}/services">
+      <service type="com.diversityarrays.dal.service.DalDbProviderService">
+	<provider classname="com.diversityarrays.dal.db.kddart.KddartDalDbProviderService" />
+	<provider classname="com.diversityarrays.dal.db.bms.BMS_DalDbProviderService" />
+      </service>
+    </jar>
+
+  </target>
+
+  <!-- ================================================================ -->
+
+</project>
