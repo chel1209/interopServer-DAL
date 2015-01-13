@@ -8,8 +8,7 @@
 
   <!-- ================================================================ -->
 
-<!--  <target name="dalserver-bin.zip" depends="dalserver.jar,dalserver-services.jar"> -->
-  <target name="dalserver-bin.zip">
+  <target name="dalserver-bin.zip" depends="dalserver.jar,dalserver-services.jar">
     <zip destfile="dalserver-bin.zip"
 	 basedir="${basedir}"
 	 includes="dalserver/dalserver.jar dalserver/lib/* dalserver/plugins/* dalserver/www/**"
