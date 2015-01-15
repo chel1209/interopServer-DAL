@@ -79,7 +79,7 @@ public class DalServer extends SimpleWebServer implements IDalServer {
 
 	private static final String YOU_NEED_TO_LOGIN_FIRST = "You need to login first";
 
-	static final private String DAL_SERVER_VERSION = "1.0.0";
+	static final private String DAL_SERVER_VERSION = "1.0.1";
 
 	static private void fatal(String msg) {
 		System.err.println("?" + msg);
@@ -935,7 +935,7 @@ public class DalServer extends SimpleWebServer implements IDalServer {
 				}
 				sb.append("<ul>");
 				for (DalOperation op : ops) {
-					sb.append("<li>").append(DbUtil.htmlEscape(op.toString()))
+					sb.append("<li>").append(DbUtil.htmlEscape(op.getCommandTemplate()))
 							.append("</li>");
 				}
 				sb.append("</ul><hr/>");
