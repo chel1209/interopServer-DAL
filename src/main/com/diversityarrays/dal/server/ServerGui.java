@@ -93,7 +93,7 @@ public class ServerGui extends JFrame {
 				Integer port = asker.dalServerPort;
 				
 				IDalServer srv = dalServerFactory.create(host, port, asker.wwwRoot, asker.dalDatabase);
-//				srv.setUseSimpleDatabase(asker.useSimpleDatabase);
+				doSql.setEnabled(srv.getDalDatabase() instanceof SqlDalDatabase);
 				
 				srv.setMaxInactiveMinutes(asker.maxInactiveMinutes);
 				setServer(srv);
@@ -228,7 +228,6 @@ public class ServerGui extends JFrame {
 		serverMenu.add(serverStartAction);
 		serverMenu.add(serverStopAction);
 		serverMenu.add(exitAction);
-		
 		
 		JMenu commandMenu = new JMenu("Command");
 		menuBar.add(commandMenu);
@@ -366,6 +365,8 @@ public class ServerGui extends JFrame {
 		
 		serverStartAction.setEnabled(this.server==null);
 		serverStopAction.setEnabled(! serverStartAction.isEnabled());
+		
+		doSql.setEnabled(this.server != null && this.server.getDalDatabase() instanceof SqlDalDatabase);
 		
 		quietOption.setEnabled(server!=null);
 		
