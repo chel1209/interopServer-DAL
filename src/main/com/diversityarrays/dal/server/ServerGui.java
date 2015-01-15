@@ -93,7 +93,6 @@ public class ServerGui extends JFrame {
 				Integer port = asker.dalServerPort;
 				
 				IDalServer srv = dalServerFactory.create(host, port, asker.wwwRoot, asker.dalDatabase);
-				doSql.setEnabled(srv.getDalDatabase() instanceof SqlDalDatabase);
 				
 				srv.setMaxInactiveMinutes(asker.maxInactiveMinutes);
 				setServer(srv);
