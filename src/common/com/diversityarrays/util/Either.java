@@ -64,7 +64,8 @@ public class Either<L,R> {
 	}
 	
 	public boolean isRight() {
-		return right != null;
+		// so that it's ok to have a null value for right
+		return left == null;
 	}
 	
 
