@@ -12,8 +12,8 @@
 	<classpathentry kind="lib" path="dalserver/lib/dalclient-core.jar"/>
 	<classpathentry kind="lib" path="dalserver/lib/javax.persistence-2.0.0.jar"/>
 	<classpathentry kind="lib" path="dalserver/lib/nanohttpd.jar"/>
-	<classpathentry kind="lib" path="dalserver/lib/pearcan-dart-7.0.1.jar"/>
 	<classpathentry kind="lib" path="dalserver/lib/zxing-core.jar"/>
 	<classpathentry kind="lib" path="dalserver/lib/zxing-javase.jar"/>
+	<classpathentry kind="lib" path="dalserver/lib/pearcan-dart.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

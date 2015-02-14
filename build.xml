@@ -21,7 +21,8 @@
     <fileset dir="dalserver/lib">
       <include name="collections-generic-4.01.jar" />
       <include name="commons-codec-1.6.jar" />
-      <include name="dalclient-core.jar" />
+        <include name="dalclient-core.jar" />
+        <include name="dalclient-javase.jar" />
       <include name="javax.persistence-2.0.0.jar" />
       <include name="nanohttpd.jar" />
     </fileset>
@@ -67,7 +68,7 @@
 
       <include name="javax.persistence-2.0.0.jar" />
       <include name="nanohttpd.jar" />
-      <include name="pearcan-dart-7.0.1.jar" />
+      <include name="pearcan-dart.jar" />
       <include name="zxing-core.jar" />
       <include name="zxing-javase.jar" />
 
@@ -90,7 +91,7 @@
     <pathelement location="lib/dalclient-core.jar" />
     <pathelement location="lib/javax.persistence-2.0.0.jar" />
     <pathelement location="lib/nanohttpd.jar" />
-    <pathelement location="lib/pearcan-dart-7.0.1.jar" />
+    <pathelement location="lib/pearcan-dart.jar" />
     <pathelement location="lib/zxing-core.jar" />
     <pathelement location="lib/zxing-javase.jar" />
 
@@ -154,7 +155,7 @@
       <include name="collections-generic-4.01.jar" />
       <include name="javax.persistence-2.0.0.jar" />
       <include name="nanohttpd.jar" />
-      <include name="pearcan-dart-7.0.1.jar" />
+      <include name="pearcan-dart.jar" />
     </fileset>
   </path>
 
