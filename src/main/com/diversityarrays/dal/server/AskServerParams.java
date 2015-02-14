@@ -242,6 +242,8 @@ public class AskServerParams extends JDialog {
 				else {
 					sb.append("<B>Error encountered:</B>");
 					if (SHOW_STACKTRACE) {
+						error.printStackTrace();
+						
 						StringWriter sw = new StringWriter();
 						PrintWriter pw = new PrintWriter(sw);
 						error.printStackTrace(pw);

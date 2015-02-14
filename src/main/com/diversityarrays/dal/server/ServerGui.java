@@ -32,7 +32,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -64,6 +63,7 @@ import net.pearcan.util.MemoryUsageMonitor;
 
 import org.apache.commons.collections15.Closure;
 
+import com.darwinsys.TeePrintStream;
 import com.diversityarrays.dal.db.DalDatabase;
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.SqlDalDatabase;
@@ -277,7 +277,7 @@ public class ServerGui extends JFrame {
 		});
 
 
-		OutputStream os = new OutputStream() {
+		final OutputStream os = new OutputStream() {
 			@Override
 			public void write(int b) throws IOException {
 				char ch = (char) b;
@@ -287,11 +287,12 @@ public class ServerGui extends JFrame {
 				}
 			}
 		};
-
-		PrintStream ps = new PrintStream(os);
-
-		System.setErr(ps);
-		System.setOut(ps);
+		
+		TeePrintStream pso = new TeePrintStream(System.out, os);
+		TeePrintStream pse = new TeePrintStream(System.err, os);
+		
+		System.setErr(pse);
+		System.setOut(pso);
 
 		Box box = Box.createHorizontalBox();
 		box.add(clear);
@@ -393,38 +394,43 @@ public class ServerGui extends JFrame {
 	
 
 	private void ensureDatabaseInitialisedThenStartServer() {
-		DalDatabase db = server.getDalDatabase();
-		if (db.isInitialiseRequired()) {
-			try {
-				Closure<String> progress = new Closure<String>() {
-					@Override
-					public void execute(String msg) {
-						messages.append(msg + "\n");
-					}
-				};
-				db.initialise(progress);
-			} catch (DalDbException e) {
-				GuiUtil.errorMessage(ServerGui.this, e, "Unable to initialise database: " + db.getDatabaseName());
+		try {
+			DalDatabase db = server.getDalDatabase();
+			if (db.isInitialiseRequired()) {
+				try {
+					Closure<String> progress = new Closure<String>() {
+						@Override
+						public void execute(String msg) {
+							messages.append(msg + "\n");
+						}
+					};
+					db.initialise(progress);
+				} catch (DalDbException e) {
+					GuiUtil.errorMessage(ServerGui.this, e, "Unable to initialise database: " + db.getDatabaseName());
+				}
+			}
+
+			System.out.println("Session Auto-Expiry after "+server.getMaxInactiveMinutes()+" minutes");
+
+			NanoHTTPD httpServer = server.getHttpServer();
+
+			String hostPort = httpServer.getHostname()+":"+ httpServer.getPort();
+			System.out.println("Starting server: "+hostPort);
+
+			IOException err = ServerRunner.executeInstance(httpServer, false);
+			if (err!=null) {
+				serverStartAction.setEnabled(true);
+				if (err instanceof java.net.BindException) {
+					System.err.println("!!!! "+hostPort+": "+err.getMessage());
+				}
+				else {
+					System.err.println("!!!! "+err.getMessage());
+					err.printStackTrace();
+				}
 			}
 		}
-		
-		System.out.println("Session Auto-Expiry after "+server.getMaxInactiveMinutes()+" minutes");
-
-		NanoHTTPD httpServer = server.getHttpServer();
-
-    	String hostPort = httpServer.getHostname()+":"+ httpServer.getPort();
-    	System.out.println("Starting server: "+hostPort);
-    	
-		IOException err = ServerRunner.executeInstance(httpServer, false);
-		if (err!=null) {
-			serverStartAction.setEnabled(true);
-			if (err instanceof java.net.BindException) {
-				System.err.println("!!!! "+hostPort+": "+err.getMessage());
-			}
-			else {
-				System.err.println("!!!! "+err.getMessage());
-				err.printStackTrace();
-			}
+		catch (Exception e) {
+			GuiUtil.errorMessage(ServerGui.this, e, "Server Start Failed");
 		}
 	}
 
