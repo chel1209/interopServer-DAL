@@ -42,7 +42,8 @@ class BmsConnectionInfo {
 	static private final String SPECIES_NAME_CONSTRAINT = " ftable='ATRIBUTS' AND ftype='PASSPORT' AND fcode = 'SPP_CODE' AND fname='SPECIES CODE'";
 
 	// for CIMMYT test database: fcode IN ('TAXON','TAXNO');
-	static private final String TAXONOMY_CONSTRAINT = " ftable='ATRIBUTS' AND ftype='PASSPORT' AND fcode = 'TAXON' AND fname='Taxonomy'";
+	static private final String TAXONOMY_CONSTRAINT = " ftable='ATRIBUTS' AND ftype='PASSPORT' AND fcode IN ('TAXON','TAXNO') AND fname='Taxonomy'";
+//	static private final String TAXONOMY_CONSTRAINT = " ftable='ATRIBUTS' AND ftype='PASSPORT' AND fcode = 'TAXON' AND fname='Taxonomy'";
 	
 	static private final String GET_TAXONOMY_FLDNO = "SELECT fldno FROM udflds WHERE " + TAXONOMY_CONSTRAINT ; 
 	
