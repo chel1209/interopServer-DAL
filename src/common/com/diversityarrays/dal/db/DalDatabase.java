@@ -31,7 +31,33 @@ import com.diversityarrays.dalclient.SessionExpiryOption;
 
 
 /**
- * 
+ * Defines the methods that will be called by the DalServer to provide the response
+ * needed by each DAL operation.
+ * <p>
+ * DAL operations fall into several categories:
+ * <ul>
+ *   <li>Retrieval: <code>get</code> operations retrieve the record for a single
+ *       <i>entity</i> whereas <code>list</code> operations may retrieve multiple
+ *       records;<br>
+ *       e.g. <code>get/genus/<i>ID</i></code> or <code>list/genus</code>)</li>
+ *   <li>Update (not yet available)</li>
+ *   <li>Delete (not yet available)</li>
+ *   <li>System functions: These usually relate users, groups, entity metadata;
+ *       e.g. <code>list/all/group</code> retrieves all the
+ *       <i>SystemGroup</i> records in the database, whereas
+ *       <code><i>TABLE_NAME</i>/list/field</code> retrieves the field names
+ *       for the entity stored in the specified TABLE_NAME. If you need them,
+ *       the <i>TABLE_NAME</i> for an entity is specified in the @Table annotation
+ *       for any given sub-class of <code>DalEntity</code>.
+ *   </li>
+ *   <li>Session management: these relate to the login session; 
+ *       e.g. <code>list/group</code> returns the <i>SystemGroup</i> records that
+ *       the currently logged-in user belongs to (which in turn govern the
+ *       access the session has to the various entities in the database).
+ *       
+ *   </li>
+ * </ul>
+ * Most of the <i>DAL entity</i> related operations are handled 
  * @author brian
  *
  */

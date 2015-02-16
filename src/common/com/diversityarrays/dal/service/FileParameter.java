@@ -19,6 +19,11 @@ package com.diversityarrays.dal.service;
 
 import java.io.File;
 
+/**
+ * Provides an implementation of Parameter for java.io.File.
+ * @author brian
+ *
+ */
 public class FileParameter extends Parameter<File> {
 
 	public FileParameter(String name, String desc, boolean reqd) {

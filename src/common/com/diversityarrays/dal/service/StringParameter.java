@@ -17,7 +17,11 @@
  */
 package com.diversityarrays.dal.service;
 
-
+/**
+ * Provides an implementation of Parameter for String.
+ * @author brian
+ *
+ */
 public class StringParameter extends Parameter<String> {
 
 	public StringParameter(String name, String desc, boolean reqd) {

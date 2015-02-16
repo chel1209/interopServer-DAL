@@ -17,7 +17,18 @@
  */
 package com.diversityarrays.dal.service;
 
-
+/**
+ * The Parameter class is templated to provide type-safety in the code - see its
+ * sub-classes. Default implementations are provided for Boolean, File, Integer and String
+ * parameters but you can easily provide your own.
+ * <p>
+ * Each Parameter sub-class is responsible for the translating to/from a String
+ * representation; these are used when persisting the value of the parameter
+ * to storage between invocations of the ServerGui.
+ * @author brian
+ *
+ * @param <T> 
+ */
 public abstract class Parameter<T> {
 
 	static public final boolean REQUIRED = true;

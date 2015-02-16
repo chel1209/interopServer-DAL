@@ -24,6 +24,12 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Provides the base for implementations of DalDbProviderService that use a
+ * JDBC connection to the database entities.
+ * @author brian
+ *
+ */
 public abstract class AbstractJdbcDalDbProviderService extends
 		AbstractDalDbProviderService {
 

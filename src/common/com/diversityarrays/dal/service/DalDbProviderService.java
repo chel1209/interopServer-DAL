@@ -26,7 +26,14 @@ import org.apache.commons.collections15.Closure;
 import com.diversityarrays.dal.db.DalDatabase;
 import com.diversityarrays.dal.db.DalDbException;
 
-
+/**
+ * Implementations of these are retrieved using ServiceRegistry.lookupProviders()
+ * and are responsible for supplying the list of Parameters and any default values
+ * for presentation to the user as well as creating a DalDatabase instance when
+ * required.
+ * @author brian
+ *
+ */
 public interface DalDbProviderService {
 
 	/**

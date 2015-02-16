@@ -17,7 +17,11 @@
  */
 package com.diversityarrays.dal.service;
 
-
+/**
+ * Provides an implementation of Parameter for Integer.
+ * @author brian
+ *
+ */
 public class IntegerParameter extends Parameter<Integer> {
 
 	public IntegerParameter(String name, String desc, boolean reqd) {

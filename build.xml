@@ -1,7 +1,16 @@
 <project name="dalexplore" default="dalserver-bin.zip" basedir=".">
 
+	<!-- Keep the ant build output separate from the Eclipse bin -->
   <property name="build.dir" value="${basedir}/build" />
+	<!-- Code that is used by the main DalServer code and
+		 also the various plugins that implement DalDbProviderService.
+	 -->
   <property name="common-src.dir" value="${basedir}/src/common" />
+	<!-- The main DalServer code.
+	     Listens for HTTP connections and dispatches to internal
+	     handlers or an instance of DalDatabase that was created
+	     by the selected instance of DalDbProviderService.
+	 -->
   <property name="main-src.dir" value="${basedir}/src/main" />
   <property name="services-src.dir" value="${basedir}/src/services" />
   <property name="test-src.dir" value="${basedir}/src/test" />

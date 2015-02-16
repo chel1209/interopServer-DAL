@@ -83,6 +83,12 @@ import com.diversityarrays.dal.service.Parameters;
 
 /**
  * User interface to query the user for the parameters of a DalDatabase.
+ * DalDbProviderService implementations using ServiceRegistry.lookupProviders() 
+ * and a ProviderPanel instance created for each. The ProviderPanel is a UI
+ * that presents each of the Parameters required by a specific DalDbProviderService
+ * so that it may construct a DalDatabase when requested.
+ * <p>
+ * @see Parameter for more details
  * @author brian
  *
  */
@@ -90,6 +96,10 @@ public class AskServerParams extends JDialog {
 	
 	private static final boolean SHOW_STACKTRACE = Boolean.getBoolean(AskServerParams.class.getSimpleName()+".SHOW_STACKTRACE");
 	
+	/**
+	 * Display what is happening when a DalDatabase is being created
+	 * in a background thread.
+	 */
 	class DalDatabaseCreatorDialog extends JDialog {
 
 		private boolean running;

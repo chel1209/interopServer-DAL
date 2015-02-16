@@ -22,6 +22,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This class provides a type-safe mechanism to store and retrieve the values
+ * of DalDatabase configuration parameters. The various <code>static</code>
+ * methods provide the means for retrieving the Parameter value.
+ * @author brian
+ *
+ * @param <T>
+ */
 public class ParameterValue<T> {
 	
 	@SuppressWarnings("unchecked")

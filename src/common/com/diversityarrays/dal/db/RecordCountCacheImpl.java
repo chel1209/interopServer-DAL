@@ -22,6 +22,11 @@ import java.util.Map;
 
 import com.diversityarrays.dal.server.DalSession;
 
+/**
+ * Provides a basic implementation of RecordCountCache.
+ * @author brian
+ *
+ */
 public class RecordCountCacheImpl implements RecordCountCache {
 	
 	private Map<String, Map<Class<?>,RecordCountCacheEntry>> mapBySessionId = new HashMap<String, Map<Class<?>,RecordCountCacheEntry>>();

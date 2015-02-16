@@ -17,8 +17,13 @@
  */
 package com.diversityarrays.dal.service;
 
-
-
+/**
+ * Provides a base from which you can more easily implement your own
+ * versions of a DalDbProviderService. If your service uses JDBC, you may
+ * with to consider using AbstractJdcbDalDbProviderService.
+ * @author brian
+ *
+ */
 public abstract class AbstractDalDbProviderService implements DalDbProviderService {
 
 	private final String providerName;

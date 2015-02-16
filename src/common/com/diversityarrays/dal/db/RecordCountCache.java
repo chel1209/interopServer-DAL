@@ -19,6 +19,25 @@ package com.diversityarrays.dal.db;
 
 import com.diversityarrays.dal.server.DalSession;
 
+/**
+ * A RecordCountCache supports a performance hack to reduce the time required
+ * to respond to LIST commands of the form <code>list/<i>entity</i>/_nPerPage/page/_pageNumber</code>.
+ * <p>
+ * These flavours of LIST command need to return the total number of records and pages.
+ * For implementations of DalDatabase where the database schema is such that complex SQL
+ * statements with multiple JOINs are required, the cost of repeatedly obtaining the record
+ * count for this purpose may result in poor response times. Caching the value for given
+ * DalSession and <i>entity</i> helps to improve this response time.
+ * <p>
+ * An assumption in the use of RecordCache is that repeated requests for a given entity
+ * will be for the same LIST command (with the same <i>Filtering</i> clause) but for a
+ * different <code>_pageNumber</code> 
+ * <p>
+ * When a database schema more closely matches the <i>entity</i> requirements, it may
+ * not be necessary to use a <code>RecordCountCache</code>.
+ * @author brian
+ *
+ */
 public interface RecordCountCache {
 
 	public void removeEntriesFor(DalSession session);

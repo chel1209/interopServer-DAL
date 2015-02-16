@@ -66,6 +66,12 @@ import com.diversityarrays.dalclient.SessionExpiryOption;
 import com.diversityarrays.util.Continue;
 import com.diversityarrays.util.Either;
 
+/**
+ * Provides an implementation of DalDatabase that understands the
+ * old BMS database schema (GMS).
+ * @author brian
+ *
+ */
 public class BMS_DalDatabase extends AbstractDalDatabase {
 	
 	private static final String DATABASE_VERSION = "0.1";

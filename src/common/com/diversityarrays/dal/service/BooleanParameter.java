@@ -17,7 +17,11 @@
  */
 package com.diversityarrays.dal.service;
 
-
+/**
+ * Provides an implementation of Parameter for Boolean.
+ * @author brian
+ *
+ */
 public class BooleanParameter extends Parameter<Boolean> {
 
 	public BooleanParameter(String name, String desc, boolean reqd) {
