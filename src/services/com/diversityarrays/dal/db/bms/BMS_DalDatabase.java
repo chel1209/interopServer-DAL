@@ -17,7 +17,9 @@
  */
 package com.diversityarrays.dal.db.bms;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,9 +38,17 @@ import net.pearcan.util.StringUtil;
 
 import org.apache.commons.collections15.Closure;
 import org.apache.commons.collections15.ClosureUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 import com.diversityarrays.dal.db.AbstractDalDatabase;
 import com.diversityarrays.dal.db.AuthenticationException;
+import com.diversityarrays.dal.db.BufferedReaderEntityIterator;
 import com.diversityarrays.dal.db.CollectionEntityIterator;
 import com.diversityarrays.dal.db.DalDatabaseUtil;
 import com.diversityarrays.dal.db.DalDbException;
@@ -53,9 +63,12 @@ import com.diversityarrays.dal.db.ResultSetEntityIterator;
 import com.diversityarrays.dal.db.SystemGroupInfo;
 import com.diversityarrays.dal.db.UserInfo;
 import com.diversityarrays.dal.entity.DalEntity;
+import com.diversityarrays.dal.entity.GeneralType;
 import com.diversityarrays.dal.entity.Genotype;
 import com.diversityarrays.dal.entity.GenotypeAlias;
 import com.diversityarrays.dal.entity.Genus;
+import com.diversityarrays.dal.entity.ItemUnit;
+import com.diversityarrays.dal.entity.Trial;
 import com.diversityarrays.dal.ops.DalOperation;
 import com.diversityarrays.dal.server.DalSession;
 import com.diversityarrays.dal.service.DalDbNotYetImplementedException;
@@ -215,6 +228,22 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		throws DalDbException {
 			throw new UnsupportedOperationException();
 		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			throw new DalDbException(new UnsupportedOperationException());
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			throw new DalDbException(new UnsupportedOperationException());
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 	
 	private EntityProvider<Genotype> genotypeProvider = new EntityProvider<Genotype>() {
@@ -307,8 +336,284 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			throw new UnsupportedOperationException();
 		}
 
-	};
+		@Override
+		public void prepareDetailsSearch() {
+			// TODO Auto-generated method stub
+			
+		}
 
+		@Override
+		public void getDetails(DalEntity entity) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+	};
+	
+	private EntityProvider<Trial> trialProvider = new EntityProvider<Trial>() {
+		
+		private CloseableHttpClient client;
+		private HttpGet request;		
+		private TrialFactory trialFactory;
+
+		private void createFactory() {
+			trialFactory = new TrialFactory();
+		}
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			if(trialFactory == null){
+				createFactory();
+			}
+			String sql = trialFactory.createCountQuery(filterClause);
+			int total = 0;
+			for (Connection c : bmsConnections.getConnections()) {
+				total += SqlUtil.getSingleInteger(c, sql);
+			}
+			return total;
+		}
+		
+		@Override
+		public Trial getEntity(String id, String filterClause) throws DalDbException {
+			
+			if(trialFactory == null){
+				createFactory();
+			}
+
+			try {
+				final Trial[] result = new Trial[1];
+
+				ResultSetVisitor visitor = new ResultSetVisitor() {
+					@Override
+					public Continue visit(ResultSet rs) {
+						try {
+							result[0] = trialFactory.createEntity(rs);
+						} catch (DalDbException e) {
+							return Continue.error(e);
+						}
+						return Continue.STOP; // only the first
+					}
+				};
+				
+				String sql = trialFactory.createGetQuery(id, filterClause);
+				
+				Connection c = bmsConnections.getConnectionFor(id);
+				if (c != null) {
+					Continue cont = SqlUtil.performQuery(c, sql, visitor);
+					if (cont.isError()) {
+						Throwable t = cont.throwable;
+						if (t instanceof DalDbException) {
+							throw ((DalDbException) t);
+						}
+						throw new DalDbException(t);
+					}
+				}
+
+				return result[0];
+			}
+			finally {
+				try {trialFactory.close(); } 
+				catch (IOException ignore) { }
+			}
+		}
+		
+		@Override
+		public EntityIterator<? extends Trial> createIdIterator(String id,int firstRecord, int nRecords, String filterClause) throws DalDbException {
+			
+			BufferedReader bufferedReader;
+			
+			if(trialFactory == null){
+				createFactory();
+			}
+					
+			client = HttpClientBuilder.create().build();
+			request = new HttpGet(trialFactory.createListStudiesDetailsURL(id));
+			
+			try{
+				HttpResponse response = client.execute(request);
+				System.out.println(request.getURI());
+				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+			
+			return new BufferedReaderEntityIterator<Trial>(bufferedReader, trialFactory);
+		}
+		
+		public void prepareDetailsSearch() throws DalDbException {
+			HttpClientBuilder clients = HttpClientBuilder.create();
+			client = clients.build();
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			((Trial)entity).getTrialId();
+			request = new HttpGet(trialFactory.createListStudiesDetailsURL(String.valueOf(((Trial)entity).getTrialId())));
+						
+			try{
+				HttpResponse response = client.execute(request);
+				trialFactory.processDetails(entity, new BufferedReader(new InputStreamReader(response.getEntity().getContent())));
+				
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			request = new HttpGet(trialFactory.createListStudiesDetailsURL(String.valueOf(((Trial)entity).getTrialId())));
+						
+			try{
+				HttpResponse response = client.execute(request);
+				trialFactory.processTrial(entity, new BufferedReader(new InputStreamReader(response.getEntity().getContent())));
+				
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+		}
+		
+		@Override
+		public EntityIterator<? extends Trial> createIterator(int firstRecord,
+				int nRecords, String filterClause) throws DalDbException {
+			BufferedReader bufferedReader;
+			
+			if(trialFactory == null){
+				createFactory();
+			}
+					
+			client = HttpClientBuilder.create().build();
+			request = new HttpGet(trialFactory.createListStudiesURL(filterClause));
+			
+			try{
+				HttpResponse response = client.execute(request);
+				System.out.println(request.getURI());
+				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+			
+			return new BufferedReaderEntityIterator<Trial>(bufferedReader, trialFactory);
+		}
+
+	};	
+	
+	private EntityProvider<GeneralType> generalTypeProvider = new EntityProvider<GeneralType>() {
+		
+		GeneralTypeFactory generalTypeFactory = new GeneralTypeFactory();
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public GeneralType getEntity(String id, String filterClause)
+				throws DalDbException {
+
+			
+			final GeneralType[] result = new GeneralType[1];
+
+			ResultSetVisitor visitor = new ResultSetVisitor() {
+				@Override
+				public Continue visit(ResultSet rs) {
+					try {
+						result[0] = generalTypeFactory.createEntity(rs);
+					} catch (DalDbException e) {
+						return Continue.error(e);
+					}
+					return Continue.STOP;
+				}
+			};
+
+			String sql = generalTypeFactory.createGetQuery(id, filterClause);
+
+			Continue cont = SqlUtil.performQuery(bmsConnections.centralConnection,
+					sql,
+					visitor);
+
+			if (cont.isError()) {
+				Throwable t = cont.throwable;
+				if (t instanceof DalDbException) {
+					throw ((DalDbException) t);
+				}
+				throw new DalDbException(t);
+			}
+
+			return result[0];
+	
+		}
+
+		@Override
+		public EntityIterator<? extends GeneralType> createIdIterator(
+				String id, int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			BufferedReader bufferedReader;
+
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet request = new HttpGet(generalTypeFactory.createListTermsURL(id));
+			try{
+				HttpResponse response = client.execute(request);
+				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+				//System.out.println(rd.readLine());
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+
+			return new  BufferedReaderEntityIterator<GeneralType>(bufferedReader, generalTypeFactory);
+		}
+
+		@Override
+		public EntityIterator<? extends GeneralType> createIterator(
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			throw new DalDbException(new UnsupportedOperationException());
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			throw new DalDbException(new UnsupportedOperationException());
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
 	private EntityProvider<GenotypeAlias> genotypeAliasProvider = new EntityProvider<GenotypeAlias>() {
 		
 		GenotypeAliasFactory genotypeAliasFactory = new GenotypeAliasFactory();
@@ -390,7 +695,120 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 				throw new DalDbException(e);
 			}
 		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			throw new DalDbException(new UnsupportedOperationException());
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			throw new DalDbException(new UnsupportedOperationException());
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
 	};
+	
+	private EntityProvider<ItemUnit> itemUnitProvider = new EntityProvider<ItemUnit>() {
+		
+		ItemUnitFactory itemUnitFactory = new ItemUnitFactory();
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public ItemUnit getEntity(String id, String filterClause)
+				throws DalDbException {
+
+			
+			final ItemUnit[] result = new ItemUnit[1];
+
+			ResultSetVisitor visitor = new ResultSetVisitor() {
+				@Override
+				public Continue visit(ResultSet rs) {
+					try {
+						result[0] = itemUnitFactory.createEntity(rs);
+					} catch (DalDbException e) {
+						return Continue.error(e);
+					}
+					return Continue.STOP;
+				}
+			};
+
+			String sql = itemUnitFactory.createGetQuery(id, filterClause);
+
+			Continue cont = SqlUtil.performQuery(bmsConnections.centralConnection,
+					sql,
+					visitor);
+
+			if (cont.isError()) {
+				Throwable t = cont.throwable;
+				if (t instanceof DalDbException) {
+					throw ((DalDbException) t);
+				}
+				throw new DalDbException(t);
+			}
+
+			return result[0];
+	
+		}
+
+		@Override
+		public EntityIterator<? extends ItemUnit> createIdIterator(
+				String id, int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			BufferedReader rd;
+
+			HttpClient client = HttpClientBuilder.create().build();
+			HttpGet request = new HttpGet(itemUnitFactory.createListTermsURL(id));
+			try{
+				HttpResponse response = client.execute(request);
+				rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+				//System.out.println(rd.readLine());
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+
+			return new BufferedReaderEntityIterator<ItemUnit>(rd, itemUnitFactory);
+		}
+
+		@Override
+		public EntityIterator<? extends ItemUnit> createIterator(
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+	};	
 
 	public BMS_DalDatabase(Closure<String> progress, boolean initialise, JdbcConnectionParameters localParams, JdbcConnectionParameters centralParams) throws DalDbException {
 		super("BMS-Interop[Central=" + centralParams + " Local=" + localParams + "]");
@@ -460,6 +878,15 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 //					tmp.add(createOperation("genus/_genusid/list/genotype/_nperpage/page/_num", Genotype.class, genusGenotypeProvider));
 					
 					tmp.add(createOperation("genotype/_genoid/list/alias", GenotypeAlias.class, genotypeAliasProvider));
+					//GeneralType operations
+					tmp.add(createOperation("generaltype/_typeid", GeneralType.class, generalTypeProvider));
+					
+					//ItemUnit operations
+					tmp.add(createOperation("itemunit/_itemunitid", ItemUnit.class, itemUnitProvider));
+					
+					//Trial operations
+					tmp.add(createOperation("trial/_trialid", Trial.class, trialProvider));
+					tmp.add(createOperation("trial/details/_program", Trial.class, trialProvider));
 					
 					operations = tmp;
 				}
@@ -547,12 +974,40 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			}
 		});
 		
+		map.put(GeneralTypeGetOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new GeneralTypeGetOperation(BMS_DalDatabase.this, (EntityProvider<GeneralType>) provider);
+			}
+		});		
+		
 //		map.put(GenotypeListSpecimenOperation.PATTERN, new MatcherToOperation() {
 //			@Override
 //			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
 //				return new GenotypeListSpecimenOperation(BMS_DalDatabase.this, (EntityProvider<Specimen>) provider);
 //			}
 //		});
+		
+		map.put(ItemUnitGetOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new ItemUnitGetOperation(BMS_DalDatabase.this, (EntityProvider<ItemUnit>) provider);
+			}
+		});
+		
+		map.put(GetTrialOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new GetTrialOperation(BMS_DalDatabase.this, (EntityProvider<Trial>) provider);
+			}
+		});
+		
+		map.put(GetTrialsOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new GetTrialsOperation(BMS_DalDatabase.this, (EntityProvider<Trial>) provider);
+			}
+		});
 		
 		return map;
 	}
@@ -768,4 +1223,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	public void setRecordCountCacheEntry(DalSession session, Class<?> entityClass, String filterClause, int count) {
 		recordCountCache.setEntry(session, entityClass, filterClause, count);
 	}
+	
+	
+
 }

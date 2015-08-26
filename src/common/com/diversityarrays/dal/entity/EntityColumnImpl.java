@@ -17,6 +17,7 @@
  */
 package com.diversityarrays.dal.entity;
 
+import java.beans.Transient;
 import java.lang.reflect.Field;
 
 import javax.persistence.Column;
@@ -45,6 +46,7 @@ public class EntityColumnImpl implements EntityColumn {
 		try {
 			Field f = entityClass.getDeclaredField(fieldName);
 			column = f.getAnnotation(Column.class);
+
 			if (column==null) {
 				throw new RuntimeException("No @Column annotation on "+f);
 			}

@@ -61,6 +61,8 @@ import com.diversityarrays.dal.db.DbUtil;
 import com.diversityarrays.dal.db.SqlDalDatabase;
 import com.diversityarrays.dal.db.SystemGroupInfo;
 import com.diversityarrays.dal.db.UserInfo;
+//import com.diversityarrays.dal.db.bms.BMS_DalDbProviderService;
+//import com.diversityarrays.dal.db.kddart.KddartDalDbProviderService;
 import com.diversityarrays.dal.ops.DalOperation;
 import com.diversityarrays.dal.ops.OperationMatch;
 import com.diversityarrays.dal.ops.WordNode;
@@ -292,6 +294,8 @@ public class DalServer extends SimpleWebServer implements IDalServer {
 	throws NoServiceException 
 	{
 		DalDbProviderService provider = null;
+		//DalDbProviderService providerDart = new KddartDalDbProviderService();
+		//DalDbProviderService providerBMS = new BMS_DalDbProviderService();
 		for (Iterator<DalDbProviderService> iter = ServiceRegistry.lookupProviders(DalDbProviderService.class);
 			iter.hasNext(); ) 
 		{
@@ -300,7 +304,7 @@ public class DalServer extends SimpleWebServer implements IDalServer {
 				break;
 			}
 		}
-
+		
 		if (provider == null) {
 			throw new NoServiceException("No provider for " + dalDbServiceName);
 		}

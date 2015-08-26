@@ -90,6 +90,7 @@ public class DalDatabaseUtil {
 
 		Pattern digitsCsv = Pattern.compile("^(\\d+)(,[\\d,]+)+$"); // "^[\\d]+(,[\\d+])+$"
 		Pattern digits = Pattern.compile("[\\d]+");
+		Pattern chars = Pattern.compile("[a-zA-Z]+");
 		int nParts = parts.length;
 
 		WordNode node = root;

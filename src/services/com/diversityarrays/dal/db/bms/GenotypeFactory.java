@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import net.pearcan.json.JsonMap;
 import net.pearcan.util.StringTemplate;
 
 import com.diversityarrays.dal.db.DalDbException;
@@ -264,6 +265,12 @@ public class GenotypeFactory implements SqlEntityFactory<Genotype> {
 		whereAndLimit.append(" LIMIT ").append(nRecords).append(" OFFSET ").append(firstRecord);
 
 		return whereAndLimit.toString();
+	}
+
+	@Override
+	public Genotype createEntity(JsonMap jsonMap) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

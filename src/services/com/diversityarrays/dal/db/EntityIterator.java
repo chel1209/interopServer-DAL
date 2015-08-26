@@ -30,4 +30,11 @@ public interface EntityIterator<T extends DalEntity> extends Closeable {
 	 */
 	public T nextEntity() throws DalDbException;
 	
+	/**
+	 * Will read a line if it's using a JsonParser, no need to support this operation otherwise.
+	 * 
+	 * @throws DalDbException if couldn't read the line 
+	 */
+	public void readLine() throws DalDbException;	
+	
 }

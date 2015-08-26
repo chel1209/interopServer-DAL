@@ -27,6 +27,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import net.pearcan.json.JsonMap;
+
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.SqlEntityFactory;
 import com.diversityarrays.dal.entity.ColumnNameMapping;
@@ -250,6 +252,12 @@ public class GenotypeAliasFactory implements SqlEntityFactory<GenotypeAlias> {
 		}
 		
 		return result;
+	}
+
+	@Override
+	public GenotypeAlias createEntity(JsonMap jsonMap) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

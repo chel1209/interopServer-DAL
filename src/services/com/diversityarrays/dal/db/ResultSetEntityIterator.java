@@ -42,7 +42,6 @@ public class ResultSetEntityIterator<T extends DalEntity> implements EntityItera
 		
 	}
 
-
 	@Override
 	public void close() throws IOException {
 		try {
@@ -69,6 +68,12 @@ public class ResultSetEntityIterator<T extends DalEntity> implements EntityItera
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public void readLine() throws DalDbException {
+		throw new DalDbException(new UnsupportedOperationException());
+		
 	}
 
 }

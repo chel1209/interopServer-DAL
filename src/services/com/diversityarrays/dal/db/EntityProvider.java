@@ -55,4 +55,17 @@ public interface EntityProvider<T extends DalEntity> {
 	 * @throws DalDbException 
 	 */
 	public EntityIterator<? extends T> createIterator(int firstRecord, int nRecords, String filterClause) throws DalDbException;
+	
+	/**
+	 * Prepares an extra search in case the mapping of the basic information on a couple of entities doesn't map one-to-one.	
+	 */
+	public void prepareDetailsSearch() throws DalDbException;
+	
+	/**
+	 * Executes an extra search in case the mapping of the basic information on a couple of entities doesn't map one-to-one
+	 * @param Entity to which the information will be added.	
+	 */
+	public void getDetails(DalEntity entity) throws DalDbException;
+	
+	public void getFullDetails(DalEntity entity) throws DalDbException;
 }

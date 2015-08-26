@@ -61,6 +61,7 @@ public class GenotypeListAliasOperation extends EntityOperation<GenotypeAlias,BM
 			responseBuilder.addResponseMeta(entityTagName);
 			
 			GenotypeAlias entity;
+			
 			while (null != (entity = iter.nextEntity())) {
 				appendEntity(responseBuilder, entity);
 			}

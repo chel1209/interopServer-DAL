@@ -85,6 +85,10 @@ public class TestDalDatabase {
 	
 	private static String LIST_GENOTYPE_ALIAS_ID;
 	private static String GET_GENOTYPE_ALIAS_ID;
+	private static String GET_GENERALTYPE_ID;
+	private static String GET_ITEM_UNIT_ID;
+	private static String GET_PROGRAM_ID;
+	private static String GET_TRIAL_ID;
 
 	private static final boolean WANT_TIMING =  Boolean.getBoolean(TestDalDatabase.class.getSimpleName()+".WANT_TIMING");
 	private static final boolean NOISY = Boolean.getBoolean(TestDalDatabase.class.getSimpleName()+".NOISY");
@@ -103,7 +107,7 @@ public class TestDalDatabase {
 
 	static {
 		CENTRAL_LOCAL_URL_PAIRS.put("DART", new String[] {
-			"jdbc:mysql://192.168.9.91:13306/ibdbv2_wheat_central?user=root",
+			"jdbc:mysql://localhost:3306/ibdbv2_maize_merged?user=root",
 			null // "jdbc:mysql://192.168.9.91:13306/ibdbv2_wheat_2_local?user=root"
 		});
 
@@ -113,7 +117,7 @@ public class TestDalDatabase {
 		});
 		
 		CENTRAL_LOCAL_URL_PAIRS.put("HOME", new String[] { 
-			"jdbc:mysql://localhost:4406/iwis_gms?user=root",
+			"jdbc:mysql://localhost:3306/iwis_gms?user=root",
 			null // "jdbc:mysql://localhost:4406/iwis_gms?user=root"
 		});
 	}
@@ -183,10 +187,15 @@ public class TestDalDatabase {
 		if ("BMS".equalsIgnoreCase(testDbName)) {
 			GET_GENUS_ID = "2";
 			
-			GET_GENOTYPE_ID = "5988205";			
+			GET_GENOTYPE_ID = "20";			
 
-			GET_GENOTYPE_ALIAS_ID = "462355";
+			GET_GENOTYPE_ALIAS_ID = "20";
 			LIST_GENOTYPE_ALIAS_ID = "5988209";
+			GET_GENERALTYPE_ID = "50883";
+			GET_ITEM_UNIT_ID = "51315";
+			//GET_PROGRAM_ID = "24";
+			GET_TRIAL_ID = "trialId=25010,25007";
+			GET_PROGRAM_ID = "7ed6f4df-5b5f-477d-b0de-8d958fe0fed7";
 
 			dalDatabase = createBMS_DalDatabase();
 		}
@@ -194,10 +203,10 @@ public class TestDalDatabase {
 			
 			GET_GENUS_ID = "1";
 			
-			GET_GENOTYPE_ID = "1";
+			GET_GENOTYPE_ID = "20";
 
-			GET_GENOTYPE_ALIAS_ID = "540";
-			LIST_GENOTYPE_ALIAS_ID = "540";
+			GET_GENOTYPE_ALIAS_ID = "20";
+			LIST_GENOTYPE_ALIAS_ID = "20";
 			
 			dalDatabase = createKddartDalDatabase();
 		}
@@ -210,8 +219,8 @@ public class TestDalDatabase {
 
 	private static DalDatabase createBMS_DalDatabase() throws UnknownHostException, DalDbException {
 		
-		USERNAME = "GUEST";
-		PASSWORD = "GUEST";
+		USERNAME = "celso";
+		PASSWORD = "celso";
 		
 		String where = null;
 		String hostname = InetAddress.getLocalHost().getCanonicalHostName();
@@ -989,5 +998,239 @@ public class TestDalDatabase {
 		System.out.println(jm.toJsonString());
 //		System.out.println(baos.toString());
 	}
+	
+	/**
+	 * Tests the operation to get GeneralType information
+	 * @author CCARREIRO 
+	 * 
+	 */
+	@Test
+	public void testGetGeneralType() {
+		
+		LoggedInTest loggedInTest = new LoggedInTest("getGeneralType", true) {
+			
+			@Override
+			public void execute(DalSession session) {
+				
+				String dalcmd = "generaltype/" + GET_GENERALTYPE_ID;
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				try {
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							null, 
+							null);
+					
+					checkJsonResult("testGetGeneralType", responseBuilder, "GeneralType");
+					
+					if (NOISY) {
+						showResponse("testGetGeneralType", responseBuilder);
+					}
 
+				} catch (DalDbException e) {
+					fail(e.getMessage());
+				} catch (ParseException e) {
+					fail(e.getMessage());
+				}
+
+			}
+		};
+		
+		doLoggedInTest(loggedInTest);
+	}	
+
+	/**
+	 * Tests the operation to set GeneralType information
+	 * @author CCARREIRO 
+	 * 
+	 */
+	@Test
+	public void testSetGeneralType() {
+		
+		LoggedInTest loggedInTest = new LoggedInTest("setGeneralType", true) {
+			
+			@Override
+			public void execute(DalSession session) {
+				
+				String dalcmd = "set/generaltype/";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> parametros = new HashMap<String,String>();
+				parametros.put("typeId","1");
+				
+				try {
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.POST, 
+							dalcmd, 
+							null,
+							parametros,
+							null);
+					
+					checkJsonResult("testSetGeneralType", responseBuilder, "GeneralType");
+					
+					if (NOISY) {
+						showResponse("testSetGeneralType", responseBuilder);
+					}
+
+				} catch (DalDbException e) {
+					fail(e.getMessage());
+				} catch (ParseException e) {
+					fail(e.getMessage());
+				}
+
+			}
+		};
+		
+		doLoggedInTest(loggedInTest);
+	}	
+	
+	/**
+	 * Tests the operation to get GeneralType information
+	 * @author CCARREIRO 
+	 * 
+	 */
+	@Test
+	public void testGetItemUnit() {
+		
+		LoggedInTest loggedInTest = new LoggedInTest("getItemUnit", true) {
+			
+			@Override
+			public void execute(DalSession session) {
+				
+				String dalcmd = "itemunit/" + GET_ITEM_UNIT_ID;
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				try {
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							null, 
+							null);
+					
+					checkJsonResult("testGetItemUnit", responseBuilder, "ItemUnit");
+					
+					if (NOISY) {
+						showResponse("testGetItemUnit", responseBuilder);
+					}
+	
+				} catch (DalDbException e) {
+					fail(e.getMessage());
+				} catch (ParseException e) {
+					fail(e.getMessage());
+				}
+	
+			}
+		};
+		
+		doLoggedInTest(loggedInTest);
+	}
+	
+	/**
+	 * Tests the operation to get Trial/Nursery basic information
+	 * @author CCARREIRO 
+	 * 
+	 */
+	@Test
+	public void testGetTrial() {
+		
+		LoggedInTest loggedInTest = new LoggedInTest("trial", true) {
+			
+			@Override
+			public void execute(DalSession session) {
+				
+				String dalcmd = "trial/" + GET_PROGRAM_ID;
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				mapaParametros.put("programId", GET_PROGRAM_ID);
+				
+				try {
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);
+					
+					checkJsonResult("testGetTrial", responseBuilder, "Trial");
+					
+					if (NOISY) {
+						showResponse("testGetTrial", responseBuilder);
+					}
+	
+				} catch (DalDbException e) {
+					fail(e.getMessage());
+				} catch (ParseException e) {
+					fail(e.getMessage());
+				}
+	
+			}
+		};
+		
+		doLoggedInTest(loggedInTest);
+	}
+	
+	@Test
+	public void testGetTrials() {
+		
+		LoggedInTest loggedInTest = new LoggedInTest("trial", true) {
+			
+			@Override
+			public void execute(DalSession session) {
+				
+				String dalcmd = "trial/details/";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				mapaParametros.put("trialId", GET_TRIAL_ID);
+				
+				try {
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);
+					
+					checkJsonResult("testGetTrial", responseBuilder, "Trial");
+					
+					if (NOISY) {
+						showResponse("testGetTrial", responseBuilder);
+					}
+	
+				} catch (DalDbException e) {
+					fail(e.getMessage());
+				} catch (ParseException e) {
+					fail(e.getMessage());
+				}
+	
+			}
+		};
+		
+		doLoggedInTest(loggedInTest);
+	}		
 }
+

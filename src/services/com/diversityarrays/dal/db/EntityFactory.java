@@ -20,9 +20,13 @@ package com.diversityarrays.dal.db;
 import java.io.Closeable;
 import java.sql.ResultSet;
 
+import net.pearcan.json.JsonMap;
+
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.entity.DalEntity;
 
 public interface EntityFactory<T extends DalEntity> extends Closeable {
 	public T createEntity(ResultSet rs) throws DalDbException;
+	
+	public T createEntity(JsonMap jsonMap) throws DalDbException;
 }

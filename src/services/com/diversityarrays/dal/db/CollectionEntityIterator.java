@@ -43,4 +43,10 @@ public class CollectionEntityIterator<T extends DalEntity> implements EntityIter
 		}
 		return null;
 	}
+
+	@Override
+	public void readLine() throws DalDbException {
+		throw new DalDbException(new UnsupportedOperationException());
+		
+	}
 }
