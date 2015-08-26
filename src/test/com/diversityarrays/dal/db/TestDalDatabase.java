@@ -194,7 +194,7 @@ public class TestDalDatabase {
 			GET_GENERALTYPE_ID = "50883";
 			GET_ITEM_UNIT_ID = "51315";
 			//GET_PROGRAM_ID = "24";
-			GET_TRIAL_ID = "trialId=25010,25007";
+			GET_TRIAL_ID = "25010,25007";
 			GET_PROGRAM_ID = "7ed6f4df-5b5f-477d-b0de-8d958fe0fed7";
 
 			dalDatabase = createBMS_DalDatabase();
