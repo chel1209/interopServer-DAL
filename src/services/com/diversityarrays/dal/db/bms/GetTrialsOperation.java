@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import net.pearcan.json.JsonUtil;
+
 import com.diversityarrays.dal.db.DalDatabaseUtil;
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.DalResponseBuilder;
@@ -26,7 +28,7 @@ public class GetTrialsOperation extends EntityOperation<Trial, BMS_DalDatabase> 
 	public GetTrialsOperation(BMS_DalDatabase db, 
 			EntityProvider<Trial> provider) 
 	{
-		super(db, ENTITY_NAME, "trial/details/_trialid", Trial.class, provider);
+		super(db, ENTITY_NAME, "trial/details/_trial", Trial.class, provider);
 	}
 
 	@Override
@@ -40,12 +42,14 @@ public class GetTrialsOperation extends EntityOperation<Trial, BMS_DalDatabase> 
 		EntityIterator<? extends Trial> iter = null;
 		try {
 			//Probar parametros que vienen desde IHttpSession
-			System.out.println("mapa dentro: " + methodParms);
+			//System.out.println("mapa dentro: " + methodParms);
 			
-			String[] trialIds = methodParms.get("trialId").split(",");
+			String[] trialIds = dalOpParameters.get(0).split("&");
 			
 			responseBuilder.addResponseMeta(entityTagName);
 			for(String id : trialIds){
+				String[] ids = id.split("=");
+				id = ids[1];
 				iter = entityProvider.createIdIterator(id,0, 0, filterClause);
 							
 				Trial entity;
@@ -63,5 +67,5 @@ public class GetTrialsOperation extends EntityOperation<Trial, BMS_DalDatabase> 
 			}
 		}
 	}
-
+	
 }

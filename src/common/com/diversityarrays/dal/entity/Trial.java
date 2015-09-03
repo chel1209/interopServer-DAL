@@ -1,6 +1,7 @@
 package com.diversityarrays.dal.entity;
 
 import java.sql.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -31,12 +32,24 @@ public class Trial extends DalEntity{
 	@Id
 	@Column(name="TrialID", nullable=false)		
 	private Integer trialId;
+
+	@Column(name="TrialManagerId", nullable=false)		
+	private Integer trialManagerId;
 	
 	@Column(name="TrialManagerName", nullable=false, length=(100))
 	private String trialManagerName;
 	
-	@Column(name="trialLocation", nullable=false, length=(100))
-	private String trialLocation;
+	@Column(name="siteName", nullable=false, length=(100))
+	private String siteName;
+	
+	@Column(name="trialTypeName", nullable=false, length=(100))
+	private String trialTypeName;	
+	
+	@Column(name="trialTraits", nullable=false, length=(100))
+	private List<TrialTrait> trialTraits;
+	
+	@Column(name="trialUnits", nullable=false, length=(100))
+	private List<TrialUnit> trialUnits;	
 	
 	public static final EntityColumn TRIAL_NOTE = createEntityColumn(Trial.class, "trialNote");
 	public static final EntityColumn TRIAL_NAME = createEntityColumn(Trial.class, "trialName");
@@ -142,20 +155,68 @@ public class Trial extends DalEntity{
 	/**
 	 * @return the siteName
 	 */
-	public String getTrialLocation() {
-		return trialLocation;
+	public String getSiteName() {
+		return siteName;
 	}
 	/**
 	 * @param siteName the siteName to set
 	 */
-	public void setTrialLocation(String trialLocation) {
-		this.trialLocation = trialLocation;
+	public void setSiteName(String siteName) {
+		this.siteName = siteName;
 	}
 	/**
 	 * @param trialTypeId the trialTypeId to set
 	 */
 	public void setTrialTypeId(Integer trialTypeId) {
 		this.trialTypeId = trialTypeId;
+	}
+	/**
+	 * @return the trialManagerId
+	 */
+	public Integer getTrialManagerId() {
+		return trialManagerId;
+	}
+	/**
+	 * @param trialManagerId the trialManagerId to set
+	 */
+	public void setTrialManagerId(Integer trialManagerId) {
+		this.trialManagerId = trialManagerId;
+	}
+	/**
+	 * @return the trialTypeName
+	 */
+	public String getTrialTypeName() {
+		return trialTypeName;
+	}
+	/**
+	 * @param trialTypeName the trialTypeName to set
+	 */
+	public void setTrialTypeName(String trialTypeName) {
+		this.trialTypeName = trialTypeName;
+	}
+	/**
+	 * @return the trialTratis
+	 */
+	public List<TrialTrait> getTrialTraits() {
+		return trialTraits;
+	}
+	/**
+	 * @param trialTratis the trialTratis to set
+	 */
+	public void setTrialTraits(List<TrialTrait> trialTraits) {
+		this.trialTraits = trialTraits;
+	}
+	/**
+	 * @return the trialUnits
+	 */
+	public List<TrialUnit> getTrialUnits() {
+		return trialUnits;
+	}
+	/**
+	 * @param trialUnits the trialUnits to set
+	 */
+	public void setTrialUnits(List<TrialUnit> trialUnits) {
+		this.trialUnits = trialUnits;
 	}
 		
 }

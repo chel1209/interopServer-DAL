@@ -200,6 +200,8 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		result.setTrialId(new Integer((String)jsonMap.get("id")));
 		result.setTrialName((String)jsonMap.get("name"));
 		result.setTrialNote((String)jsonMap.get("objective"));
+		result.setTrialAcronym((String)jsonMap.get("title"));
+		
 		
 		try{
 			result.setTrialStartDate(new Date(formatter.parse((String)jsonMap.get("startDate")).getTime()));
@@ -211,7 +213,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 
 		if(((String)jsonMap.get("endDate")).length()>0 && !jsonMap.get("endDate").equals("null")){
 			try{
-				result.setTrialStartDate(new Date(formatter.parse((String)jsonMap.get("endDate")).getTime()));
+				result.setTrialEndDate(new Date(formatter.parse((String)jsonMap.get("endDate")).getTime()));
 			}catch(ParseException pe){
 				throw new DalDbException("Error parsing End Date" + pe.getMessage());
 			}catch(Exception e){
@@ -220,22 +222,36 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		}
 		
 		List<Object> generalInfo = (List)jsonMap.get("generalInfo");
-		System.out.println("Trial::" + ((Trial)result).getTrialId() + "generalInfo" + generalInfo);
-		for(Object map:generalInfo){
-			if(((JsonMap)map).get("name").equals("PI_NAME")){
-				((Trial)result).setTrialManagerName((String)((JsonMap)map).get("value"));
-				System.out.println(" PINAME:: " + ((Trial)result).getTrialManagerName());
-			}else{
-				if(((JsonMap)map).get("name").equals("LOCATION_NAME")){
+		if(generalInfo!=null){
+			System.out.println("Trial::" + ((Trial)result).getTrialId() + "generalInfo" + generalInfo);
+		
+			for(Object map:generalInfo){
+				if(((JsonMap)map).get("name").equals("PI_NAME")){
 					((Trial)result).setTrialManagerName((String)((JsonMap)map).get("value"));
-					System.out.println(" Location:: " + ((Trial)result).getTrialLocation());
+				}else{
+					if(((JsonMap)map).get("name").equals("+")){
+						((Trial)result).setSiteName((String)((JsonMap)map).get("value"));
+					}else{
+						if(((JsonMap)map).get("name").equals("PI_NAME_ID")){
+							((Trial)result).setTrialManagerId(Integer.valueOf((String)((JsonMap)map).get("value")));
+						}else{
+							if(((JsonMap)map).get("name").equals("STUDY_TYPE")){
+								((Trial)result).setTrialTypeName((String)((JsonMap)map).get("value"));
+							}
+						}
+					}
 				}
 			}
+		
 		}
 		
 		
+		TrialTraitFactory trialTraitFactory = new TrialTraitFactory();
+		trialTraitFactory.createEntity(result,jsonMap);
+
+		TrialUnitFactory trialUnitFactory = new TrialUnitFactory();
+		trialUnitFactory.createEntity(result,jsonMap);
 		
-				
 		return result;
 	}
 	
@@ -262,16 +278,12 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 						System.out.println(" PINAME:: " + ((Trial)entity).getTrialManagerName());
 					}else{
 						if(((JsonMap)map).get("name").equals("LOCATION_NAME")){
-							((Trial)entity).setTrialManagerName((String)((JsonMap)map).get("value"));
-							System.out.println(" Location:: " + ((Trial)entity).getTrialLocation());
+							((Trial)entity).setSiteName((String)((JsonMap)map).get("value"));
+							System.out.println(" Location:: " + ((Trial)entity).getSiteName());
 						}
 					}
 				}
 				
-				//((Trial)entity).setTrialManagerName();
-				//System.out.println("::::ENTITY::::" + ((Trial)entity).getTrialManagerName());
-				//((Trial)entity).setTrialLocation(generalInfo.get("LOCATION_NAME"));
-				//System.out.println("::::ENTITY::::" + ((Trial)entity).getTrialLocation());
 			}
 			
 			
@@ -290,7 +302,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 			if(line != null){
 				JsonParser parser = new JsonParser(line);
 				((Trial)entity).setTrialManagerName((String)parser.getMapResult().get("PI_NAME"));
-				((Trial)entity).setTrialLocation((String)parser.getMapResult().get("LOCATION_NAME"));
+				((Trial)entity).setSiteName((String)parser.getMapResult().get("LOCATION_NAME"));
 			}
 			
 			

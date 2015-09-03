@@ -472,7 +472,7 @@ public class DalServer extends SimpleWebServer implements IDalServer {
 	{
 		Response result;
 
-		boolean wantJson = "json".equals(session.getParms().get("ctype"));
+		boolean wantJson = "application/json".equals(session.getHeaders().get("content-type"));
 
 		if (verbose) {
 			System.out.println(method + " '" + uri + "' ");

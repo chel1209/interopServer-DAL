@@ -36,8 +36,7 @@ public class GetTrialOperation extends EntityOperation<Trial, BMS_DalDatabase> {
 		
 		//String filterClause = DalDatabaseUtil.getFilteringClause(methodParms);
 		
-		String filterClause = methodParms.get("programId");
-		System.out.println("filterclause: " + filterClause);
+		String filterClause = dalOpParameters.get(0);
 		
 		EntityIterator<? extends Trial> iter = null;
 		try {
