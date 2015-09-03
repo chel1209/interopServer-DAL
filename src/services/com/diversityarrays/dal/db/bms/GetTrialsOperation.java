@@ -35,12 +35,14 @@ public class GetTrialsOperation extends EntityOperation<Trial, BMS_DalDatabase> 
 			Map<String, String> methodParms, Map<String, String> filePathByName)
 	throws DalDbException {
 		
+		System.out.println("GetTrialsOperation [BEGIN execute]: " + methodParms);
+		
 		String filterClause = DalDatabaseUtil.getFilteringClause(methodParms);
 		
 		EntityIterator<? extends Trial> iter = null;
 		try {
 			//Probar parametros que vienen desde IHttpSession
-			System.out.println("mapa dentro: " + methodParms);
+			System.out.println("GetTrialsOperation [Mapa dentro]: " + methodParms);
 			
 			String[] trialIds = methodParms.get("trialId").split(",");
 			
@@ -62,6 +64,7 @@ public class GetTrialsOperation extends EntityOperation<Trial, BMS_DalDatabase> 
 				catch (IOException ignore) { }
 			}
 		}
+		System.out.println("GetTrialsOperation [END execute]: " + methodParms);
 	}
 
 }

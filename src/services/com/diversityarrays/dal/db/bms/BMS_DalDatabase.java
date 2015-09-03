@@ -38,10 +38,14 @@ import net.pearcan.util.StringUtil;
 
 import org.apache.commons.collections15.Closure;
 import org.apache.commons.collections15.ClosureUtils;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
@@ -68,6 +72,7 @@ import com.diversityarrays.dal.entity.Genotype;
 import com.diversityarrays.dal.entity.GenotypeAlias;
 import com.diversityarrays.dal.entity.Genus;
 import com.diversityarrays.dal.entity.ItemUnit;
+import com.diversityarrays.dal.entity.Observation;
 import com.diversityarrays.dal.entity.Trial;
 import com.diversityarrays.dal.ops.DalOperation;
 import com.diversityarrays.dal.server.DalSession;
@@ -244,6 +249,12 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			// TODO Auto-generated method stub
 			
 		}
+		
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+			throw new UnsupportedOperationException("Not supported yet.");	
+		}
+		
 	};
 	
 	private EntityProvider<Genotype> genotypeProvider = new EntityProvider<Genotype>() {
@@ -353,6 +364,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			// TODO Auto-generated method stub
 			
 		}
+		
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+			throw new UnsupportedOperationException("Not supported yet.");	
+		}		
 
 	};
 	
@@ -426,6 +442,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public EntityIterator<? extends Trial> createIdIterator(String id,int firstRecord, int nRecords, String filterClause) throws DalDbException {
 			
+			System.out.println("BEGIN createIdIterator (TRIAL) in BMS_DalDatabase class====");
 			BufferedReader bufferedReader;
 			
 			if(trialFactory == null){
@@ -446,7 +463,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			}catch(Exception ex){
 				throw new DalDbException("Exception: " + ex);
 			}
-			
+			System.out.println("END createIdIterator (TRIAL) in BMS_DalDatabase class ====");
 			return new BufferedReaderEntityIterator<Trial>(bufferedReader, trialFactory);
 		}
 		
@@ -516,6 +533,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			
 			return new BufferedReaderEntityIterator<Trial>(bufferedReader, trialFactory);
 		}
+		
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+			throw new UnsupportedOperationException("Not supported yet.");	
+		}		
 
 	};	
 	
@@ -612,6 +634,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			// TODO Auto-generated method stub
 			
 		}
+		
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+			throw new UnsupportedOperationException("Not supported yet.");	
+		}		
 	};
 	
 	private EntityProvider<GenotypeAlias> genotypeAliasProvider = new EntityProvider<GenotypeAlias>() {
@@ -711,9 +738,14 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			// TODO Auto-generated method stub
 			
 		}
+		
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+			throw new UnsupportedOperationException("Not supported yet.");	
+		}		
 	};
 	
-	private EntityProvider<ItemUnit> itemUnitProvider = new EntityProvider<ItemUnit>() {
+	private EntityProvider<ItemUnit> itemUnitProvider = new EntityProvider<ItemUnit>() { 
 		
 		ItemUnitFactory itemUnitFactory = new ItemUnitFactory();
 
@@ -808,6 +840,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			// TODO Auto-generated method stub
 			
 		}
+		
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+			throw new UnsupportedOperationException("Not supported yet.");	
+		}		
 	};	
 
 	public BMS_DalDatabase(Closure<String> progress, boolean initialise, JdbcConnectionParameters localParams, JdbcConnectionParameters centralParams) throws DalDbException {
@@ -833,8 +870,94 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 	}
 
+    
+	private EntityProvider<Observation> observationProvider = new EntityProvider<Observation>() {
+		
+		private CloseableHttpClient client;
+		private ObservationFactory  observationFactory;
+		private HttpPut             httpPut;
+		private HttpEntity          entitySent;
+		private HttpResponse        response;
 
+		private void createFactory() {
+			observationFactory = new ObservationFactory();
+		}		
 
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Observation getEntity(String id, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Observation> createIdIterator(
+				String id, int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Observation> createIterator(
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+			
+			String StrjSON = parameters.get("json");
+			
+			if(observationFactory == null){
+				createFactory();
+			}
+			
+			client  = HttpClientBuilder.create().build();
+
+			//System.out.println("URL: " + observationFactory.getURL(dalOpParameters));
+			
+			httpPut     = new HttpPut(observationFactory.getURL(dalOpParameters));
+			entitySent  = new StringEntity(StrjSON,ContentType.create("application/json"));
+	    	httpPut.setEntity(entitySent);		
+	    	
+	    	try{
+		    	response = client.execute(httpPut);
+		    	System.out.println(response.getStatusLine());	    		
+	    	}catch(Exception e){
+	    		System.out.println("Somethinh is wrong: " + e.toString());
+	    	}
+	    	
+		}
+		
+	};
+	
 	@Override
 	public boolean isInitialiseRequired() {
 		return true;
@@ -887,6 +1010,10 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 					//Trial operations
 					tmp.add(createOperation("trial/_trialid", Trial.class, trialProvider));
 					tmp.add(createOperation("trial/details/_program", Trial.class, trialProvider));
+					
+					//SetOperations
+					tmp.add(createOperation("observation/_program/_trialid/_observationid", Observation.class, observationProvider));
+					
 					
 					operations = tmp;
 				}
@@ -1008,6 +1135,13 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 				return new GetTrialsOperation(BMS_DalDatabase.this, (EntityProvider<Trial>) provider);
 			}
 		});
+		
+		map.put(SetObservationOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new SetObservationOperation(BMS_DalDatabase.this, (EntityProvider<Observation>) provider);
+			}
+		});		
 		
 		return map;
 	}

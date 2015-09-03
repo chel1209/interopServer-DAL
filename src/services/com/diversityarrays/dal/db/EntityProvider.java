@@ -17,6 +17,9 @@
  */
 package com.diversityarrays.dal.db;
 
+import java.util.List;
+import java.util.Map;
+
 import com.diversityarrays.dal.entity.DalEntity;
 
 
@@ -68,4 +71,12 @@ public interface EntityProvider<T extends DalEntity> {
 	public void getDetails(DalEntity entity) throws DalDbException;
 	
 	public void getFullDetails(DalEntity entity) throws DalDbException;
+	
+	/*
+	 * Send data to BMS using PUT method
+	 * @param Entity to which the information will be sent.
+	 * @throws DalDbException
+	 */
+	public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException;
+	
 }

@@ -196,7 +196,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 	public Trial createEntity(JsonMap jsonMap) throws DalDbException {
 		Trial result = new Trial();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-		System.out.println(jsonMap.get("id"));
+		System.out.println("TrialFactory [createEntity] TrialId: " + jsonMap.get("id"));
 		result.setTrialId(new Integer((String)jsonMap.get("id")));
 		result.setTrialName((String)jsonMap.get("name"));
 		result.setTrialNote((String)jsonMap.get("objective"));
@@ -220,7 +220,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		}
 		
 		List<Object> generalInfo = (List)jsonMap.get("generalInfo");
-		System.out.println("Trial::" + ((Trial)result).getTrialId() + "generalInfo" + generalInfo);
+		System.out.println("Trial::" + ((Trial)result).getTrialId() + " generalInfo" + generalInfo);
 		for(Object map:generalInfo){
 			if(((JsonMap)map).get("name").equals("PI_NAME")){
 				((Trial)result).setTrialManagerName((String)((JsonMap)map).get("value"));
