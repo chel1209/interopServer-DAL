@@ -50,6 +50,10 @@ import com.diversityarrays.dal.db.bms.BMS_DalDatabase;
 import com.diversityarrays.dal.db.bms.GenotypeAliasFactory;
 import com.diversityarrays.dal.db.kddart.KddartDalDatabase;
 import com.diversityarrays.dal.db.kddart.KddartDalDbProviderService;
+import com.diversityarrays.dal.entity.MeasurementIdentifier;
+import com.diversityarrays.dal.entity.Measurements;
+import com.diversityarrays.dal.entity.Observation;
+import com.diversityarrays.dal.entity.Trait;
 import com.diversityarrays.dal.ops.DalOperation;
 import com.diversityarrays.dal.ops.OperationMatch;
 import com.diversityarrays.dal.ops.WordNode;
@@ -219,8 +223,8 @@ public class TestDalDatabase {
 
 	private static DalDatabase createBMS_DalDatabase() throws UnknownHostException, DalDbException {
 		
-		USERNAME = "celso";
-		PASSWORD = "celso";
+		USERNAME = "rulax";
+		PASSWORD = "rulax";
 		
 		String where = null;
 		String hostname = InetAddress.getLocalHost().getCanonicalHostName();
@@ -1196,7 +1200,7 @@ public class TestDalDatabase {
 			
 			@Override
 			public void execute(DalSession session) {
-				
+				System.out.println("BEGIN testGetTrials() ========");
 				String dalcmd = "trial/details/";
 				
 				OperationMatch match = getOperationMatch(dalcmd);
@@ -1220,6 +1224,7 @@ public class TestDalDatabase {
 					if (NOISY) {
 						showResponse("testGetTrial", responseBuilder);
 					}
+				System.out.println("END testGetTrials() ========");	
 	
 				} catch (DalDbException e) {
 					fail(e.getMessage());
@@ -1231,6 +1236,55 @@ public class TestDalDatabase {
 		};
 		
 		doLoggedInTest(loggedInTest);
-	}		
+	}
+	
+	/*
+	 * Test for SetObservation
+	 * @author Raul Hernandez T.
+	 */
+	
+	@Test
+	public void testSetObservation() {
+		//TODO
+		LoggedInTest loggedInTest = new LoggedInTest("observation", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "observation/" + "maize" + "/" + "25010" + "/" + "378";
+				//String dalcmd = "trial/details/";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				mapaParametros.put("json", "{\"uniqueIdentifier\":378,\"germplasmId\":4,\"germplasmDesignation\":\"CML165\",\"entryNumber\":4,\"entryType\":\"Test Entry\",\"plotNumber\":1,\"replicationNumber\":1,\"environmentNumber\":1,\"seedSource\":\"\",\"measurements\":[{\"measurementIdentifier\":{\"measurementId\":392,\"trait\":{\"traitId\":18020,\"traitName\":\"Plant_height\"}},\"measurementValue\":\"403\"}]}");
+				
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+					
+					checkJsonResult("testSetObservation", responseBuilder, "Observation");
+					if (NOISY) {
+						showResponse("testSetObservation", responseBuilder);
+					}					
+					
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}
+			
+		};
+		
+		doLoggedInTest(loggedInTest);
+		
+	}	
 }
 

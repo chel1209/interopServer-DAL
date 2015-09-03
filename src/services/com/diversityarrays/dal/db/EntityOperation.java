@@ -66,6 +66,7 @@ public abstract class EntityOperation<T extends DalEntity,DB extends DalDatabase
 
 	protected void appendEntity(DalResponseBuilder responseBuilder, T entity)
 			throws DalDbException {
+		        System.out.println("BEGIN appendEntity in EntityOperation ====");
 				DalResponseBuilder builder = responseBuilder.startTag(entityTagName);
 				for (Field fld : columnByField.keySet()) {
 					try {
@@ -91,6 +92,7 @@ public abstract class EntityOperation<T extends DalEntity,DB extends DalDatabase
 					}
 				}
 				builder.endTag();
+				System.out.println("END appendEntity in EntityOperation ====");
 			}
 
 }
