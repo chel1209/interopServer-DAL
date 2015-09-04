@@ -194,7 +194,7 @@ public class TestDalDatabase {
 			GET_GENERALTYPE_ID = "50883";
 			GET_ITEM_UNIT_ID = "51315";
 			//GET_PROGRAM_ID = "24";
-			GET_TRIAL_ID = "25010,25007";
+			GET_TRIAL_ID = "trialid=25016&trialid=25007";
 			GET_PROGRAM_ID = "7ed6f4df-5b5f-477d-b0de-8d958fe0fed7";
 
 			dalDatabase = createBMS_DalDatabase();
@@ -1158,17 +1158,14 @@ public class TestDalDatabase {
 				OperationMatch match = getOperationMatch(dalcmd);
 				
 				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
-				
-				Map<String, String> mapaParametros = new HashMap<String, String>();
-				mapaParametros.put("programId", GET_PROGRAM_ID);
-				
+								
 				try {
 					match.node.getOperation().execute(session,
 							responseBuilder, 
 							Method.GET, 
 							dalcmd, 
 							match.getParameterValues(), 
-							mapaParametros, 
+							null, 
 							null);
 					
 					checkJsonResult("testGetTrial", responseBuilder, "Trial");
@@ -1197,14 +1194,11 @@ public class TestDalDatabase {
 			@Override
 			public void execute(DalSession session) {
 				
-				String dalcmd = "trial/details/";
+				String dalcmd = "trial/details/" + GET_TRIAL_ID ;
 				
 				OperationMatch match = getOperationMatch(dalcmd);
 				
 				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
-				
-				Map<String, String> mapaParametros = new HashMap<String, String>();
-				mapaParametros.put("trialId", GET_TRIAL_ID);
 				
 				try {
 					match.node.getOperation().execute(session,
@@ -1212,7 +1206,7 @@ public class TestDalDatabase {
 							Method.GET, 
 							dalcmd, 
 							match.getParameterValues(), 
-							mapaParametros, 
+							null, 
 							null);
 					
 					checkJsonResult("testGetTrial", responseBuilder, "Trial");
