@@ -1197,13 +1197,10 @@ public class TestDalDatabase {
 			
 			@Override
 			public void execute(DalSession session) {
-<<<<<<< HEAD
-				System.out.println("BEGIN testGetTrials() ========");
-				String dalcmd = "trial/details/";
-=======
-				
+
+
 				String dalcmd = "trial/details/" + GET_TRIAL_ID ;
->>>>>>> 168d0f3e82cc2929dee69ecf2b531c20831a09d1
+
 				
 				OperationMatch match = getOperationMatch(dalcmd);
 				
