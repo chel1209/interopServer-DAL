@@ -1162,17 +1162,14 @@ public class TestDalDatabase {
 				OperationMatch match = getOperationMatch(dalcmd);
 				
 				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
-				
-				Map<String, String> mapaParametros = new HashMap<String, String>();
-				mapaParametros.put("programId", GET_PROGRAM_ID);
-				
+								
 				try {
 					match.node.getOperation().execute(session,
 							responseBuilder, 
 							Method.GET, 
 							dalcmd, 
 							match.getParameterValues(), 
-							mapaParametros, 
+							null, 
 							null);
 					
 					checkJsonResult("testGetTrial", responseBuilder, "Trial");
@@ -1200,15 +1197,17 @@ public class TestDalDatabase {
 			
 			@Override
 			public void execute(DalSession session) {
+<<<<<<< HEAD
 				System.out.println("BEGIN testGetTrials() ========");
 				String dalcmd = "trial/details/";
+=======
+				
+				String dalcmd = "trial/details/" + GET_TRIAL_ID ;
+>>>>>>> 168d0f3e82cc2929dee69ecf2b531c20831a09d1
 				
 				OperationMatch match = getOperationMatch(dalcmd);
 				
 				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
-				
-				Map<String, String> mapaParametros = new HashMap<String, String>();
-				mapaParametros.put("trialId", GET_TRIAL_ID);
 				
 				try {
 					match.node.getOperation().execute(session,
@@ -1216,7 +1215,7 @@ public class TestDalDatabase {
 							Method.GET, 
 							dalcmd, 
 							match.getParameterValues(), 
-							mapaParametros, 
+							null, 
 							null);
 					
 					checkJsonResult("testGetTrial", responseBuilder, "Trial");
