@@ -23,6 +23,7 @@ import com.diversityarrays.dal.ops.FilteringTerm;
 public class ItemUnitFactory implements SqlEntityFactory<ItemUnit> {
 	
 	private static final int OBSOLETE = 1;
+	private boolean pending;
 	
 	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
 	
@@ -124,30 +125,30 @@ public class ItemUnitFactory implements SqlEntityFactory<ItemUnit> {
 
 		ItemUnit result = new ItemUnit();
 		result.setItemUnitId(new Integer((String)jsonMap.get("id")));
-		System.out.println("ItemUnitId: " + result.getItemUnitId());
-		
 		result.setItemUnitName((String)jsonMap.get("name"));
-		System.out.println("ItemUnitName: " + result.getItemUnitName());
-		
 		result.setItemUnitNote((String)jsonMap.get("description"));
-		System.out.println("ItemUnitNote: " + result.getItemUnitNote());
-				
-		result.setUnitTypeId(new Integer((String)((JsonMap)jsonMap.get("dataType")).get("id")));// confirmar como acceder a los atributos de objetos dentro de json 
-		System.out.println("UnitTypeId: " + result.getUnitTypeId());
+		GeneralTypeFactory generalTypeFactory = new GeneralTypeFactory();
+		generalTypeFactory.createEntity(result,jsonMap);
 		
-		result.setUnitTypeName((String)((JsonMap)jsonMap.get("dataType")).get("name"));// confirmar como acceder a los atributos de objetos dentro de json 
-		System.out.println("UnitTypeName: " + result.getUnitTypeName());
-		
-		//Not mapped yet.
-		result.setConversionRule("");
-		result.setGramsConversionMultiplier(0f);
-		//result.setGeneralType(new GeneralType());
-
 		return result;
 	}
 	
 	public String createListTermsURL(String id){
 		return "http://teamnz.leafnode.io/bmsapi/ontology/maize/scales/" + id;
+	}
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 
 }

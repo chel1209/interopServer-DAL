@@ -30,6 +30,7 @@ import org.apache.http.HttpEntity;
 public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 	
 	private static final int OBSOLETE = 1;
+	private boolean pending = false;
 	
 	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
 	
@@ -199,6 +200,7 @@ public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 	public void createEntity(Trial trial,JsonMap jsonMap) throws DalDbException {
 
 		SpecimenFactory specimenFactory = new SpecimenFactory();
+		SampleMeasurementFactory sampleMeasurementFactory = new SampleMeasurementFactory();
 		System.out.println(jsonMap.get("id"));
 		List<TrialUnit> trialUnits = new ArrayList<TrialUnit>();			
 		List<Object> germplasm = (List)jsonMap.get("germplasm");
@@ -206,9 +208,15 @@ public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 			for(Object map:germplasm){
 				TrialUnit result = new TrialUnit();
 				result.setTrialId(trial.getTrialId());
+				sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialId()));
 				result.setUnitPositionText((String)((JsonMap)map).get("entryNo"));
-				specimenFactory.createEntity(result, jsonMap);
-				
+				specimenFactory.createEntity(result, jsonMap,sampleMeasurementFactory,trial.getTrialTraits());
+				if(trial.getSiteName() != null ){
+					result.setSiteName(trial.getSiteName());
+				}
+				if(trial.getSiteNameID() != null){
+					result.setSiteId(trial.getSiteNameID());
+				}
 				trialUnits.add(result);
 			}
 			trial.setTrialUnits(trialUnits);
@@ -284,5 +292,19 @@ public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
+	}
+		
 }

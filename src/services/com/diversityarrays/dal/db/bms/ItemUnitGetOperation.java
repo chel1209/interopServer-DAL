@@ -47,6 +47,7 @@ public class ItemUnitGetOperation extends EntityOperation<ItemUnit, BMS_DalDatab
 			iter.readLine();
 			while (null != (entity = iter.nextEntity())) {
 				appendEntity(responseBuilder, entity);
+				iter.readLine();
 			}
 		} finally {
 			if (iter != null) {

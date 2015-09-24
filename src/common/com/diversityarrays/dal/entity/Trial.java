@@ -38,23 +38,30 @@ public class Trial extends DalEntity{
 	
 	@Column(name="TrialManagerName", nullable=false, length=(100))
 	private String trialManagerName;
+
+	@Column(name="DesignTypeName", nullable=false, length=(100))
+	private String designTypeName;
 	
-	@Column(name="siteName", nullable=false, length=(100))
+	@Column(name="SiteName", nullable=false, length=(100))
 	private String siteName;
 	
-	@Column(name="trialTypeName", nullable=false, length=(100))
+	@Column(name="SiteNameId", nullable=false, length=(100))
+	private Integer siteNameId;
+	
+	@Column(name="TrialTypeName", nullable=false, length=(100))
 	private String trialTypeName;	
 	
-	@Column(name="trialTraits", nullable=false, length=(100))
+	@Column(name="TrialTraits", nullable=false, length=(100))
 	private List<TrialTrait> trialTraits;
 	
-	@Column(name="trialUnits", nullable=false, length=(100))
+	@Column(name="TrialUnits", nullable=false, length=(100))
 	private List<TrialUnit> trialUnits;	
 	
 	public static final EntityColumn TRIAL_NOTE = createEntityColumn(Trial.class, "trialNote");
 	public static final EntityColumn TRIAL_NAME = createEntityColumn(Trial.class, "trialName");
 	public static final EntityColumn TRIAL_ACRONYM = createEntityColumn(Trial.class, "trialAcronym");
 	public static final EntityColumn TRIAL_ID = createEntityColumn(Trial.class, "trialId");
+	public static final EntityColumn SITE_NAME_ID = createEntityColumn(Trial.class, "siteNameId");
 		
 	/**
 	 * @return the trialNote
@@ -217,6 +224,30 @@ public class Trial extends DalEntity{
 	 */
 	public void setTrialUnits(List<TrialUnit> trialUnits) {
 		this.trialUnits = trialUnits;
+	}
+	/**
+	 * @return the designTypeName
+	 */
+	public String getDesignTypeName() {
+		return designTypeName;
+	}
+	/**
+	 * @param designTypeName the designTypeName to set
+	 */
+	public void setDesignTypeName(String designTypeName) {
+		this.designTypeName = designTypeName;
+	}
+	/**
+	 * @return the siteNameID
+	 */
+	public Integer getSiteNameID() {
+		return siteNameId;
+	}
+	/**
+	 * @param siteNameID the siteNameID to set
+	 */
+	public void setSiteNameID(Integer siteNameID) {
+		this.siteNameId = siteNameID;
 	}
 		
 }

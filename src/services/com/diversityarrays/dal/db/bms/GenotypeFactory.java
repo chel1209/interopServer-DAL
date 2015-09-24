@@ -32,6 +32,8 @@ import com.diversityarrays.dalclient.Permission;
 
 public class GenotypeFactory implements SqlEntityFactory<Genotype> {
 	
+	private boolean pending;
+	
 //	private static final ColumnNameMapping COLUMN_NAME_MAPPING;
 //
 //	static {
@@ -271,6 +273,20 @@ public class GenotypeFactory implements SqlEntityFactory<Genotype> {
 	public Genotype createEntity(JsonMap jsonMap) throws DalDbException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 	
 }

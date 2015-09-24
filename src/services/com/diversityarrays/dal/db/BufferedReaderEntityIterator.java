@@ -19,6 +19,7 @@ public class BufferedReaderEntityIterator<T extends DalEntity> implements Entity
 	private final EntityFactory<T> tFactory;
 	private int index = 0;
 	private String line = null;
+	private boolean pending = false;
 	
 	/**
 	 * 
@@ -57,10 +58,12 @@ public class BufferedReaderEntityIterator<T extends DalEntity> implements Entity
 				JsonParser parser = new JsonParser(line);
 				if(parser.getMapResult()!=null){
 					result = tFactory.createEntity(parser.getMapResult());
+					pending = tFactory.isPending();
 				}else{
 					List<Object> list = parser.getListResult();
 					if(index < list.size()){
 						result = tFactory.createEntity((JsonMap)list.get(index));
+						pending = tFactory.isPending();
 						index++;
 						return result;
 					}else{
@@ -75,6 +78,20 @@ public class BufferedReaderEntityIterator<T extends DalEntity> implements Entity
 			throw new DalDbException("Error iterating buffered reader: " + ex);
 		}
 		return result;
+	}
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 
 }

@@ -26,6 +26,9 @@ import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.entity.DalEntity;
 
 public interface EntityFactory<T extends DalEntity> extends Closeable {
+	
+	public boolean isPending();
+	
 	public T createEntity(ResultSet rs) throws DalDbException;
 	
 	public T createEntity(JsonMap jsonMap) throws DalDbException;

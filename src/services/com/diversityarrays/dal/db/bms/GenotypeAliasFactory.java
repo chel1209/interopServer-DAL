@@ -39,6 +39,8 @@ public class GenotypeAliasFactory implements SqlEntityFactory<GenotypeAlias> {
 	
 	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
 	
+	private boolean pending;
+	
 	static {
 		// Ensure the EntityColumn initializers get called !
 		new GenotypeAlias();
@@ -258,6 +260,20 @@ public class GenotypeAliasFactory implements SqlEntityFactory<GenotypeAlias> {
 	public GenotypeAlias createEntity(JsonMap jsonMap) throws DalDbException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 
 }

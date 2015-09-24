@@ -34,6 +34,7 @@ public class ResultSetEntityIterator<T extends DalEntity> implements EntityItera
 	private final EntityFactory<T> tfactory;
 	
 	private boolean noMore;
+	private boolean pending;
 	
 	public ResultSetEntityIterator(Statement s, ResultSet r, EntityFactory<T> tfactory) throws SQLException {
 		stmt = s;
@@ -74,6 +75,20 @@ public class ResultSetEntityIterator<T extends DalEntity> implements EntityItera
 	public void readLine() throws DalDbException {
 		throw new DalDbException(new UnsupportedOperationException());
 		
+	}
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 
 }

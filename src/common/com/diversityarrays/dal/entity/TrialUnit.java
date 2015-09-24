@@ -3,12 +3,17 @@ package com.diversityarrays.dal.entity;
 import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Table(name="TrialUnit")
 @EntityTag("TrialUnit")
 public class TrialUnit extends DalEntity{
 
+	@Id
+	@Column(name="TrialUnitId", length=(6000))
+	private int trialUnitId;
+	
 	@Column(name="TrialUnitNote", length=(6000))
 	private String trialUnitNote;
 	
@@ -27,10 +32,25 @@ public class TrialUnit extends DalEntity{
 	@Column(name="TrialId")
 	private Integer trialId;
 	
+	@Column(name="Specimen")
 	private Specimen specimen;
 	
+	@Column(name="ReplicateNumber")
+	private Integer replicateNumber;
+	
+	@Column(name="SampleMeasurement")
+	private List<SampleMeasurement> sampleMeasurements;
+	
 	public String toString(){
-		return "{ TrialId: \"" + trialId + "\", TrialUnitNote: \"" + trialUnitNote + "\", SiteName: \"" + siteName + "\", SiteId: \""+ siteId +  "\", UnitPositionText: \"" + unitPositionText + "\", Specimen: \"" + specimen.toString() + "\"}";
+		String result = null;
+		if(sampleMeasurements!=null && sampleMeasurements.size()>0){
+			for(SampleMeasurement sampleMeasurement:sampleMeasurements){
+				result = "{ TrialUnitId: \""+ trialUnitId + "\"  TrialId: \"" + trialId + "\", TrialUnitNote: \"" + trialUnitNote + "\", SiteName: \"" + siteName + "\", SiteId: \""+ siteId +  "\", UnitPositionText: \"" + unitPositionText + "\", Specimen: \"" + specimen.toString() + "\", SampleMeasurement : \""+ sampleMeasurement.toString() +"\", ReplicateNumber :\""+ replicateNumber + "\" }";
+			}
+		}else {
+			result = "{ TrialUnitId: \""+ trialUnitId + "\" TrialId: \"" + trialId + "\", TrialUnitNote: \"" + trialUnitNote + "\", SiteName: \"" + siteName + "\", SiteId: \""+ siteId +  "\", UnitPositionText: \"" + unitPositionText + "\", Specimen: \"" + specimen.toString() + "\", ReplicateNumber: \""+ replicateNumber + "\"}";
+		}
+		return result;
 	}
 
 	/**
@@ -129,6 +149,55 @@ public class TrialUnit extends DalEntity{
 	 */
 	public void setSpecimen(Specimen specimen) {
 		this.specimen = specimen;
+	}
+
+	/**
+	 * @return the sampleMeasurements
+	 */
+	public List<SampleMeasurement> getSampleMeasurements() {
+		return sampleMeasurements;
+	}
+
+	/**
+	 * @param sampleMeasurements the sampleMeasurements to set
+	 */
+	public void setSampleMeasurements(List<SampleMeasurement> sampleMeasurements) {
+		this.sampleMeasurements = sampleMeasurements;
+	}
+
+	/**
+	 * @return the specimen
+	 */
+	public Specimen getSpecimen() {
+		return specimen;
+	}
+
+	/**
+	 * @return the trialUnitId
+	 */
+	public int getTrialUnitId() {
+		return trialUnitId;
+	}
+
+	/**
+	 * @param trialUnitId the trialUnitId to set
+	 */
+	public void setTrialUnitId(int trialUnitId) {
+		this.trialUnitId = trialUnitId;
+	}
+
+	/**
+	 * @return the replicateNumber
+	 */
+	public Integer getReplicateNumber() {
+		return replicateNumber;
+	}
+
+	/**
+	 * @param replicateNumber the replicateNumber to set
+	 */
+	public void setReplicateNumber(Integer replicateNumber) {
+		this.replicateNumber = replicateNumber;
 	}
 			
 }

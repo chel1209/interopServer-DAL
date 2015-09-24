@@ -5,7 +5,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import net.pearcan.json.JsonMap;
 import net.pearcan.json.JsonParser;
@@ -13,31 +20,28 @@ import net.pearcan.json.JsonParser;
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.SqlEntityFactory;
 import com.diversityarrays.dal.entity.ColumnNameMapping;
-import com.diversityarrays.dal.entity.DalEntity;
-import com.diversityarrays.dal.entity.Trial;
+import com.diversityarrays.dal.entity.DAL_Trait;
+import com.diversityarrays.dal.entity.GeneralType;
+import com.diversityarrays.dal.entity.ItemUnit;
+import com.diversityarrays.dal.entity.SampleMeasurement;
+import com.diversityarrays.dal.entity.Trait;
 import com.diversityarrays.dal.entity.TrialTrait;
+import com.diversityarrays.dal.entity.TrialUnit;
 import com.diversityarrays.dal.ops.FilteringTerm;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpEntity;
-
-public class TrialTraitFactory implements SqlEntityFactory<Trial> {
+public class SampleMeasurementFactory implements SqlEntityFactory<SampleMeasurement> {
 	
 	private static final int OBSOLETE = 1;
-	private boolean pending;
+	private String url;
+	private boolean pending = false;
 	
 	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
 	
 	static {
 		// Ensure the EntityColumn initializers get called !
-		new Trial();
+		new SampleMeasurement();
 		
-		COLUMN_NAME_MAPPING = new ColumnNameMapping(Trial.class) {
+		COLUMN_NAME_MAPPING = new ColumnNameMapping(SampleMeasurement.class) {
 
 			@Override
 			public FilteringTerm createReplacement(FilteringTerm term, String xqueryColumn) throws DalDbException {
@@ -93,14 +97,11 @@ public class TrialTraitFactory implements SqlEntityFactory<Trial> {
 		};
 		
 		COLUMN_NAME_MAPPING
-			.addColumn(Trial.TRIAL_NOTE, "objective")
-			.addColumn(Trial.TRIAL_NAME, "name")
-			.addColumn(Trial.TRIAL_ACRONYM, "title")
-			.addColumn(Trial.TRIAL_ID, "id")
-		;	
+			.addColumn(SampleMeasurement.TRIAL_UNIT_ID, "observationId")
+			.addColumn(SampleMeasurement.TRAIT_VALUE, "measurementValue");	
 	}
 	
-	public TrialTraitFactory() {
+	public SampleMeasurementFactory() {
 	}
 
 	@Override
@@ -180,107 +181,69 @@ public class TrialTraitFactory implements SqlEntityFactory<Trial> {
 	}
 
 	@Override
-	public Trial createEntity(ResultSet rs) throws DalDbException {
-		Trial result = new Trial();
-		
-	
-		try {
-	
-			result.setTrialId(rs.getInt("cvterm_id"));
-			result.setTrialName(rs.getString("name"));
-			result.setTrialNote(rs.getString("objective"));		
-		} catch (SQLException e) {
-			throw new DalDbException(e);
-		}
-		
+	public SampleMeasurement createEntity(ResultSet rs) throws DalDbException {
+		SampleMeasurement result = new SampleMeasurement();
+			
 		return result;
 	}
 	
-	public void createEntity(Trial trial,JsonMap jsonMap) throws DalDbException {
+	public void createEntity(TrialUnit trialUnit, JsonMap jsonMap, List<TrialTrait> trialTraits) throws DalDbException {
+		List<Object> list = (List)jsonMap.get("measurements");
+		TraitFactory traitFactory = new TraitFactory();
+		List<SampleMeasurement> sampleMeasurements = new ArrayList<SampleMeasurement>();
+		for(Object map: list){
+			SampleMeasurement result = new SampleMeasurement();
+			result.setTrialUnitId(Integer.valueOf((String)jsonMap.get("uniqueIdentifier")));
+			trialUnit.setTrialUnitId(result.getTrialUnitId());
+			trialUnit.setTreatmentId(Integer.valueOf((String)jsonMap.get("environmentNumber")));
+			if(((String)jsonMap.get("replicationNumber"))!=null){
+				trialUnit.setReplicateNumber(Integer.valueOf((String)jsonMap.get("replicationNumber")));
+			}
+			result.setTrait(traitFactory.createEntity((JsonMap)((JsonMap)map).get("measurementIdentifier")));
+			sampleMeasurements.add(result);
+		}
+		trialUnit.setSampleMeasurements(sampleMeasurements);
+	}
+	
+	public void createEntity(ItemUnit itemUnit, JsonMap jsonMap) throws DalDbException {
+		GeneralType result = new GeneralType();
+		JsonMap map = (JsonMap)jsonMap.get("dataType");
+		if(map!=null){
+			result.setTypeId(new Integer((String)map.get("id")));
+			result.setTypeName((String)map.get("name"));
+			itemUnit.setGeneralType(result);
+		}
 		
-		System.out.println(jsonMap.get("id"));
-		List<TrialTrait> trialTraits = new ArrayList<TrialTrait>();			
-		List<Object> traits = (List)jsonMap.get("traits");
-		if(traits != null){
-			for(Object map:traits){
-				TrialTrait result = new TrialTrait();
-				result.setTrialId(trial.getTrialId());
-				result.setTraitId(Integer.valueOf((String)((JsonMap)map).get("id")));
-				result.setTraitName((String)((JsonMap)map).get("name"));
-				trialTraits.add(result);
-			}
-			trial.setTrialTraits(trialTraits);
-		}
 	}
 	
-	public String createListStudiesURL(String filterClause){
-		return "http://teamnz.leafnode.io:80/bmsapi/study/" + "maize" + "/list?programUniqueId=" + filterClause;
-		//return "http://teamnz.leafnode.io/bmsapi/study/maize/list?programUniqueId=7ed6f4df-5b5f-477d-b0de-8d958fe0fed7";
-	}
-	
-	public String createListStudiesDetailsURL(String id){
-		return "http://teamnz.leafnode.io:80/bmsapi/study/maize/" + id;
-	}
-	
-	public void processDetails(DalEntity entity, BufferedReader reader) throws DalDbException {
-		try{
-			String line = reader.readLine();
-			
-			if(line != null){
-				JsonParser parser = new JsonParser(line);
-				List<Object> generalInfo = (List)parser.getMapResult().get("generalInfo");
-				System.out.println("Trial::" + ((Trial)entity).getTrialId() + "generalInfo" + generalInfo);
-				for(Object map:generalInfo){
-					if(((JsonMap)map).get("name").equals("PI_NAME")){
-						((Trial)entity).setTrialManagerName((String)((JsonMap)map).get("value"));
-						System.out.println(" PINAME:: " + ((Trial)entity).getTrialManagerName());
-					}else{
-						if(((JsonMap)map).get("name").equals("LOCATION_NAME")){
-							((Trial)entity).setTrialManagerName((String)((JsonMap)map).get("value"));
-							System.out.println(" Location:: " + ((Trial)entity).getSiteName());
-						}
-					}
-				}
-				
-				//((Trial)entity).setTrialManagerName();
-				//System.out.println("::::ENTITY::::" + ((Trial)entity).getTrialManagerName());
-				//((Trial)entity).setTrialLocation(generalInfo.get("LOCATION_NAME"));
-				//System.out.println("::::ENTITY::::" + ((Trial)entity).getTrialLocation());
-			}
-			
-			
-		}catch(ParseException peex){
-			throw new DalDbException("Error parsing json: " + peex);
-		}catch(IOException ioex){
-			throw new DalDbException("Input/Output error while processing details: " + ioex);
-		}catch(Exception ex){
-			throw new DalDbException("Error iterating buffered reader: " + ex);
-		}
-	}
-	
-	public void processTrial(DalEntity entity, BufferedReader reader) throws DalDbException {
-		try{
-			String line = reader.readLine();
-			if(line != null){
-				JsonParser parser = new JsonParser(line);
-				((Trial)entity).setTrialManagerName((String)parser.getMapResult().get("PI_NAME"));
-				((Trial)entity).setSiteName((String)parser.getMapResult().get("LOCATION_NAME"));
-			}
-			
-			
-		}catch(ParseException peex){
-			throw new DalDbException("Error parsing json: " + peex);
-		}catch(IOException ioex){
-			throw new DalDbException("Input/Output error while processing details: " + ioex);
-		}catch(Exception ex){
-			throw new DalDbException("Error iterating buffered reader: " + ex);
-		}		
+	public String createURL(String id){
+		url = "http://teamnz.leafnode.io:80/bmsapi/study/maize/" + id + "/observations";
+		return url;
 	}
 
 	@Override
-	public Trial createEntity(JsonMap jsonMap) throws DalDbException {
+	public SampleMeasurement createEntity(JsonMap jsonMap) throws DalDbException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public List<Object> getObservationsMap() throws DalDbException{
+		CloseableHttpClient client = HttpClientBuilder.create().build();
+		HttpGet request = new HttpGet(url);
+		
+		try{
+			HttpResponse response = client.execute(request);
+			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			JsonParser parser = new JsonParser(bufferedReader.readLine());
+			
+			return parser.getListResult();
+		}catch(ClientProtocolException cpex){
+			throw new DalDbException("Protocol error: " + cpex);
+		}catch(IOException ioex){
+			throw new DalDbException("Input/Output error when executing request: " + ioex);
+		}catch(Exception ex){
+			throw new DalDbException("Exception: " + ex);
+		} 
 	}
 
 	/**
