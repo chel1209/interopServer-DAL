@@ -36,7 +36,7 @@ public class Observation extends DalEntity{
 	@Column(name="measurements")
 	private List<Measurements> measurements;
 	
-	
+	public Observation(){}
 	
 	public Observation(Integer uniqueIdentifier,     Integer germplasmId,
 			           String  germplasmDesignation, Integer entryNumber, String entryType,
@@ -116,5 +116,36 @@ public class Observation extends DalEntity{
 	public void setMeasurements(List<Measurements> measurements) {
 		this.measurements = measurements;
 	}
+	
+	@Override
+	public String toString(){
+		
+		
+		String print =  "uniqueIdentifier:     " + uniqueIdentifier     + "\n";
+		       print += "germplasmId:          " + germplasmId          + "\n";
+		       print += "germplasmDesignation: " + germplasmDesignation + "\n";
+		       print += "entryNumber:          " + entryNumber          + "\n";
+		       print += "entryType:            " + entryType            + "\n";
+		       print += "plotNumber:           " + plotNumber           + "\n";
+		       print += "replicationNumber:    " + replicationNumber    + "\n";
+		       print += "environmentNumber:    " + environmentNumber    + "\n";
+		       print += "seedSource:           " + seedSource           + "\n";
+		       
+		       for(Measurements m : this.measurements){
+		    	   print += "MeasurementValue:     " + m.getMeasurementValue() + "\n";
+		    	   
+		    	   MeasurementIdentifier mIdentifier = m.getMeasurementIdentifier();
+		    	   print += "MeasurementId:        " + mIdentifier.getMeasurementId() + "\n";
+		    	   
+		    	   Trait trait = mIdentifier.getTrait();
+		    	   
+		    	   print += "TraitId:              " + trait.getTraitId() + "\n";
+		    	   print += "TraitName:            " + trait.getTraitName() + "\n";
+		    	   
+		       }
+		       
+		return print;
+	}
+	
 	
 }

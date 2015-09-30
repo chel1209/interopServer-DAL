@@ -37,7 +37,7 @@ public class SetObservationOperation extends EntityOperation<Observation, BMS_Da
 		// TODO Auto-generated method stub
 		System.out.println("SetObservationOperation [BEGIN execute]: " + methodParms);
 
-		entityProvider.sendDataUsingPut(methodParms,dalOpParameters);
+		entityProvider.sendDataUsingPut(methodParms,dalOpParameters,filePathByName);
 		
 		
 		

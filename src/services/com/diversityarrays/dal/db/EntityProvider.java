@@ -77,6 +77,6 @@ public interface EntityProvider<T extends DalEntity> {
 	 * @param Entity to which the information will be sent.
 	 * @throws DalDbException
 	 */
-	public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException;
+	public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException;
 	
 }

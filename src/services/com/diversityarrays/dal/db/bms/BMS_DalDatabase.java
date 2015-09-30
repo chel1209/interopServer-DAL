@@ -251,7 +251,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 		
 		@Override
-		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
 		}
 		
@@ -366,7 +366,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 		
 		@Override
-		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
 		}		
 
@@ -535,7 +535,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 		
 		@Override
-		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
 		}		
 
@@ -636,7 +636,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 		
 		@Override
-		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
 		}		
 	};
@@ -740,7 +740,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 		
 		@Override
-		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
 		}		
 	};
@@ -842,7 +842,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 		
 		@Override
-		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
 		}		
 	};	
@@ -931,19 +931,18 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 		
 		@Override
-		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters) throws DalDbException{
-			
-			String StrjSON = parameters.get("json");
+		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			
 			if(observationFactory == null){
 				createFactory();
 			}
 			
-			client  = HttpClientBuilder.create().build();
-
-			//System.out.println("URL: " + observationFactory.getURL(dalOpParameters));
+			client         = HttpClientBuilder.create().build();
+			httpPut        = new HttpPut(observationFactory.getURL(dalOpParameters));
+			String StrjSON = observationFactory.getJsonMapped(filePathByName);
 			
-			httpPut     = new HttpPut(observationFactory.getURL(dalOpParameters));
+			System.out.println("StrjSON => " + StrjSON);
+			
 			entitySent  = new StringEntity(StrjSON,ContentType.create("application/json"));
 	    	httpPut.setEntity(entitySent);		
 	    	
