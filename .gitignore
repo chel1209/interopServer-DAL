@@ -4,3 +4,4 @@ tmp
 dalserver-common.jar
 dalserver-services.jar
 dalserver.jar
+.classpath
