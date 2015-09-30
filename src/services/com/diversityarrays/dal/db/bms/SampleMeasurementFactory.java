@@ -200,6 +200,11 @@ public class SampleMeasurementFactory implements SqlEntityFactory<SampleMeasurem
 				trialUnit.setReplicateNumber(Integer.valueOf((String)jsonMap.get("replicationNumber")));
 			}
 			result.setTrait(traitFactory.createEntity((JsonMap)((JsonMap)map).get("measurementIdentifier")));
+			trialUnit.setTrialUnitNote((String)jsonMap.get("seedSource"));
+			trialUnit.setUnitPositionText((String)jsonMap.get("enrtyNumber"));
+			if((String)jsonMap.get("plotNumber")!=null){
+				trialUnit.setUnitPositionId(Integer.valueOf((String)jsonMap.get("plotNumber")));
+			}
 			sampleMeasurements.add(result);
 		}
 		trialUnit.setSampleMeasurements(sampleMeasurements);

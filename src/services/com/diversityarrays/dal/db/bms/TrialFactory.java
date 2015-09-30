@@ -276,7 +276,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		if (environments == null) {
 			environments = (List) jsonMap.get("environments");
 		}
-
+	
 		if (environments.size() > 0) {
 			System.out.println("Trial::" + ((Trial) result).getTrialId()
 					+ "environment details" + environments);

@@ -184,8 +184,11 @@ public class TraitFactory implements SqlEntityFactory<DAL_Trait> {
 	public DAL_Trait createEntity(JsonMap jsonMap) throws DalDbException {
 		DAL_Trait result = new DAL_Trait();
 
-		result.setTraitId((Integer)jsonMap.get("traitId"));
-		result.setTraitName((String)jsonMap.get("traitName"));	
+		JsonMap traitMap = (JsonMap)jsonMap.get("trait");
+		if((String)traitMap.get("traitId")!=null){
+			result.setTraitId(Integer.valueOf((String)traitMap.get("traitId")));
+		}
+		result.setTraitName((String)traitMap.get("traitName"));	
 		
 		return result;
 	}

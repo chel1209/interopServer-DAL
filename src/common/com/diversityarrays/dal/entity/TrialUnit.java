@@ -41,6 +41,9 @@ public class TrialUnit extends DalEntity{
 	@Column(name="SampleMeasurement")
 	private List<SampleMeasurement> sampleMeasurements;
 	
+	@Column(name="UnitPositionId")
+	private Integer unitPositionId;
+	
 	public String toString(){
 		String result = null;
 		if(sampleMeasurements!=null && sampleMeasurements.size()>0){
@@ -198,6 +201,20 @@ public class TrialUnit extends DalEntity{
 	 */
 	public void setReplicateNumber(Integer replicateNumber) {
 		this.replicateNumber = replicateNumber;
+	}
+
+	/**
+	 * @return the unitPositionId
+	 */
+	public Integer getUnitPositionId() {
+		return unitPositionId;
+	}
+
+	/**
+	 * @param unitPositionId the unitPositionId to set
+	 */
+	public void setUnitPositionId(Integer unitPositionId) {
+		this.unitPositionId = unitPositionId;
 	}
 			
 }
