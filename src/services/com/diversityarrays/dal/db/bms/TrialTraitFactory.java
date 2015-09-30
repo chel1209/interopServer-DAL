@@ -29,6 +29,7 @@ import org.apache.http.HttpEntity;
 public class TrialTraitFactory implements SqlEntityFactory<Trial> {
 	
 	private static final int OBSOLETE = 1;
+	private boolean pending;
 	
 	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
 	
@@ -280,6 +281,20 @@ public class TrialTraitFactory implements SqlEntityFactory<Trial> {
 	public Trial createEntity(JsonMap jsonMap) throws DalDbException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 	
 }

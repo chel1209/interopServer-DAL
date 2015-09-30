@@ -35,6 +35,8 @@ public interface EntityIterator<T extends DalEntity> extends Closeable {
 	 * 
 	 * @throws DalDbException if couldn't read the line 
 	 */
-	public void readLine() throws DalDbException;	
+	public void readLine() throws DalDbException;
+	
+	public boolean isPending();
 	
 }

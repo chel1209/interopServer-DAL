@@ -54,10 +54,11 @@ public class GetTrialsOperation extends EntityOperation<Trial, BMS_DalDatabase> 
 							
 				Trial entity;
 				iter.readLine();
-				if (null != (entity = iter.nextEntity())) {
-					appendEntity(responseBuilder, entity);
-				}
-				
+				do{
+					if (null != (entity = iter.nextEntity())) {
+						appendEntity(responseBuilder, entity);
+					}
+				}while(iter.isPending());
 			}
 			
 		} finally {

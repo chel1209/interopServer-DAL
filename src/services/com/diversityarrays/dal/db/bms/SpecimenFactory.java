@@ -2,10 +2,8 @@ package com.diversityarrays.dal.db.bms;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
 
 import net.pearcan.json.JsonMap;
 import net.pearcan.json.JsonParser;
@@ -16,20 +14,17 @@ import com.diversityarrays.dal.entity.ColumnNameMapping;
 import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.entity.Specimen;
 import com.diversityarrays.dal.entity.Trial;
+import com.diversityarrays.dal.entity.TrialTrait;
 import com.diversityarrays.dal.entity.TrialUnit;
 import com.diversityarrays.dal.ops.FilteringTerm;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpEntity;
 
 public class SpecimenFactory implements SqlEntityFactory<Trial> {
 
 	private static final int OBSOLETE = 1;
+	private boolean pending;
 
 	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
 
@@ -195,8 +190,9 @@ public class SpecimenFactory implements SqlEntityFactory<Trial> {
 		return result;
 	}
 
-	public void createEntity(TrialUnit trialUnit, JsonMap jsonMap)
+	public void createEntity(TrialUnit trialUnit, JsonMap jsonMap,SampleMeasurementFactory sampleMeasurementFactory, List<TrialTrait> trialTraits)
 			throws DalDbException {
+		List<Object> observations = sampleMeasurementFactory.getObservationsMap();
 
 		List<Object> germplasm = (List) jsonMap.get("germplasm");
 		for (Object map : germplasm) {
@@ -205,6 +201,15 @@ public class SpecimenFactory implements SqlEntityFactory<Trial> {
 				result.setSpecimenName((String) ((JsonMap) map).get("designation"));
 				result.setSpecimenId(Integer.valueOf((String) ((JsonMap) map).get("gid")));
 				trialUnit.setSpecimen(result);
+				
+				if(observations!=null&&observations.size()>0){
+					for(Object observationsMap : observations)
+						if(Integer.valueOf((String)((JsonMap)observationsMap).get("enrtyNumber")) == Integer.valueOf(trialUnit.getUnitPositionText())){
+							sampleMeasurementFactory.createEntity(trialUnit,(JsonMap)observationsMap, trialTraits);
+							break;
+						}
+				}
+				
 				break;
 			}
 		}
@@ -251,12 +256,6 @@ public class SpecimenFactory implements SqlEntityFactory<Trial> {
 					}
 				}
 
-				// ((Trial)entity).setTrialManagerName();
-				// System.out.println("::::ENTITY::::" +
-				// ((Trial)entity).getTrialManagerName());
-				// ((Trial)entity).setTrialLocation(generalInfo.get("LOCATION_NAME"));
-				// System.out.println("::::ENTITY::::" +
-				// ((Trial)entity).getTrialLocation());
 			}
 
 		} catch (ParseException peex) {
@@ -295,6 +294,20 @@ public class SpecimenFactory implements SqlEntityFactory<Trial> {
 	public Trial createEntity(JsonMap jsonMap) throws DalDbException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 
 }

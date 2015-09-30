@@ -15,12 +15,15 @@ import net.pearcan.json.JsonMap;
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.SqlEntityFactory;
 import com.diversityarrays.dal.entity.ColumnNameMapping;
+import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.entity.GeneralType;
+import com.diversityarrays.dal.entity.ItemUnit;
 import com.diversityarrays.dal.ops.FilteringTerm;
 
 public class GeneralTypeFactory implements SqlEntityFactory<GeneralType> {
 	
 	private static final int OBSOLETE = 1;
+	private boolean pending = false;
 	
 	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
 	
@@ -202,8 +205,33 @@ public class GeneralTypeFactory implements SqlEntityFactory<GeneralType> {
 		return result;
 	}
 	
+	public void createEntity(ItemUnit itemUnit, JsonMap jsonMap) throws DalDbException {
+		GeneralType result = new GeneralType();
+		JsonMap map = (JsonMap)jsonMap.get("dataType");
+		if(map!=null){
+			result.setTypeId(new Integer((String)map.get("id")));
+			result.setTypeName((String)map.get("name"));
+			itemUnit.setGeneralType(result);
+		}
+		
+	}
+	
 	public String createListTermsURL(String id){
-		return "http://teamnz.leafnode.io/bmsapi/ontology/maize/variables/" + id + "?programId=3527ed55-2151-4d8b-a8e0-a9d72d5ac199";
+		return "http://teamnz.leafnode.io/bmsapi/ontology/maize/variables/" + id + "?programId=fd628e26-9016-4f71-84bb-df00b38f3ee7";
+	}
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 	
 }

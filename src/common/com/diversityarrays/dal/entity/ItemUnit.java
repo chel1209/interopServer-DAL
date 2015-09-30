@@ -16,10 +16,6 @@ public class ItemUnit extends DalEntity {
 	@Column(name="ItemUnitID", nullable=false)	
 	private Integer itemUnitId;
 	
-	/*@ManyToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="UnitTypeId")
-	private GeneralType generalType;*/
-	
 	@Column(name="ItemUnitName", nullable=false, length=(12))
 	private String itemUnitName;
 	
@@ -32,20 +28,12 @@ public class ItemUnit extends DalEntity {
 	@Column(name="GramsConversionMultiplier", nullable=false)
 	private Float gramsConversionMultiplier;
 	
-	/*
-	 * Fields marked as @Transient don't exist in the database, so they are ignored by JPA. 
-	 */
-	@Transient
-	private Integer unitTypeId;
-	
-	@Transient
-	private String unitTypeName;
+	@Column(name="GeneralType", length=(100))
+	private GeneralType generalType;
 	
 	static public final EntityColumn ITEM_UNIT_ID = createEntityColumn(ItemUnit.class, "itemUnitId");
 	static public final EntityColumn ITEM_UNIT_NAME = createEntityColumn(ItemUnit.class, "itemUnitName");
 	static public final EntityColumn ITEM_UNIT_NOTE = createEntityColumn(ItemUnit.class, "itemUnitNote");
-	//static public final EntityColumn UNIT_TYPE_ID = createEntityColumn(ItemUnit.class, "unitTypeId");
-	//static public final EntityColumn UNIT_TYPE_NAME = createEntityColumn(ItemUnit.class, "unitTypeName");
 	 
 	public ItemUnit(){
 		super();
@@ -64,20 +52,6 @@ public class ItemUnit extends DalEntity {
 	public void setItemUnitId(Integer itemUnitId) {
 		this.itemUnitId = itemUnitId;
 	}
-
-	/**
-	 * @return the generalType
-	 */
-	/*/public GeneralType getGeneralType() {
-		return generalType;
-	}
-
-	/**
-	 * @param generalType the generalType to set
-	 */
-	/*public void setGeneralType(GeneralType generalType) {
-		this.generalType = generalType;
-	}*/
 
 	/**
 	 * @return the itemUnitName
@@ -135,38 +109,18 @@ public class ItemUnit extends DalEntity {
 		this.gramsConversionMultiplier = gramsConversionMultiplier;
 	}
 
-
-
 	/**
-	 * @return the unitTypeId
+	 * @return the generalType
 	 */
-	@Transient
-	public Integer getUnitTypeId() {
-		return unitTypeId;
+	public GeneralType getGeneralType() {
+		return generalType;
 	}
 
 	/**
-	 * @param unitTypeId the unitTypeId to set
+	 * @param generalType the generalType to set
 	 */
-	@Transient
-	public void setUnitTypeId(Integer unitTypeId) {
-		this.unitTypeId = unitTypeId;
-	}
-
-	/**
-	 * @return the unitTypeName
-	 */
-	@Transient
-	public String getUnitTypeName() {
-		return unitTypeName;
-	}
-
-	/**
-	 * @param unitTypeName the unitTypeName to set
-	 */
-	@Transient
-	public void setUnitTypeName(String unitTypeName) {
-		this.unitTypeName = unitTypeName;
+	public void setGeneralType(GeneralType generalType) {
+		this.generalType = generalType;
 	}
 	
 }

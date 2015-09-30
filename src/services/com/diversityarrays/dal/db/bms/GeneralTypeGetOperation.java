@@ -46,6 +46,7 @@ public class GeneralTypeGetOperation extends EntityOperation<GeneralType, BMS_Da
 			GeneralType entity;
 			iter.readLine();
 			while (null != (entity = iter.nextEntity())) {
+				iter.readLine();
 				appendEntity(responseBuilder, entity);
 			}
 		} finally {

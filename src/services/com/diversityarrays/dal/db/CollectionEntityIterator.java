@@ -26,6 +26,7 @@ import com.diversityarrays.dal.entity.DalEntity;
 public class CollectionEntityIterator<T extends DalEntity> implements EntityIterator<T> {
 	
 	private final Iterator<T> iterator;
+	private boolean pending;
 
 	public CollectionEntityIterator(Collection<T> coll) {
 		this.iterator = coll.iterator();
@@ -48,5 +49,19 @@ public class CollectionEntityIterator<T extends DalEntity> implements EntityIter
 	public void readLine() throws DalDbException {
 		throw new DalDbException(new UnsupportedOperationException());
 		
+	}
+
+	/**
+	 * @return the pending
+	 */
+	public boolean isPending() {
+		return pending;
+	}
+
+	/**
+	 * @param pending the pending to set
+	 */
+	public void setPending(boolean pending) {
+		this.pending = pending;
 	}
 }
