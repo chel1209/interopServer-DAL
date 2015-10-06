@@ -4,3 +4,11 @@ tmp
 dalserver-common.jar
 dalserver-services.jar
 dalserver.jar
+.classpath
+dalserver-bin.zip
+dalserver/hs_err_pid19372.log
+dalserver/lib/gson-2.3.1.jar
+hs_err_pid11236.log
+hs_err_pid7692.log
+hs_err_pid8368.log
+hs_err_pid8628.log
