@@ -222,8 +222,7 @@ public class SampleMeasurementFactory implements SqlEntityFactory<SampleMeasurem
 	}
 	
 	public String createURL(String id){
-		url = "http://teamnz.leafnode.io:80/bmsapi/study/maize/" + id + "/observations";
-		return url;
+		return BMSApiDataConnection.getObservationsCall(id);
 	}
 
 	@Override

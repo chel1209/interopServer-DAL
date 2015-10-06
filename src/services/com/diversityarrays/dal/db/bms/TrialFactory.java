@@ -334,14 +334,11 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 	}
 
 	public String createListStudiesURL(String filterClause) {
-		return "http://teamnz.leafnode.io:80/bmsapi/study/" + "maize"
-				+ "/list?programUniqueId=" + filterClause;
-		// return
-		// "http://teamnz.leafnode.io/bmsapi/study/maize/list?programUniqueId=7ed6f4df-5b5f-477d-b0de-8d958fe0fed7";
+		return BMSApiDataConnection.getListStudiesCall(filterClause);
 	}
 
 	public String createListStudiesDetailsURL(String id) {
-		return "http://teamnz.leafnode.io:80/bmsapi/study/maize/" + id;
+		return BMSApiDataConnection.getListStudiesDetails(id);
 	}
 
 	public void processDetails(DalEntity entity, BufferedReader reader)
