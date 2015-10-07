@@ -217,7 +217,7 @@ public class GeneralTypeFactory implements SqlEntityFactory<GeneralType> {
 	}
 	
 	public String createListTermsURL(String id){
-		return "http://teamnz.leafnode.io/bmsapi/ontology/maize/variables/" + id + "?programId=fd628e26-9016-4f71-84bb-df00b38f3ee7";
+		return BMSApiDataConnection.getGeneralTypeCall(id);
 	}
 
 	/**

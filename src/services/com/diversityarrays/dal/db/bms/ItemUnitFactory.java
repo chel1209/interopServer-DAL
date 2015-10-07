@@ -134,7 +134,7 @@ public class ItemUnitFactory implements SqlEntityFactory<ItemUnit> {
 	}
 	
 	public String createListTermsURL(String id){
-		return "http://teamnz.leafnode.io/bmsapi/ontology/maize/scales/" + id;
+		return BMSApiDataConnection.getScalesCall(id);
 	}
 
 	/**

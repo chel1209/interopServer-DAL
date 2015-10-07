@@ -52,8 +52,8 @@ public class ObservationFactory {
 	
 	
 	public String getURL(List<String> dalOpParameters) {
-  	   return "http://teamnz.leafnode.io:80/bmsapi/study/" + dalOpParameters.get(0) + "/" + dalOpParameters.get(1) + "/observations/" + dalOpParameters.get(2);
-	}
+		return BMSApiDataConnection.getObservationCall(dalOpParameters);
+ 	}
 	
 	public String getJsonMapped(Map<String, String> filePathByName){
 		String strJsonParsed = filePathByName.get("postData");
