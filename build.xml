@@ -80,6 +80,9 @@
       <include name="pearcan-dart.jar" />
       <include name="zxing-core.jar" />
       <include name="zxing-javase.jar" />
+      <include name="gson-2.3.1.jar" />
+      <include name="httpclient-4.3.jar" />
+      <include name="httpcore-4.3.jar" />
 
     </fileset>
   </path>
@@ -103,6 +106,7 @@
     <pathelement location="lib/pearcan-dart.jar" />
     <pathelement location="lib/zxing-core.jar" />
     <pathelement location="lib/zxing-javase.jar" />
+  	<pathelement location="lib/gson-2.3.1.jar" />
 
     <!-- So that DALClient can run -->
     <pathelement location="lib/dalclient-javase.jar" />
@@ -165,6 +169,9 @@
       <include name="javax.persistence-2.0.0.jar" />
       <include name="nanohttpd.jar" />
       <include name="pearcan-dart.jar" />
+      <include name="gson-2.3.1.jar" />
+      <include name="httpclient-4.3.jar" />  
+      <include name="httpcore-4.3.jar" />
     </fileset>
   </path>
 
