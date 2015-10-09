@@ -190,9 +190,9 @@ public class SpecimenFactory implements SqlEntityFactory<Trial> {
 		return result;
 	}
 
-	public void createEntity(TrialUnit trialUnit, JsonMap jsonMap,SampleMeasurementFactory sampleMeasurementFactory, List<TrialTrait> trialTraits)
+	public void createEntity(TrialUnit trialUnit, JsonMap jsonMap,SampleMeasurementFactory sampleMeasurementFactory, List<TrialTrait> trialTraits, String sampleMeasurementURL)
 			throws DalDbException {
-		List<Object> observations = sampleMeasurementFactory.getObservationsMap();
+		List<Object> observations = sampleMeasurementFactory.getObservationsMap(sampleMeasurementURL);
 
 		List<Object> germplasm = (List) jsonMap.get("germplasm");
 		for (Object map : germplasm) {

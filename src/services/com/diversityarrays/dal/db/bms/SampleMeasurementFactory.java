@@ -231,7 +231,8 @@ public class SampleMeasurementFactory implements SqlEntityFactory<SampleMeasurem
 		return null;
 	}
 	
-	public List<Object> getObservationsMap() throws DalDbException{
+	public List<Object> getObservationsMap(String url) throws DalDbException{
+		this.url = url;
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(url);
 		
