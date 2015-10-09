@@ -198,8 +198,8 @@ public class TestDalDatabase {
 			GET_GENERALTYPE_ID = "50883";
 			GET_ITEM_UNIT_ID = "51315";
 			//GET_PROGRAM_ID = "24";
-            GET_TRIAL_ID = "trialid=25016&trialid=25007";
-			GET_PROGRAM_ID = "7ed6f4df-5b5f-477d-b0de-8d958fe0fed7";
+            GET_TRIAL_ID = "trialid=2634&trialid=2631";
+			GET_PROGRAM_ID = "d72adf97-5dc6-4f76-9fec-63cf0fd0b202";
 
 			dalDatabase = createBMS_DalDatabase();
 		}
@@ -1280,7 +1280,7 @@ public class TestDalDatabase {
 		};
 		
 		doLoggedInTest(loggedInTest);
-		
+
 	}
 	
 	@Test
@@ -1291,7 +1291,42 @@ public class TestDalDatabase {
 			@Override
 			public void execute(DalSession session) {
 				String dalcmd = "projects/";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+									
+					checkJsonResult("testGetProject", responseBuilder, "Project");
+					if (NOISY) {
+						showResponse("testGetProject", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+	doLoggedInTest(loggedInTest);
+	}
+	
+	@Test
+	public void testGetLocations() {
+		LoggedInTest loggedInTest = new LoggedInTest("location", true) {
 
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "sites/";
 				
 				OperationMatch match = getOperationMatch(dalcmd);
 				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
@@ -1308,9 +1343,10 @@ public class TestDalDatabase {
 							mapaParametros, 
 							null);	
 					
-					checkJsonResult("testGetProject", responseBuilder, "Project");
+
+					checkJsonResult("testGetLocations", responseBuilder, "Site");
 					if (NOISY) {
-						showResponse("testGetProject", responseBuilder);
+						showResponse("testGetLocations", responseBuilder);
 					}					
 					
 				}catch (DalDbException e) {

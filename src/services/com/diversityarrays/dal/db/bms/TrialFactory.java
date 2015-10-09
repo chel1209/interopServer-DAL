@@ -205,15 +205,17 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		result.setTrialNote((String) jsonMap.get("objective"));
 		result.setTrialAcronym((String) jsonMap.get("title"));
 
-		try {
-			result.setTrialStartDate(new Date(formatter.parse(
-					(String) jsonMap.get("startDate")).getTime()));
-		} catch (ParseException pe) {
-			throw new DalDbException("Error parsing Start Date"
-					+ pe.getMessage());
-		} catch (Exception e) {
-			throw new DalDbException("Error parsing Start Date"
-					+ e.getMessage());
+		if(((String) jsonMap.get("startDate")).length()>0){
+			try {
+				result.setTrialStartDate(new Date(formatter.parse(
+						(String) jsonMap.get("startDate")).getTime()));
+			} catch (ParseException pe) {
+				throw new DalDbException("Error parsing Start Date"
+						+ pe.getMessage());
+			} catch (Exception e) {
+				throw new DalDbException("Error parsing Start Date"
+						+ e.getMessage());
+			}
 		}
 
 		if (((String) jsonMap.get("endDate")).length() > 0
@@ -277,55 +279,57 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 			environments = (List) jsonMap.get("environments");
 		}
 	
-		if (environments.size() > 0) {
-			System.out.println("Trial::" + ((Trial) result).getTrialId()
-					+ "environment details" + environments);
-
-			if (index < environments.size()) {
-				
-				JsonMap map = (JsonMap) environments.get(index);
-				
-				index++;
-				pending = true;
-				
-				List<Object> environmentDetails = (List) ((JsonMap) map)
-						.get("environmentDetails");
-				if (environmentDetails != null && environmentDetails.size() > 0) {
-					for (Object mapDetails : environmentDetails) {
-						if (((JsonMap) mapDetails).get("name").equals(
-								"EXPT_DESIGN")) {
-							((Trial) result)
-									.setDesignTypeName((String) ((JsonMap) mapDetails)
-											.get("value"));
-						} else {
+		if(environments != null){
+			if (environments.size() > 0) {
+				System.out.println("Trial::" + ((Trial) result).getTrialId()
+						+ "environment details" + environments);
+	
+				if (index < environments.size()) {
+					
+					JsonMap map = (JsonMap) environments.get(index);
+					
+					index++;
+					pending = true;
+					
+					List<Object> environmentDetails = (List) ((JsonMap) map)
+							.get("environmentDetails");
+					if (environmentDetails != null && environmentDetails.size() > 0) {
+						for (Object mapDetails : environmentDetails) {
 							if (((JsonMap) mapDetails).get("name").equals(
-									"LOCATION_NAME")) {
+									"EXPT_DESIGN")) {
 								((Trial) result)
-										.setSiteName((String) ((JsonMap) mapDetails)
+										.setDesignTypeName((String) ((JsonMap) mapDetails)
 												.get("value"));
 							} else {
 								if (((JsonMap) mapDetails).get("name").equals(
-										"LOCATION_NAME_ID")) {
+										"LOCATION_NAME")) {
 									((Trial) result)
-											.setSiteNameID(Integer
-													.valueOf((String) ((JsonMap) mapDetails)
-															.get("value")));
+											.setSiteName((String) ((JsonMap) mapDetails)
+													.get("value"));
+								} else {
+									if (((JsonMap) mapDetails).get("name").equals(
+											"LOCATION_NAME_ID")) {
+										((Trial) result)
+												.setSiteNameID(Integer
+														.valueOf((String) ((JsonMap) mapDetails)
+																.get("value")));
+									}
 								}
 							}
 						}
 					}
-				}
-				if(index == environments.size()){
-					pending = false;
-					environments = null;
-					index = 0;
-				}
-				
-				TrialUnitFactory trialUnitFactory = new TrialUnitFactory();
-				trialUnitFactory.createEntity(result, jsonMap);				
-				
-				if(((Trial)result).getSiteName() != null && ((Trial)result).getSiteNameID() != null){
-					return result;
+					if(index == environments.size()){
+						pending = false;
+						environments = null;
+						index = 0;
+					}
+					
+					TrialUnitFactory trialUnitFactory = new TrialUnitFactory();
+					trialUnitFactory.createEntity(result, jsonMap);				
+					
+					if(((Trial)result).getSiteName() != null && ((Trial)result).getSiteNameID() != null){
+						return result;
+					}
 				}
 			}
 		}

@@ -8,6 +8,7 @@ public class BMSApiDataConnection {
 	private static String IP   = "172.17.60.83";
 	private static String PORT  = "18080";
 	private static String CROP = "wheat";
+	private static String LOCATION_TYPE_ID = "410";
 
 	
 	/* 
@@ -47,5 +48,7 @@ public class BMSApiDataConnection {
     	
     }
 
-
+    public static String getLocationsCall(){
+        return "http://" + IP +":" + PORT + "/bmsapi/location/" + CROP + "?locationTypeId=" + LOCATION_TYPE_ID;
+    }
 }
