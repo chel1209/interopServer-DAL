@@ -41,6 +41,11 @@ public class BMSApiDataConnection {
     public static String getScalesCall(String id){
         return "http://" + IP +":" + PORT + "/bmsapi/ontology/" + CROP + "/scales/" + id;
     }
+    
+    public static String getProjectCall(String filterClause){
+    	return "http://" + IP +":" + PORT + "/bmsapi/program/list";
+    	
+    }
 
 
 }

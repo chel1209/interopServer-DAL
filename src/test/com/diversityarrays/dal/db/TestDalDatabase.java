@@ -223,8 +223,8 @@ public class TestDalDatabase {
 
 	private static DalDatabase createBMS_DalDatabase() throws UnknownHostException, DalDbException {
 		
-		USERNAME = "celso";
-		PASSWORD = "celso";
+		USERNAME = "rulax";
+		PASSWORD = "rulax";
 		
 		String where = null;
 		String hostname = InetAddress.getLocalHost().getCanonicalHostName();
@@ -1281,6 +1281,50 @@ public class TestDalDatabase {
 		
 		doLoggedInTest(loggedInTest);
 		
-	}	
+	}
+	
+	@Test
+	public void testGetProject(){
+		
+		LoggedInTest loggedInTest = new LoggedInTest("project", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "projects/";
+
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+					
+					checkJsonResult("testGetProject", responseBuilder, "Project");
+					if (NOISY) {
+						showResponse("testGetProject", responseBuilder);
+					}					
+					
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}
+			
+		};
+		
+		doLoggedInTest(loggedInTest);
+		
+	}
+	
 }
 

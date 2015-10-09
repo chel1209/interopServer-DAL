@@ -73,6 +73,7 @@ import com.diversityarrays.dal.entity.GenotypeAlias;
 import com.diversityarrays.dal.entity.Genus;
 import com.diversityarrays.dal.entity.ItemUnit;
 import com.diversityarrays.dal.entity.Observation;
+import com.diversityarrays.dal.entity.Project;
 import com.diversityarrays.dal.entity.Trial;
 import com.diversityarrays.dal.ops.DalOperation;
 import com.diversityarrays.dal.server.DalSession;
@@ -957,6 +958,96 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		
 	};
 	
+	private EntityProvider<Project> projectProvider = new EntityProvider<Project>() {
+		
+		private ProjectFactory projectFactory;
+		private CloseableHttpClient client;
+		private HttpGet request;		
+		
+		
+		private void createFactory() {
+			projectFactory = new ProjectFactory();
+		}		
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Project getEntity(String id, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Project> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			
+			BufferedReader bufferedReader;
+			
+			if(projectFactory == null){
+				createFactory();
+			}
+					
+			client = HttpClientBuilder.create().build();
+			request = new HttpGet(projectFactory.getURL(filterClause));
+			
+			try{
+				HttpResponse response = client.execute(request);
+				System.out.println(request.getURI());
+				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+			
+			return new BufferedReaderEntityIterator<Project>(bufferedReader, projectFactory);
+
+		}
+
+		@Override
+		public EntityIterator<? extends Project> createIterator(
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,
+				List<String> dalOpParameters, Map<String, String> filePathByName)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	};
+	
 	@Override
 	public boolean isInitialiseRequired() {
 		return true;
@@ -1013,6 +1104,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 					//SetOperations
 					tmp.add(createOperation("observation/_program/_trialid/_observationid", Observation.class, observationProvider));
 					
+					//Project Operations
+					//tmp.add(createOperation("list/project/_numberpage/page/_num", Project.class,projectProvider));
+					tmp.add(createOperation("projects/", Project.class,projectProvider));
 					
 					operations = tmp;
 				}
@@ -1140,7 +1234,14 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
 				return new SetObservationOperation(BMS_DalDatabase.this, (EntityProvider<Observation>) provider);
 			}
-		});		
+		});
+		
+		map.put(GetProjectOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new GetProjectOperation(BMS_DalDatabase.this, (EntityProvider<Project>) provider); 
+			}
+		});
 		
 		return map;
 	}
