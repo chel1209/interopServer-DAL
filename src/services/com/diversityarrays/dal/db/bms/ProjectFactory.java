@@ -91,4 +91,11 @@ public class ProjectFactory implements SqlEntityFactory<Project>{
 		return null;
 	}
 
+	@Override
+	public String createPagedListQuery(int firstRecord, int nRecords,
+			String filterClause, int pageNumber) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -23,4 +23,5 @@ public interface SqlEntityFactory<T extends DalEntity> extends EntityFactory<T> 
 	public String createCountQuery(String filterClause) throws DalDbException;
 	public String createGetQuery(String id, String filterClause) throws DalDbException;
 	public String createPagedListQuery(int firstRecord, int nRecords, String filterClause) throws DalDbException;
+	public String createPagedListQuery(int firstRecord, int nRecords, String filterClause,int pageNumber) throws DalDbException;
 }

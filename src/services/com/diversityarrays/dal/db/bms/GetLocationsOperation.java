@@ -18,14 +18,14 @@ import fi.iki.elonen.NanoHTTPD.Method;
 
 public class GetLocationsOperation extends EntityOperation<Site, BMS_DalDatabase> {
 
-	public static final Pattern PATTERN = Pattern.compile("^sites/");
+	public static final Pattern PATTERN = Pattern.compile("^list/site/[a-z]*/page/[a-z]*");
 	
 	public static final String ENTITY_NAME = "Site";
 
 	public GetLocationsOperation(BMS_DalDatabase db, 
 			EntityProvider<Site> provider) 
 	{
-		super(db, ENTITY_NAME, "sites/", Site.class, provider);
+		super(db, ENTITY_NAME, "list/site/_nperpage/page/_num", Site.class, provider);
 	}
 
 	@Override

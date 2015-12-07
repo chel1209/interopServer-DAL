@@ -34,6 +34,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.pearcan.json.JsonParser;
 import net.pearcan.util.StringUtil;
 
 import org.apache.commons.collections15.Closure;
@@ -73,6 +74,7 @@ import com.diversityarrays.dal.entity.GenotypeAlias;
 import com.diversityarrays.dal.entity.Genus;
 import com.diversityarrays.dal.entity.ItemUnit;
 import com.diversityarrays.dal.entity.Observation;
+import com.diversityarrays.dal.entity.Page;
 import com.diversityarrays.dal.entity.Project;
 import com.diversityarrays.dal.entity.Site;
 import com.diversityarrays.dal.entity.Trial;
@@ -256,6 +258,21 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
 		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Genus> createIterator(int firstRecord,
+				int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	};
 	
@@ -370,6 +387,21 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Genotype> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page page) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
 		}		
 
 	};
@@ -539,6 +571,21 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Trial> createIterator(int firstRecord,
+				int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
 		}		
 
 	};	
@@ -640,6 +687,21 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends GeneralType> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page page) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
 		}		
 	};
 	
@@ -744,6 +806,21 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends GenotypeAlias> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page page) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
 		}		
 	};
 	
@@ -846,6 +923,21 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends ItemUnit> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page page) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
 		}		
 	};	
 
@@ -956,6 +1048,21 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	    	}
 	    	
 		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Observation> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page page) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	};
 	
@@ -1046,6 +1153,21 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			// TODO Auto-generated method stub
 			
 		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Project> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page page) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 	};
 	
@@ -1110,7 +1232,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 					tmp.add(createOperation("projects/", Project.class,projectProvider));
 
 					//GetLocationsOperations
-					tmp.add(createOperation("sites/", Site.class, siteProvider));
+					tmp.add(createOperation("list/site/_nperpage/page/_num", Site.class, siteProvider));
 					
 					operations = tmp;
 				}
@@ -1474,22 +1596,51 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		private CloseableHttpClient client;
 		private HttpGet request;		
 		private SiteFactory siteFactory;
+		private PageFactory pageFactory;
 
 		private void createFactory() {
 			siteFactory = new SiteFactory();
 		}
+		
+		private void createPageFactory() {
+			pageFactory = new PageFactory();
+		}		
 
 		@Override
-		public int getEntityCount(String filterClause) throws DalDbException {
+		public Page getEntityCountPage(String filterClause) throws DalDbException {
+			
+			BufferedReader bufferedReader;
+			Page result = null;
+			
+			int total = 0;
+			
+			if(pageFactory == null){
+				createPageFactory();
+			}
+			
 			if(siteFactory == null){
 				createFactory();
 			}
-			String sql = siteFactory.createCountQuery(filterClause);
-			int total = 0;
-			for (Connection c : bmsConnections.getConnections()) {
-				total += SqlUtil.getSingleInteger(c, sql);
+			
+			client = HttpClientBuilder.create().build();
+			request = new HttpGet(siteFactory.createCountQuery(filterClause));
+						
+			try{
+				HttpResponse response = client.execute(request);
+				System.out.println(request.getURI());
+				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+				BufferedReaderEntityIterator<Page> entityIterator =  new BufferedReaderEntityIterator<Page>(bufferedReader, pageFactory);
+				entityIterator.readLine();
+				result = entityIterator.nextEntity();
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
 			}
-			return total;
+					
+			return result;
 		}
 		
 		@Override
@@ -1634,6 +1785,41 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException{
 			throw new UnsupportedOperationException("Not supported yet.");	
+		}
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public EntityIterator<? extends Site> createIterator(int firstRecord,
+				int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			System.out.println("BEGIN createIdIterator (Site) in BMS_DalDatabase class====");
+			BufferedReader bufferedReader;
+			
+			if(siteFactory == null){
+				createFactory();
+			}
+					
+			client = HttpClientBuilder.create().build();
+			request = new HttpGet(siteFactory.createPagedListQuery(0, nRecords, null,page.getPageNumber()));
+			
+			try{
+				HttpResponse response = client.execute(request);
+				System.out.println(request.getURI());
+				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+			System.out.println("END createIdIterator (Site) in BMS_DalDatabase class ====");
+			return new BufferedReaderEntityIterator<Site>(bufferedReader, siteFactory, page);
 		}		
 
 	};	

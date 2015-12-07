@@ -64,7 +64,7 @@ public class SampleMeasurementFactory implements SqlEntityFactory<SampleMeasurem
 					// Let's handle a numeric value specially.
 					// Not sure if I should really do this but...
 					Integer.parseInt(term.value);
-					return new FilteringTerm("nstat " + term.operator + term.value);
+					return new FilteringTerm("nstat " + term.operator + term.value);j
 				} catch (NumberFormatException e) {
 
 					// TODO handle quotes in term.value
@@ -263,6 +263,13 @@ public class SampleMeasurementFactory implements SqlEntityFactory<SampleMeasurem
 	 */
 	public void setPending(boolean pending) {
 		this.pending = pending;
+	}
+
+	@Override
+	public String createPagedListQuery(int firstRecord, int nRecords,
+			String filterClause, int pageNumber) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

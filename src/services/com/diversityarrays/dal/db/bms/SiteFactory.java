@@ -106,17 +106,7 @@ public class SiteFactory implements SqlEntityFactory<Site> {
 
 	@Override
 	public String createCountQuery(String filterClause) throws DalDbException {
-		StringBuilder sb = new StringBuilder("SELECT COUNT(*) FROM cvterm");
-		sb.append(" WHERE (is_obsolete!=").append(NamesNSTAT.DELETED.value)
-				.append(")");
-
-		// TODO test filterClause field name translation
-		if (filterClause != null) {
-			sb.append(" AND ( ")
-					.append(COLUMN_NAME_MAPPING.translate(filterClause))
-					.append(" )");
-		}
-		return sb.toString();
+		return BMSApiDataConnection.getLocationsCall(1,BMSApiDataConnection.BMS_MAX_PAGE_SIZE);
 	}
 
 	@Override
@@ -132,8 +122,8 @@ public class SiteFactory implements SqlEntityFactory<Site> {
 
 	@Override
 	public String createPagedListQuery(int firstRecord, int nRecords,
-			String filterClause) throws DalDbException {
-		return BMSApiDataConnection.getLocationsCall();
+			String filterClause,int pageNumber) throws DalDbException {
+		return BMSApiDataConnection.getLocationsCall(pageNumber,nRecords);
 	}
 
 	@Override
@@ -168,8 +158,12 @@ public class SiteFactory implements SqlEntityFactory<Site> {
 			JsonMap typeMap = (JsonMap)map.get("locationType");
 			result.setSiteTypeId(Integer.valueOf((String)typeMap.get("id")));
 			result.setSiteTypeName((String)typeMap.get("name"));
-			result.setLatitude((Double)map.get("latitude"));
-			result.setLongitude((Double)map.get("longitude"));
+			if((String)map.get("latitude")!=null){
+				result.setLatitude(Double.valueOf((String)map.get("latitude")));
+			}
+			if((String)map.get("longitude")!=null){
+				result.setLongitude(Double.valueOf((String)map.get("longitude")));
+			}
 			index++;
 			pending = true;
 		}else{
@@ -211,6 +205,13 @@ public class SiteFactory implements SqlEntityFactory<Site> {
 	 */
 	public void setPending(boolean pending) {
 		this.pending = pending;
+	}
+
+	@Override
+	public String createPagedListQuery(int firstRecord, int nRecords,
+			String filterClause) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -288,5 +288,12 @@ public class GenotypeFactory implements SqlEntityFactory<Genotype> {
 	public void setPending(boolean pending) {
 		this.pending = pending;
 	}
+
+	@Override
+	public String createPagedListQuery(int firstRecord, int nRecords,
+			String filterClause, int pageNumber) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
