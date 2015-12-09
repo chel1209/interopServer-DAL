@@ -1246,14 +1246,24 @@ public class TestDalDatabase {
 
 			@Override
 			public void execute(DalSession session) {
-				String dalcmd = "observation/" + "maize" + "/" + "25010" + "/" + "378";
-				//String dalcmd = "trial/details/";
+				String dalcmd = "observation/" + "wheat" + "/" + "2147" + "/" + "2152";
 				
 				OperationMatch match = getOperationMatch(dalcmd);
 				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
 				
 				Map<String, String> mapaParametros = new HashMap<String, String>();
-				mapaParametros.put("json", "{\"uniqueIdentifier\":378,\"germplasmId\":4,\"germplasmDesignation\":\"CML165\",\"entryNumber\":4,\"entryType\":\"Test Entry\",\"plotNumber\":1,\"replicationNumber\":1,\"environmentNumber\":1,\"seedSource\":\"\",\"measurements\":[{\"measurementIdentifier\":{\"measurementId\":392,\"trait\":{\"traitId\":18020,\"traitName\":\"Plant_height\"}},\"measurementValue\":\"403\"}]}");
+				mapaParametros.put("json", "{\"TrialUnitId\":2152,\"SpecimenId\":4,\"SpecimenName\":\"CML165\",\"UnitPositionText\":4,\"entryType\":\"Test Entry\",\"UnitPositionId\":1,\"ReplicateNumber\":1,\"TreatmentId\":1,\"TrialUnitNote\":\"\",\"measurements\":[{\"measurementIdentifier\":{\"TrialTraitId\":2152,\"trait\":{\"TraitId\":18020,\"TraitName\":\"Plant_height\"}},\"TraitValue\":\"403\"}]}");
+				
+				Map<String, String> filePathByName = new HashMap<String, String>();
+				filePathByName.put("postData", "{\"TrialUnitId\":2152,\"SpecimenId\":5398211,\"SpecimenName\":\"CGSS01B00062T-099Y-099M-099M-099Y-099M-12Y-0MEX\",\"UnitPositionText\":1,\"entryType\":\"Test Entry\",\"UnitPositionId\":1,\"ReplicateNumber\":1,\"TreatmentId\":1,\"TrialUnitNote\":\"Test\",\"measurements\":[{\"measurementIdentifier\":{\"TrialTraitId\":6553,\"trait\":{\"TraitId\":29096,\"TraitName\":\"HNECRO_0_1\"}},\"TraitValue\":\"666\"}]}");
+
+				//The following example is where measurementId hasn't assigned yet
+				//filePathByName.put("postData", "{\"TrialUnitId\":2152,\"SpecimenId\":5398211,\"SpecimenName\":\"CGSS01B00062T-099Y-099M-099M-099Y-099M-12Y-0MEX\",\"UnitPositionText\":1,\"entryType\":\"Test Entry\",\"UnitPositionId\":1,\"ReplicateNumber\":1,\"TreatmentId\":1,\"TrialUnitNote\":\"Test\",\"measurements\":[{\"measurementIdentifier\":{\"TrialTraitId\":\"\",\"trait\":{\"TraitId\":8263,\"TraitName\":\"NPSEL\"}},\"TraitValue\":\"667\"}]}");
+				
+				List<String> dalOpParameters = new ArrayList<String>();
+				dalOpParameters.add("wheat");
+				dalOpParameters.add("2147");
+				dalOpParameters.add("2152");
 				
 				try{
 					
@@ -1261,9 +1271,10 @@ public class TestDalDatabase {
 							responseBuilder, 
 							Method.GET, 
 							dalcmd, 
-							match.getParameterValues(), 
+							//match.getParameterValues(),
+							dalOpParameters,
 							mapaParametros, 
-							null);	
+							filePathByName);	
 					
 					checkJsonResult("testSetObservation", responseBuilder, "Observation");
 					if (NOISY) {

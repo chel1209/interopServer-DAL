@@ -103,7 +103,12 @@ public class ObservationFactory {
 					 for(String keyMID : ((JsonMap)meId).getKeysInOrder()){
 						 
 						 if(keyMID.equals(MEASUREMENT_ID)){
-						    mIdentifier.setMeasurementId(Integer.valueOf(((JsonMap)meId).get(MEASUREMENT_ID).toString()));
+							try{ 
+						        mIdentifier.setMeasurementId(Integer.valueOf(((JsonMap)meId).get(MEASUREMENT_ID).toString()));
+							}catch(Exception w){
+								System.out.println("Error " + w.toString());
+								mIdentifier.setMeasurementId(null);
+							}
 						 }							 
 						 
 						 if(keyMID.equals(TRAIT)){
