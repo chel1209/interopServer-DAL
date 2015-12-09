@@ -151,4 +151,11 @@ public class ItemUnitFactory implements SqlEntityFactory<ItemUnit> {
 		this.pending = pending;
 	}
 
+	@Override
+	public String createPagedListQuery(int firstRecord, int nRecords,
+			String filterClause, int pageNumber) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

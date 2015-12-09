@@ -210,7 +210,7 @@ public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 				result.setTrialId(trial.getTrialId());
 				sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialId()));
 				result.setUnitPositionText((String)((JsonMap)map).get("entryNo"));
-				specimenFactory.createEntity(result, jsonMap,sampleMeasurementFactory,trial.getTrialTraits());
+				specimenFactory.createEntity(result, jsonMap,sampleMeasurementFactory,trial.getTrialTraits(),sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialId())));
 				if(trial.getSiteName() != null ){
 					result.setSiteName(trial.getSiteName());
 				}
@@ -304,6 +304,13 @@ public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 	 */
 	public void setPending(boolean pending) {
 		this.pending = pending;
+	}
+
+	@Override
+	public String createPagedListQuery(int firstRecord, int nRecords,
+			String filterClause, int pageNumber) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 		
 }

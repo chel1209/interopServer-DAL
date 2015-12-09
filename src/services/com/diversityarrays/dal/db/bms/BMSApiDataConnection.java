@@ -5,9 +5,12 @@ import java.util.List;
 public class BMSApiDataConnection {
 	
 	
-	private static String IP   = "172.17.60.83";
-	private static String PORT  = "18080";
-	private static String CROP = "wheat";
+	private static String IP                       = "172.17.60.83";
+	private static String PORT                     = "18080";
+	private static String CROP                     = "wheat";
+	private static final String LOCATION_TYPE_ID   = "410";
+	public static final int BMS_MAX_PAGE_SIZE      = 200;
+	public static final String PAGE_DOES_NOT_EXIST = "The page number you requested is too big.";
 
 	
 	/* 
@@ -47,5 +50,7 @@ public class BMSApiDataConnection {
     	
     }
 
-
+    public static String getLocationsCall(int pageNumber, int pageSize){
+        return "http://" + IP +":" + PORT + "/bmsapi/location/" + CROP + "?locationTypeId=" + LOCATION_TYPE_ID + "&pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+    }
 }

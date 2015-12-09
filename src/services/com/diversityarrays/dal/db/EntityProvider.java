@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.diversityarrays.dal.entity.DalEntity;
+import com.diversityarrays.dal.entity.Page;
 
 
 public interface EntityProvider<T extends DalEntity> {
@@ -31,6 +32,14 @@ public interface EntityProvider<T extends DalEntity> {
 	 * @throws DalDbException 
 	 */
 	public int getEntityCount(String filterClause) throws DalDbException;
+	
+	/**
+	 * Return the number of records satisfying the filterClause.
+	 * @param filterClause may be null
+	 * @return Page
+	 * @throws DalDbException 
+	 */
+	public Page getEntityCountPage(String filterClause) throws DalDbException;
 	
 	/**
 	 * 
@@ -58,6 +67,16 @@ public interface EntityProvider<T extends DalEntity> {
 	 * @throws DalDbException 
 	 */
 	public EntityIterator<? extends T> createIterator(int firstRecord, int nRecords, String filterClause) throws DalDbException;
+	
+	/**
+	 * @param firstRecord zero means all records
+	 * @param nRecords must be non-zero if firstRecord &gt; 0
+	 * @param filterClause may be null
+	 * @param Page if the source is paged use this to control which page to get
+	 * @return Iterator over the required records
+	 * @throws DalDbException 
+	 */
+	public EntityIterator<? extends T> createIterator(int firstRecord, int nRecords, String filterClause, Page pageNumber) throws DalDbException;
 	
 	/**
 	 * Prepares an extra search in case the mapping of the basic information on a couple of entities doesn't map one-to-one.	

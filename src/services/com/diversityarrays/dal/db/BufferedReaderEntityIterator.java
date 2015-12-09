@@ -11,6 +11,7 @@ import net.pearcan.json.JsonMap;
 import net.pearcan.json.JsonParser;
 
 import com.diversityarrays.dal.entity.DalEntity;
+import com.diversityarrays.dal.entity.Page;
 
 public class BufferedReaderEntityIterator<T extends DalEntity> implements EntityIterator<T>,
 		Closeable {
@@ -20,6 +21,7 @@ public class BufferedReaderEntityIterator<T extends DalEntity> implements Entity
 	private int index = 0;
 	private String line = null;
 	private boolean pending = false;
+	private Page page;
 	
 	/**
 	 * 
@@ -29,6 +31,12 @@ public class BufferedReaderEntityIterator<T extends DalEntity> implements Entity
 	public BufferedReaderEntityIterator(BufferedReader rd, EntityFactory<T> tfactory) {
 		webserviceResultReader = rd;
 		this.tFactory = tfactory;
+	}
+	
+	public BufferedReaderEntityIterator(BufferedReader rd, EntityFactory<T> tfactory, Page page) {
+		webserviceResultReader = rd;
+		this.tFactory = tfactory;
+		this.page = page;
 	}	
 	
 	@Override

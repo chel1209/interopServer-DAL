@@ -190,9 +190,9 @@ public class SpecimenFactory implements SqlEntityFactory<Trial> {
 		return result;
 	}
 
-	public void createEntity(TrialUnit trialUnit, JsonMap jsonMap,SampleMeasurementFactory sampleMeasurementFactory, List<TrialTrait> trialTraits)
+	public void createEntity(TrialUnit trialUnit, JsonMap jsonMap,SampleMeasurementFactory sampleMeasurementFactory, List<TrialTrait> trialTraits, String sampleMeasurementURL)
 			throws DalDbException {
-		List<Object> observations = sampleMeasurementFactory.getObservationsMap();
+		List<Object> observations = sampleMeasurementFactory.getObservationsMap(sampleMeasurementURL);
 
 		List<Object> germplasm = (List) jsonMap.get("germplasm");
 		for (Object map : germplasm) {
@@ -305,6 +305,13 @@ public class SpecimenFactory implements SqlEntityFactory<Trial> {
 	 */
 	public void setPending(boolean pending) {
 		this.pending = pending;
+	}
+
+	@Override
+	public String createPagedListQuery(int firstRecord, int nRecords,
+			String filterClause, int pageNumber) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

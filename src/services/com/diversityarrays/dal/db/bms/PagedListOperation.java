@@ -31,6 +31,7 @@ import com.diversityarrays.dal.db.EntityOperation;
 import com.diversityarrays.dal.db.EntityProvider;
 import com.diversityarrays.dal.db.RecordCountCacheEntry;
 import com.diversityarrays.dal.entity.DalEntity;
+import com.diversityarrays.dal.entity.Page;
 import com.diversityarrays.dal.server.DalSession;
 import com.diversityarrays.dalclient.DALClient;
 
@@ -59,6 +60,8 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 
 		String filterClause = DalDatabaseUtil.getFilteringClause(methodParms);
 		
+		Page bmsPage = null;
+		
 		int nRecords;
 		
 		RecordCountCacheEntry cacheEntry = context.getRecordCountCacheEntry(session, entityClass);
@@ -67,40 +70,78 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": cached value=" + nRecords);
 		}
 		else {
-			nRecords = entityProvider.getEntityCount(filterClause);
-			context.setRecordCountCacheEntry(session, entityClass, filterClause, nRecords);
+			bmsPage = entityProvider.getEntityCountPage(filterClause);
+			context.setRecordCountCacheEntry(session, entityClass, filterClause, bmsPage.getTotalResults());
 
-			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": CACHING value=" + nRecords);
+			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": CACHING value=" + bmsPage.getTotalResults());
 		}
-		
-		int nPerPage = getIntParameter(0, dalOpParameters, "_nperpage", 1);
-		int pageNum  = getIntParameter(1, dalOpParameters, "_num",      1);
 
-		int numOfPages = (nRecords + nPerPage - 1) / nPerPage;
-		
+		int nPerPage = getIntParameter(0, dalOpParameters, "_nperpage", 1);
+		int numOfPages = (bmsPage.getTotalResults() + nPerPage - 1) / nPerPage;
+		int pageNum  = getIntParameter(1, dalOpParameters, "_num",      1);
 		int firstRecord = (pageNum - 1) * nPerPage;
+		EntityIterator<? extends T> iter = null;
 		
 		responseBuilder.addResponseMeta(entityTagName);
-//		responseBuilder.addResponseMeta(DALClient.TAG_PAGINATION);
+		responseBuilder.addResponseMeta(DALClient.TAG_PAGINATION);
 		
 		responseBuilder.startTag(DALClient.TAG_PAGINATION)
 			.attribute(DALClient.ATTR_PAGE, Integer.toString(pageNum))
-			.attribute(DALClient.ATTR_NUM_OF_RECORDS, Integer.toString(nRecords))
+			.attribute(DALClient.ATTR_NUM_OF_RECORDS, Integer.toString(bmsPage.getTotalResults()))
 			.attribute(DALClient.ATTR_NUM_OF_PAGES, Integer.toString(numOfPages))
 			.attribute(DALClient.ATTR_NUM_PER_PAGE, Integer.toString(nPerPage))
 			.endTag();
 		
-		
-		EntityIterator<? extends T> iter = entityProvider.createIterator(firstRecord, nPerPage, filterClause);
-		try {
-			T entity;
-			while (null != (entity = iter.nextEntity())) {
-				appendEntity(responseBuilder, entity);
+		if(nPerPage>BMSApiDataConnection.BMS_MAX_PAGE_SIZE){
+			int processed = 0;
+			boolean pending = false;
+			bmsPage.setTotalPages(bmsPage.getTotalResults()/BMSApiDataConnection.BMS_MAX_PAGE_SIZE);
+			if(pageNum > bmsPage.getTotalPages()){
+				throw new DalDbException(BMSApiDataConnection.PAGE_DOES_NOT_EXIST);
 			}
-		}
-		finally {
-			try { iter.close(); }
-			catch (IOException ignore) { }
+			pageNum = firstRecord/BMSApiDataConnection.BMS_MAX_PAGE_SIZE;
+			bmsPage.setPageNumber(pageNum==0?1:pageNum);
+			while(processed<nPerPage){
+				if(pending==true){
+					bmsPage.setPageNumber(bmsPage.getPageNumber()+1);
+					if(nPerPage - processed < BMSApiDataConnection.BMS_MAX_PAGE_SIZE){
+						iter = entityProvider.createIterator(firstRecord, nPerPage - processed, filterClause,bmsPage);
+					}else{
+						iter = entityProvider.createIterator(firstRecord, BMSApiDataConnection.BMS_MAX_PAGE_SIZE, filterClause,bmsPage);
+					}
+				}else{
+					iter = entityProvider.createIterator(firstRecord, BMSApiDataConnection.BMS_MAX_PAGE_SIZE, filterClause,bmsPage);
+				}
+				try {
+					T entity;
+					iter.readLine();
+					while (null != (entity = iter.nextEntity())) {
+						appendEntity(responseBuilder, entity);
+						processed++;
+					}
+					if(processed < nPerPage){
+						pending = true;
+					}
+				}
+				finally {
+					try { iter.close(); }
+					catch (IOException ignore) { }
+				}
+			}
+		}else{
+			iter = entityProvider.createIterator(firstRecord, nPerPage, filterClause,bmsPage);
+			
+			try {
+				T entity;
+				iter.readLine();
+				while (null != (entity = iter.nextEntity())) {
+					appendEntity(responseBuilder, entity);
+				}
+			}
+			finally {
+				try { iter.close(); }
+				catch (IOException ignore) { }
+			}
 		}
 	}
 
