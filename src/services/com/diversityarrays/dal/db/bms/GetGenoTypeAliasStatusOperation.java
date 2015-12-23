@@ -16,45 +16,54 @@ import com.diversityarrays.dal.server.DalSession;
 
 import fi.iki.elonen.NanoHTTPD.Method;
 
-public class GetSampleTypeOperation extends EntityOperation<GeneralType, BMS_DalDatabase> {
 
-	public static final Pattern PATTERN = Pattern.compile("^list/type/sample/active");
+
+/*
+ * @author Raul Hernandez T.
+ * @date 12-NOV-2015
+ */
+public class GetGenoTypeAliasStatusOperation extends EntityOperation<GeneralType,BMS_DalDatabase>{
+
 	
-	public static final String ENTITY_NAME = "SampleType";
-
-	public GetSampleTypeOperation(BMS_DalDatabase db, 
-			EntityProvider<GeneralType> provider) 
-	{
-		super(db, ENTITY_NAME, "list/type/sample/active", GeneralType.class, provider);
+	public static final Pattern PATTERN = Pattern.compile("^list/type/genotypealiasstatus/active");
+	public static final String  ENTITY_NAME = "GenoTypeAliasStatus";
+	
+	public GetGenoTypeAliasStatusOperation(BMS_DalDatabase db, EntityProvider<GeneralType> provider){
+		super(db, ENTITY_NAME, "list/type/genotypealiasstatus/active", GeneralType.class, provider);
 	}
 
 	@Override
 	public void execute(DalSession session, DalResponseBuilder responseBuilder,
 			Method method, String dalcmd, List<String> dalOpParameters,
 			Map<String, String> methodParms, Map<String, String> filePathByName)
-	throws DalDbException {
-		
+			throws DalDbException {
+
 		String filterClause = DalDatabaseUtil.getFilteringClause(methodParms);
 		
 		EntityIterator<? extends GeneralType> iter = null;
-		try {
-			iter = entityProvider.createIdIterator("0", 0, 0, filterClause);
-
-			responseBuilder.addResponseMeta(entityTagName);
+		
+		try{
+			
+			iter = entityProvider.createIdIterator("", 0, 0, filterClause);
+			
+			responseBuilder.startTag("VCol");
+			responseBuilder.endTag();	
+			
+			responseBuilder.addResponseMeta("GeneralType");
 			
 			GeneralType entity;
 			iter.readLine();
-			do{
-				if (null != (entity = iter.nextEntity())) {
-					appendEntity(responseBuilder, entity);
-				}
-			}while(iter.isPending());
-		} finally {
-			if (iter != null) {
-				try { iter.close(); }
-				catch (IOException ignore) { }
+			
+			while (null != (entity = iter.nextEntity())) {
+				appendEmptyEntity(responseBuilder, entity);
 			}
-		}
+			
+			
+		} finally{
+			if(iter != null){
+				try{iter.close();}
+				catch(IOException ignore){}
+			}
+		}		
 	}
-
 }

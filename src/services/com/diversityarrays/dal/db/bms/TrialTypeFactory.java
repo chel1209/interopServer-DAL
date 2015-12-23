@@ -2,31 +2,33 @@ package com.diversityarrays.dal.db.bms;
 
 import java.io.IOException;
 import java.sql.ResultSet;
+
 import net.pearcan.json.JsonMap;
 
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.SqlEntityFactory;
-import com.diversityarrays.dal.entity.Project;
-
+import com.diversityarrays.dal.entity.GeneralType;
+import com.diversityarrays.dal.entity.TrialType;
 
 
 /*
  * @author Raul Hernandez T.
- * @date   10/07/2015
+ * @date   12/11/2015
+ * 
+ * @note Initial Approach, no mapping yet.
+ * @version 1.0
+ * 
  */
-public class ProjectFactory implements SqlEntityFactory<Project>{
+public class TrialTypeFactory implements SqlEntityFactory<GeneralType>{
 	
 	
-	private static final String USER_ID      = "userId";
-	private static final String START_DATE   = "startDate";
-	private static final String PROJECT_NAME = "projectName";
-	private static final String CROP_TYPE    = "cropType";
-	private static final String UNIQUE_ID    = "uniqueID";
-	
-	
+	private static final String TYPE_ID        = "typeId";
+	private static final String TYPE_NAME      = "typeName";
+	private static final String IS_TYPE_ACTIVE = "isTypeActive";
+	private static final String TYPE_NOTE      = "typeNote";
 	
 	public String getURL(String filterClause){
-		return BMSApiDataConnection.getProjectCall(filterClause);
+		return BMSApiDataConnection.getTrialTypeCall(filterClause);
 	}
 
 	@Override
@@ -36,28 +38,23 @@ public class ProjectFactory implements SqlEntityFactory<Project>{
 	}
 
 	@Override
-	public Project createEntity(ResultSet rs) throws DalDbException {
+	public GeneralType createEntity(ResultSet rs) throws DalDbException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Project createEntity(JsonMap jsonMap) throws DalDbException {
-		// TODO Auto-generated method stub
+	public GeneralType createEntity(JsonMap jsonMap) throws DalDbException {
 		
-		Project project = new Project();
+		GeneralType generalType = new GeneralType();
 		
-		project.setProjectManagerId(new Integer((jsonMap.get(USER_ID).toString())));
-		project.setProjectManagerName(null);
-		project.setProjectStartDate((String)jsonMap.get(START_DATE));
-		project.setProjectName((String)jsonMap.get(PROJECT_NAME));
-		project.setProjectNote((String)jsonMap.get(CROP_TYPE));
-		project.setTypeId(null);
-		project.setProjectStatus(null);
-		project.setProjectEndDate(null);
-		project.setProjectId(UNIQUE_ID);
+		generalType.setTypeActive(new Boolean(jsonMap.get(IS_TYPE_ACTIVE).toString()));
+		generalType.setTypeId(new Integer(jsonMap.get(TYPE_ID).toString()));
+		generalType.setTypeName((String)jsonMap.get(TYPE_NAME));
+		generalType.setTypeNote((String)jsonMap.get(TYPE_NOTE));
 		
-		return project;
+		return generalType;
+		
 	}
 
 	@Override

@@ -53,4 +53,75 @@ public class BMSApiDataConnection {
     public static String getLocationsCall(int pageNumber, int pageSize){
         return "http://" + IP +":" + PORT + "/bmsapi/location/" + CROP + "?locationTypeId=" + LOCATION_TYPE_ID + "&pageNumber=" + pageNumber + "&pageSize=" + pageSize;
     }
+    
+    public static String getTrialTypeCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getSampleCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getItemCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getItemParentCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getUnitTypeCall(String filterClause){
+    	return "No implemented yet";
+    }    
+    
+    public static String getStateCall(String filterClause){
+    	return "No implemented yet";
+    }    
+    
+    public static String getContainerCall(String filterClause){
+    	return "No implemented yet";
+    }    
+    
+    public static String getSpecimenGroupCall(String filterClause){
+    	return "No implemented yet";
+    }    
+    
+    public static String getParentCall(String filterClause){
+    	return "No implemented yet";
+    }    
+    
+    public static String getGenotypeAliasCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getGenotypeAliasStatusCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getGenParenStatusCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getGenotypeSpecimenCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getTrialEventCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getWorkflowCall(String filterClause){
+    	return "No implemented yet";
+    }    
+
+    public static String getTraitGroupCall(String filterClause){
+    	return "No implemented yet";
+    }
+    
+    public static String getSpecimenCall(String id){
+       return "http://" + IP + ":" + PORT + "/bmsapi/germplasm/" + CROP + "/" + id;	
+    }
+    
+    
+    
 }

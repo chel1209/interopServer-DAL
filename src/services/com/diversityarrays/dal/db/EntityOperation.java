@@ -36,6 +36,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.entity.EntityTag;
 import com.diversityarrays.dal.ops.AbstractDalOperation;
+import com.google.gson.JsonArray;
 
 public abstract class EntityOperation<T extends DalEntity,DB extends DalDatabase> extends AbstractDalOperation<DB> {
 	
@@ -93,6 +94,12 @@ public abstract class EntityOperation<T extends DalEntity,DB extends DalDatabase
 				}
 				builder.endTag();
 				System.out.println("END appendEntity in EntityOperation ====");
+			}
+
+	        protected void appendEmptyEntity(DalResponseBuilder responseBuilder, T entity)
+			throws DalDbException {
+				DalResponseBuilder builder = responseBuilder.startTag(entityTagName);
+				builder.endTag();
 			}
 
 }

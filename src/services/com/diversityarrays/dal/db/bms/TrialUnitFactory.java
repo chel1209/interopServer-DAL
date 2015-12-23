@@ -2,11 +2,8 @@ package com.diversityarrays.dal.db.bms;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
-
 import net.pearcan.json.JsonMap;
 import net.pearcan.json.JsonParser;
 
@@ -14,18 +11,13 @@ import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.SqlEntityFactory;
 import com.diversityarrays.dal.entity.ColumnNameMapping;
 import com.diversityarrays.dal.entity.DalEntity;
-import com.diversityarrays.dal.entity.Specimen;
 import com.diversityarrays.dal.entity.Trial;
 import com.diversityarrays.dal.entity.TrialUnit;
 import com.diversityarrays.dal.ops.FilteringTerm;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpEntity;
 
 public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 	

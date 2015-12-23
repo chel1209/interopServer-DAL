@@ -64,17 +64,18 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 		
 		int nRecords;
 		
-		RecordCountCacheEntry cacheEntry = context.getRecordCountCacheEntry(session, entityClass);
+		//RHT/Error1
+		/*RecordCountCacheEntry cacheEntry = context.getRecordCountCacheEntry(session, entityClass);
 		if (cacheEntry!=null && cacheEntry.isFor(filterClause)) {
 			nRecords = cacheEntry.count;
 			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": cached value=" + nRecords);
 		}
-		else {
+		else {*/
 			bmsPage = entityProvider.getEntityCountPage(filterClause);
 			context.setRecordCountCacheEntry(session, entityClass, filterClause, bmsPage.getTotalResults());
 
 			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": CACHING value=" + bmsPage.getTotalResults());
-		}
+		//}
 
 		int nPerPage = getIntParameter(0, dalOpParameters, "_nperpage", 1);
 		int numOfPages = (bmsPage.getTotalResults() + nPerPage - 1) / nPerPage;
@@ -134,8 +135,10 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 			try {
 				T entity;
 				iter.readLine();
+				
 				while (null != (entity = iter.nextEntity())) {
 					appendEntity(responseBuilder, entity);
+					//iter.readLine();
 				}
 			}
 			finally {

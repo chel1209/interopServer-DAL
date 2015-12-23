@@ -65,8 +65,15 @@ public class BufferedReaderEntityIterator<T extends DalEntity> implements Entity
 			if(line != null){
 				JsonParser parser = new JsonParser(line);
 				if(parser.getMapResult()!=null){
-					result = tFactory.createEntity(parser.getMapResult());
-					pending = tFactory.isPending();
+					if(index==0){
+					   result = tFactory.createEntity(parser.getMapResult());
+					   pending = tFactory.isPending();
+					   index++;
+					}else{
+					   index = 0;
+					   return result;
+					}
+					
 				}else{
 					List<Object> list = parser.getListResult();
 					if(index < list.size()){

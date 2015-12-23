@@ -1,106 +1,138 @@
 package com.diversityarrays.dal.entity;
 
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-
 import javax.persistence.Column;
 import javax.persistence.Table;
 
+/**
+ * @author Raul Hernandez T.
+ * @date   17-DIC-2015
+ * 
+ * @note Re-define the class properties according to list/specimen/_nperpage/page/_num call.
+ *       from kddart.org
+ *
+ */
 @Table(name="Specimen")
 @EntityTag("Specimen")
 public class Specimen extends DalEntity{
 
-	@Column(name="SpecimenName")
-	private String specimenName;
+	@Column(name="breedingMethodName")
+	private String   breedingMethodName;
 	
-	@Column(name="SpecimenId")
-	private int specimenId;	
+	@Column(name="isActive")
+    private Integer  isActive;
 	
-	@Column(name="HarvestDate")
-	private Date harvestDate;
-
-	@Column(name="PlanttDate")
-	private Date plantDate;
+	@Column(name="breedingMethodId")
+    private Integer  breedingMethodId;
 	
-	public String toString(){
-		if(specimenName == null){
-			specimenName = "null ";
-		}
-		
-		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-		String harvestDateString;
-		String plantDateString; 
-		
-		if(harvestDate!=null){
-			harvestDateString = format.format(harvestDate);
-		}else{
-			harvestDateString = "null";
-		}
-		
-		if(plantDate!=null){
-			plantDateString = format.format(plantDate);
-		}else{
-			plantDateString = "null";
-		}
-		String string = " { SpecimenName: \"" + specimenName + "\", SpecimenId: \"" + specimenId + "\", HarvestDate: \"" + harvestDateString + "\", PlantDate: " + plantDateString + "\"} ";
-		return string;
+	@Column(name="specimenBarcode")
+    private String   specimenBarcode;
+	
+	@Column(name="specimenId")
+    private String   specimenId;
+	
+	@Column(name="filialGeneration")
+    private Integer  filialGeneration;
+	
+	@Column(name="update")
+    private String   update;
+	
+	@Column(name="pedigree")
+    private String   pedigree;
+	
+	@Column(name="specimenName")
+    private String   specimenName;
+	
+	@Column(name="genotype")
+    private Genotype genotype;
+	
+	@Column(name="selectionHistory")
+    private String   selectionHistory;
+	
+	@Column(name="delete")
+    private String   delete;
+	
+	@Column(name="addGenotype")
+    private String   addGenotype;
+	
+	public Specimen(){}
+	
+	public String getBreedingMethodName() {
+		return breedingMethodName;
 	}
-
-	/**
-	 * @return the spcecimenName
-	 */
+	public void setBreedingMethodName(String breedingMethodName) {
+		this.breedingMethodName = breedingMethodName;
+	}
+	public Integer getIsActive() {
+		return isActive;
+	}
+	public void setIsActive(Integer isActive) {
+		this.isActive = isActive;
+	}
+	public Integer getBreedingMethodId() {
+		return breedingMethodId;
+	}
+	public void setBreedingMethodId(Integer breedingMethodId) {
+		this.breedingMethodId = breedingMethodId;
+	}
+	public String getSpecimenBarcode() {
+		return specimenBarcode;
+	}
+	public void setSpecimenBarcode(String specimenBarcode) {
+		this.specimenBarcode = specimenBarcode;
+	}
+	public String getSpecimenId() {
+		return specimenId;
+	}
+	public void setSpecimenId(String specimenId) {
+		this.specimenId = specimenId;
+	}
+	public Integer getFilialGeneration() {
+		return filialGeneration;
+	}
+	public void setFilialGeneration(Integer filialGeneration) {
+		this.filialGeneration = filialGeneration;
+	}
+	public String getUpdate() {
+		return update;
+	}
+	public void setUpdate(String update) {
+		this.update = update;
+	}
+	public String getPedigree() {
+		return pedigree;
+	}
+	public void setPedigree(String pedigree) {
+		this.pedigree = pedigree;
+	}
 	public String getSpecimenName() {
 		return specimenName;
 	}
-
-	/**
-	 * @param spcecimenName the spcecimenName to set
-	 */
 	public void setSpecimenName(String specimenName) {
 		this.specimenName = specimenName;
 	}
-
-	/**
-	 * @return the spcecimenId
-	 */
-	public int getSpecimenId() {
-		return specimenId;
+	public Genotype getGenotype() {
+		return genotype;
 	}
-
-	/**
-	 * @param spcecimenId the spcecimenId to set
-	 */
-	public void setSpecimenId(int specimenId) {
-		this.specimenId = specimenId;
+	public void setGenotype(Genotype genotype) {
+		this.genotype = genotype;
 	}
-
-	/**
-	 * @return the harvestDate
-	 */
-	public Date getHarvestDate() {
-		return harvestDate;
+	public String getSelectionHistory() {
+		return selectionHistory;
 	}
-
-	/**
-	 * @param harvestDate the harvestDate to set
-	 */
-	public void setHarvestDate(Date harvestDate) {
-		this.harvestDate = harvestDate;
+	public void setSelectionHistory(String selectionHistory) {
+		this.selectionHistory = selectionHistory;
 	}
-
-	/**
-	 * @return the plantDate
-	 */
-	public Date getPlantDate() {
-		return plantDate;
+	public String getDelete() {
+		return delete;
 	}
-
-	/**
-	 * @param plantDate the plantDate to set
-	 */
-	public void setPlantDate(Date plantDate) {
-		this.plantDate = plantDate;
-	}	
-
-			
+	public void setDelete(String delete) {
+		this.delete = delete;
+	}
+	public String getAddGenotype() {
+		return addGenotype;
+	}
+	public void setAddGenotype(String addGenotype) {
+		this.addGenotype = addGenotype;
+	}
+    
 }

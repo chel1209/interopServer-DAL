@@ -3,19 +3,11 @@ package com.diversityarrays.dal.db.bms;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
 import net.pearcan.json.JsonMap;
 
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.SqlEntityFactory;
 import com.diversityarrays.dal.entity.ColumnNameMapping;
-import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.entity.GeneralType;
 import com.diversityarrays.dal.entity.ItemUnit;
 import com.diversityarrays.dal.ops.FilteringTerm;

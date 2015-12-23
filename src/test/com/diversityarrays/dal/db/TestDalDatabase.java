@@ -223,8 +223,8 @@ public class TestDalDatabase {
 
 	private static DalDatabase createBMS_DalDatabase() throws UnknownHostException, DalDbException {
 		
-		USERNAME = "celso";
-		PASSWORD = "celso";
+		USERNAME = "rulax";
+		PASSWORD = "rulax";
 		
 		String where = null;
 		String hostname = InetAddress.getLocalHost().getCanonicalHostName();
@@ -1255,7 +1255,7 @@ public class TestDalDatabase {
 				mapaParametros.put("json", "{\"TrialUnitId\":2152,\"SpecimenId\":4,\"SpecimenName\":\"CML165\",\"UnitPositionText\":4,\"entryType\":\"Test Entry\",\"UnitPositionId\":1,\"ReplicateNumber\":1,\"TreatmentId\":1,\"TrialUnitNote\":\"\",\"measurements\":[{\"measurementIdentifier\":{\"TrialTraitId\":2152,\"trait\":{\"TraitId\":18020,\"TraitName\":\"Plant_height\"}},\"TraitValue\":\"403\"}]}");
 				
 				Map<String, String> filePathByName = new HashMap<String, String>();
-				filePathByName.put("postData", "{\"TrialUnitId\":2152,\"SpecimenId\":5398211,\"SpecimenName\":\"CGSS01B00062T-099Y-099M-099M-099Y-099M-12Y-0MEX\",\"UnitPositionText\":1,\"entryType\":\"Test Entry\",\"UnitPositionId\":1,\"ReplicateNumber\":1,\"TreatmentId\":1,\"TrialUnitNote\":\"Test\",\"measurements\":[{\"measurementIdentifier\":{\"TrialTraitId\":6553,\"trait\":{\"TraitId\":29096,\"TraitName\":\"HNECRO_0_1\"}},\"TraitValue\":\"666\"}]}");
+				filePathByName.put("postData", "{\"TrialUnitId\":2152,\"SpecimenId\":5398211,\"SpecimenName\":\"CGSS01B00062T-099Y-099M-099M-099Y-099M-12Y-0MEX\",\"UnitPositionText\":1,\"entryType\":\"Test Entry\",\"UnitPositionId\":1,\"ReplicateNumber\":1,\"TreatmentId\":1,\"TrialUnitNote\":\"Test\",\"measurements\":[{\"measurementIdentifier\":{\"TrialTraitId\":6553,\"trait\":{\"TraitId\":29096,\"TraitName\":\"HNECRO_0_1\"}},\"TraitValue\":\"999\"}]}");
 
 				//The following example is where measurementId hasn't assigned yet
 				//filePathByName.put("postData", "{\"TrialUnitId\":2152,\"SpecimenId\":5398211,\"SpecimenName\":\"CGSS01B00062T-099Y-099M-099M-099Y-099M-12Y-0MEX\",\"UnitPositionText\":1,\"entryType\":\"Test Entry\",\"UnitPositionId\":1,\"ReplicateNumber\":1,\"TreatmentId\":1,\"TrialUnitNote\":\"Test\",\"measurements\":[{\"measurementIdentifier\":{\"TrialTraitId\":\"\",\"trait\":{\"TraitId\":8263,\"TraitName\":\"NPSEL\"}},\"TraitValue\":\"667\"}]}");
@@ -1316,7 +1316,8 @@ public class TestDalDatabase {
 							match.getParameterValues(), 
 							mapaParametros, 
 							null);	
-									
+					
+					System.out.println("Reponse[testGetProject]" + responseBuilder.asString());
 					checkJsonResult("testGetProject", responseBuilder, "Project");
 					if (NOISY) {
 						showResponse("testGetProject", responseBuilder);
@@ -1354,7 +1355,6 @@ public class TestDalDatabase {
 							mapaParametros, 
 							null);	
 					
-
 					checkJsonResult("testGetLocations", responseBuilder, DALClient.TAG_PAGINATION, "Site");
 					if (NOISY) {
 						showResponse("testGetLocations", responseBuilder);
@@ -1373,5 +1373,652 @@ public class TestDalDatabase {
 		
 	}
 	
+	/**
+	 *  Test for trial type service
+	 *  @author Raul Hernandez T.
+	 *  @date   14-DEC-2015
+	 */
+	@Test
+	public void testGetTrialType(){
+		LoggedInTest loggedInTest = new LoggedInTest("trialType", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/trial/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+									
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetTrialType", responseBuilder, "TrialType");
+					if (NOISY) {
+						showResponse("testGetTrialType", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);	
+	}
+	
+	/**
+	 *  Test for trial type service
+	 *  @author Raul Hernandez T.
+	 *  @date   14-DEC-2015
+	 */	
+	@Test
+	public void testGetSample(){
+		LoggedInTest loggedInTest = new LoggedInTest("sample", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/sample/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+
+					
+					System.out.println("Reponse" + responseBuilder.asString());
+					
+					//checkJsonResult("testGetSample", responseBuilder, "GeneralType");
+					if (NOISY) {
+						showResponse("testGetSample", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetItem(){
+		LoggedInTest loggedInTest = new LoggedInTest("item", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/item/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+									
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetItem", responseBuilder, "Item");
+					if (NOISY) {
+						showResponse("testGetItem", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetItemParent(){
+		LoggedInTest loggedInTest = new LoggedInTest("itemParent", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/itemparent/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+					
+					System.out.println("Reponse" + responseBuilder.asString());									
+					//checkJsonResult("testGetItemParent", responseBuilder, "ItemParent");
+					if (NOISY) {
+						showResponse("testGetItemParent", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetUnitType(){
+		LoggedInTest loggedInTest = new LoggedInTest("unitType", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/unittype/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+									
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetUnitType", responseBuilder, "UnitType");
+					if (NOISY) {
+						showResponse("testGetUnitType", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);			
+	}
+	
+	@Test
+	public void testGetState(){
+		LoggedInTest loggedInTest = new LoggedInTest("state", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/state/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+								
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetState", responseBuilder, "State");
+					if (NOISY) {
+						showResponse("testGetState", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetContainer(){
+		LoggedInTest loggedInTest = new LoggedInTest("container", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/container/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+									
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetContainer", responseBuilder, "Container");
+					if (NOISY) {
+						showResponse("testGetContainer", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);			
+	}
+	
+	@Test
+	public void testGetSpecimenGroup(){
+		LoggedInTest loggedInTest = new LoggedInTest("specimengroup", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/specimengroup/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+									
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetSpecimenGroup", responseBuilder, "SpecimenGroup");
+					if (NOISY) {
+						showResponse("testGetSpecimenGroup", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetParent(){
+		LoggedInTest loggedInTest = new LoggedInTest("parent", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/parent/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+					
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetParent", responseBuilder, "Parent");
+					if (NOISY) {
+						showResponse("testGetParent", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetGenotypeA(){
+		LoggedInTest loggedInTest = new LoggedInTest("genotypea", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/genotypealias/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+									
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetGenotypeA", responseBuilder, "GenotypeaAlias");
+					if (NOISY) {
+						showResponse("testGetGenotypeA", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetGenotypeAliasStatus(){
+		LoggedInTest loggedInTest = new LoggedInTest("genotypealiasstatus", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/genotypealiasstatus/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+									
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetGenotypeAliasStatus", responseBuilder, "GenoTypeAliasStatus");
+					if (NOISY) {
+						showResponse("testGetGenotypeAliasStatus", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetGenParent(){
+		LoggedInTest loggedInTest = new LoggedInTest("genparent", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/genparent/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+					
+					System.out.println("Reponse" + responseBuilder.asString());				
+					//checkJsonResult("testGetGenParent", responseBuilder, "GenParent");
+					if (NOISY) {
+						showResponse("testGetGenParent", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);			
+	}
+	
+	@Test
+	public void testGetGenotypeSpecimen(){
+		LoggedInTest loggedInTest = new LoggedInTest("genotypespecimen", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/genotypespecimen/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+					
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetGenotypeSpecimen", responseBuilder, "GenoTypeSpecimen");
+					if (NOISY) {
+						showResponse("testGetGenotypeSpecimen", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetTrialEvent(){
+		LoggedInTest loggedInTest = new LoggedInTest("trialevent", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/trialevent/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+					
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetTrialEvent", responseBuilder, "TrialEvent");
+					if (NOISY) {
+						showResponse("testGetTrialEvent", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);			
+	}
+	
+	@Test
+	public void testGetWorkflow(){
+		LoggedInTest loggedInTest = new LoggedInTest("workflow", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/workflow/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+									
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetWorkflow", responseBuilder, "Workflow");
+					if (NOISY) {
+						showResponse("testGetWorkflow", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
+	@Test
+	public void testGetTraitGroup(){
+		LoggedInTest loggedInTest = new LoggedInTest("traitgroup", true) {
+
+			@Override
+			public void execute(DalSession session) {
+				String dalcmd = "list/type/traitgroup/active";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetTraitGroup", responseBuilder, "TraitGroup");
+					if (NOISY) {
+						showResponse("testGetTraitGroup", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);			
+	}
+	
+	/**
+	 * Get the specimen-gemplasm values
+	 * @author Raul Hernandez T.
+	 * @date   12/18/2015
+	 */
+	@Test
+	public void testGetSpecimen(){
+		LoggedInTest loggedInTest = new LoggedInTest("specimen", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "list/specimen/" + 100 + "/page/" + 1;
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				mapaParametros.put("Filtering", "Specimen in (268069,268070)");
+				
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+
+					System.out.println("Reponse" + responseBuilder.asString());
+					//checkJsonResult("testGetTraitGroup", responseBuilder, "TraitGroup");
+					if (NOISY) {
+						showResponse("testGetSpecimen", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);			
+	}
 }
 

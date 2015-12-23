@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.diversityarrays.dal.db.DalDatabaseUtil;
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.DalResponseBuilder;
 import com.diversityarrays.dal.db.EntityIterator;

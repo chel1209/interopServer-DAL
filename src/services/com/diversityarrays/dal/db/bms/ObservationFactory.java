@@ -1,7 +1,6 @@
 package com.diversityarrays.dal.db.bms;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +21,6 @@ import com.google.gson.Gson;
  */
 
 public class ObservationFactory {
-	
-	private String strURL;
 	
 	private static final String UNIQUE_IDENTIFIER      = "TrialUnitId";
 	private static final String GERMPLASM_ID           = "SpecimenId";
