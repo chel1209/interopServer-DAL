@@ -32,6 +32,7 @@ import com.diversityarrays.dal.db.EntityProvider;
 import com.diversityarrays.dal.db.RecordCountCacheEntry;
 import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.entity.Page;
+import com.diversityarrays.dal.entity.Trial;
 import com.diversityarrays.dal.server.DalSession;
 import com.diversityarrays.dalclient.DALClient;
 
@@ -76,7 +77,7 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 
 			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": CACHING value=" + bmsPage.getTotalResults());
 		//}
-
+			
 		int nPerPage = getIntParameter(0, dalOpParameters, "_nperpage", 1);
 		int numOfPages = (bmsPage.getTotalResults() + nPerPage - 1) / nPerPage;
 		int pageNum  = getIntParameter(1, dalOpParameters, "_num",      1);
@@ -92,6 +93,8 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 			.attribute(DALClient.ATTR_NUM_OF_PAGES, Integer.toString(numOfPages))
 			.attribute(DALClient.ATTR_NUM_PER_PAGE, Integer.toString(nPerPage))
 			.endTag();
+		
+		entityProvider.prepareDetailsSearch();
 		
 		if(nPerPage>BMSApiDataConnection.BMS_MAX_PAGE_SIZE){
 			int processed = 0;
@@ -117,6 +120,9 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 					T entity;
 					iter.readLine();
 					while (null != (entity = iter.nextEntity())) {
+						if(entity instanceof Trial){
+							entityProvider.getDetails(entity);
+						}
 						appendEntity(responseBuilder, entity);
 						processed++;
 					}
@@ -135,11 +141,24 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 			try {
 				T entity;
 				iter.readLine();
-				
+
+				EntityIterator<? extends DalEntity> iterator = null;
 				while (null != (entity = iter.nextEntity())) {
-					appendEntity(responseBuilder, entity);
+					if(entity instanceof Trial){
+						iterator = entityProvider.createIdIterator(String.valueOf(((Trial)entity).getTrialId()), firstRecord, BMSApiDataConnection.BMS_MAX_PAGE_SIZE, filterClause,bmsPage);
+						iterator.readLine();
+						do{
+							if (null != (entity = (T)iterator.nextEntity())) {
+								appendEntity(responseBuilder, entity);
+							}
+						}while(iterator.isPending());
+						//appendEntity(responseBuilder, entity);
+					}else{
+						appendEntity(responseBuilder, entity);
+					}
 					//iter.readLine();
 				}
+				
 			}
 			finally {
 				try { iter.close(); }

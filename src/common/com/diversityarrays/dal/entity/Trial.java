@@ -62,6 +62,21 @@ public class Trial extends DalEntity{
 	public static final EntityColumn TRIAL_ACRONYM = createEntityColumn(Trial.class, "trialAcronym");
 	public static final EntityColumn TRIAL_ID = createEntityColumn(Trial.class, "trialId");
 	public static final EntityColumn SITE_NAME_ID = createEntityColumn(Trial.class, "siteNameId");
+	
+	public Trial(){
+		
+	}
+	
+	public Trial(Trial trial){
+		this.designTypeName = trial.designTypeName;
+		this.trialAcronym   = trial.trialAcronym;
+		this.trialEndDate   = trial.trialEndDate;
+		this.trialId        = trial.trialId;
+		this.siteName       = trial.siteName;
+		this.siteNameId     = trial.siteNameId;
+		this.trialManagerId = trial.trialManagerId;
+		
+	}
 		
 	/**
 	 * @return the trialNote

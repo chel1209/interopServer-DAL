@@ -51,7 +51,11 @@ public class TrialUnit extends DalEntity{
 				result = "{ TrialUnitId: \""+ trialUnitId + "\"  TrialId: \"" + trialId + "\", TrialUnitNote: \"" + trialUnitNote + "\", SiteName: \"" + siteName + "\", SiteId: \""+ siteId +  "\", UnitPositionText: \"" + unitPositionText + "\", Specimen: \"" + specimen.toString() + "\", SampleMeasurement : \""+ sampleMeasurement.toString() +"\", ReplicateNumber :\""+ replicateNumber + "\" }";
 			}
 		}else {
-			result = "{ TrialUnitId: \""+ trialUnitId + "\" TrialId: \"" + trialId + "\", TrialUnitNote: \"" + trialUnitNote + "\", SiteName: \"" + siteName + "\", SiteId: \""+ siteId +  "\", UnitPositionText: \"" + unitPositionText + "\", Specimen: \"" + specimen.toString() + "\", ReplicateNumber: \""+ replicateNumber + "\"}";
+			if(specimen!=null){
+				result = "{ TrialUnitId: \""+ trialUnitId + "\" TrialId: \"" + trialId + "\", TrialUnitNote: \"" + trialUnitNote + "\", SiteName: \"" + siteName + "\", SiteId: \""+ siteId +  "\", UnitPositionText: \"" + unitPositionText + "\", Specimen: \"" + specimen.toString() + "\", ReplicateNumber: \""+ replicateNumber + "\"}";
+			}else{
+				result = "{ TrialUnitId: \""+ trialUnitId + "\" TrialId: \"" + trialId + "\", TrialUnitNote: \"" + trialUnitNote + "\", SiteName: \"" + siteName + "\", SiteId: \""+ siteId +  "\", UnitPositionText: \"" + unitPositionText + "\", ReplicateNumber: \""+ replicateNumber + "\"}";
+			}
 		}
 		return result;
 	}

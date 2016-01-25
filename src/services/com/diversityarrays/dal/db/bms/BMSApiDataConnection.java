@@ -5,12 +5,15 @@ import java.util.List;
 public class BMSApiDataConnection {
 	
 	
-	private static String IP                       = "172.17.60.83";
-	private static String PORT                     = "18080";
-	private static String CROP                     = "wheat";
+	public  static final String IP                 = "bms-v4b5t-06";
+	public  static final String PORT               = "48080";
+	public  static final String CROP               = "wheat";
 	private static final String LOCATION_TYPE_ID   = "410";
 	public static final int BMS_MAX_PAGE_SIZE      = 200;
 	public static final String PAGE_DOES_NOT_EXIST = "The page number you requested is too big.";
+	public static final String BMS_USER            = "user1";
+	public static final String BMS_PASSWORD        = "cimmyt";
+	public static final String TOKEN_HEADER        = "X-Auth-Token";
 
 	
 	/* 
@@ -122,6 +125,42 @@ public class BMSApiDataConnection {
        return "http://" + IP + ":" + PORT + "/bmsapi/germplasm/" + CROP + "/" + id;	
     }
     
+    public static String getTrialSearchCall(String programUniqueId,String principalInvestigator,String location, String season){
+    	String call = null;
+    	if(programUniqueId != null && principalInvestigator != null && location != null && season != null){
+    		call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?programUniqueId="+ programUniqueId + "&principalInvestigator=" + principalInvestigator + "&location=" + location + "&season=" + season;
+    	}else{
+    		if(programUniqueId == null && principalInvestigator != null && location != null && season != null){
+    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?principalInvestigator=" + principalInvestigator + "&location=" + location + "&season=" + season;
+    		}
+    		if(programUniqueId != null && principalInvestigator == null && location != null && season != null){
+    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?programUniqueId="+ programUniqueId + "&location=" + location + "&season=" + season;
+    		}
+    		if(programUniqueId != null && principalInvestigator == null && location == null && season != null){
+    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?programUniqueId="+ programUniqueId + "&season=" + season;
+    		}
+    		if(programUniqueId != null && principalInvestigator == null && location == null && season == null){
+    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?programUniqueId="+ programUniqueId;
+    		}    		
+    		if(programUniqueId != null && principalInvestigator == null && location != null && season == null){
+    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?programUniqueId="+ programUniqueId + "&location=" + location;
+    		}    		
+    		if(programUniqueId == null && principalInvestigator == null && location != null && season != null){
+    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?location=" + location + "&season=" + season;
+    		}
+    		if(programUniqueId == null && principalInvestigator == null && location == null && season != null){
+    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?&season=" + season;
+    		}
+    		if(programUniqueId == null && principalInvestigator == null && location == null && season == null){
+    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search";
+    		}
+    	}
+    	
+    	return call;
+    }
     
+    public static String getLoginURL(){
+    	return "http://" + IP + ":" + PORT + "/bmsapi/authenticate";
+    }
     
 }

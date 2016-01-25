@@ -55,6 +55,7 @@ import com.diversityarrays.dal.entity.Measurements;
 import com.diversityarrays.dal.entity.Observation;
 import com.diversityarrays.dal.entity.Trait;
 import com.diversityarrays.dal.ops.DalOperation;
+import com.diversityarrays.dal.ops.Filtering;
 import com.diversityarrays.dal.ops.OperationMatch;
 import com.diversityarrays.dal.ops.WordNode;
 import com.diversityarrays.dal.server.DalServer;
@@ -1149,7 +1150,7 @@ public class TestDalDatabase {
 	 * @author CCARREIRO 
 	 * 
 	 */
-	@Test
+	 @Test
 	public void testGetTrial() {
 		
 		LoggedInTest loggedInTest = new LoggedInTest("trial", true) {
@@ -1157,7 +1158,15 @@ public class TestDalDatabase {
 			@Override
 			public void execute(DalSession session) {
 				
-				String dalcmd = "trial/" + GET_PROGRAM_ID;
+				String dalcmd = "list/trial/" + 1 + "/page/" + 1 + "?Filtering=ProjectId%3D63c50ebb-67d1-4b8d-a237-1b9fb6d28859";
+				Map<String, String> methodParams = new HashMap<String, String>();
+				System.out.println("FilteringClause>>>>>>" + dalcmd.split("\\?")[1]);
+				String[] filteringArray = dalcmd.split("\\?")[1].split("=",1);
+				String filter = null;
+				for(String filteringString : filteringArray){
+					filter = filteringString.split("=")[1];
+				}
+				methodParams.put(DalOperation.OPTION_FILTERING, filter);
 				
 				OperationMatch match = getOperationMatch(dalcmd);
 				
@@ -1169,10 +1178,9 @@ public class TestDalDatabase {
 							Method.GET, 
 							dalcmd, 
 							match.getParameterValues(), 
-							null, 
+							methodParams,
 							null);
-					
-					checkJsonResult("testGetTrial", responseBuilder, "Trial");
+					checkJsonResult("testGetTrial", responseBuilder,DALClient.TAG_PAGINATION, "Trial");
 					
 					if (NOISY) {
 						showResponse("testGetTrial", responseBuilder);

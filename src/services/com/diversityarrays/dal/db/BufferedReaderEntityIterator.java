@@ -22,6 +22,7 @@ public class BufferedReaderEntityIterator<T extends DalEntity> implements Entity
 	private String line = null;
 	private boolean pending = false;
 	private Page page;
+	private int recordCount = 0;
 	
 	/**
 	 * 
@@ -76,6 +77,7 @@ public class BufferedReaderEntityIterator<T extends DalEntity> implements Entity
 					
 				}else{
 					List<Object> list = parser.getListResult();
+					recordCount = list.size();
 					if(index < list.size()){
 						result = tFactory.createEntity((JsonMap)list.get(index));
 						pending = tFactory.isPending();
@@ -107,6 +109,20 @@ public class BufferedReaderEntityIterator<T extends DalEntity> implements Entity
 	 */
 	public void setPending(boolean pending) {
 		this.pending = pending;
+	}
+
+	/**
+	 * @return the recordCount
+	 */
+	public int getRecordCount() {
+		return recordCount;
+	}
+
+	/**
+	 * @param recordCount the recordCount to set
+	 */
+	public void setRecordCount(int recordCount) {
+		this.recordCount = recordCount;
 	}
 
 }

@@ -71,10 +71,12 @@ public class PageFactory implements SqlEntityFactory<Page> {
 
 	public Page createEntity(JsonMap jsonMap) throws DalDbException {
 		Page result = new Page();
-		result.setPageNumber(Integer.valueOf((String)jsonMap.get("pageNumber")));
-		result.setPageSize(Integer.valueOf((String)jsonMap.get("pageSize")));
-		result.setTotalResults(Integer.valueOf((String)jsonMap.get("totalResults")));
-		result.setTotalPages(Integer.valueOf((String)jsonMap.get("totalPages")));
+		if(jsonMap.get("pageNumber")!=null){
+			result.setPageNumber(Integer.valueOf((String)jsonMap.get("pageNumber")));
+			result.setPageSize(Integer.valueOf((String)jsonMap.get("pageSize")));
+			result.setTotalResults(Integer.valueOf((String)jsonMap.get("totalResults")));
+			result.setTotalPages(Integer.valueOf((String)jsonMap.get("totalPages")));
+		}
 		return result;
 	}
 

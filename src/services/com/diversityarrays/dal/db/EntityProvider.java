@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.entity.Page;
+import com.diversityarrays.dal.entity.Trial;
 
 
 public interface EntityProvider<T extends DalEntity> {
@@ -97,5 +98,9 @@ public interface EntityProvider<T extends DalEntity> {
 	 * @throws DalDbException
 	 */
 	public void sendDataUsingPut(Map<String, String> parameters,List<String> dalOpParameters,Map<String, String> filePathByName) throws DalDbException;
+
+	EntityIterator<? extends DalEntity> createIdIterator(String id,
+			int firstRecord, int nRecords, String filterClause, Page page)
+			throws DalDbException;
 	
 }

@@ -34,6 +34,7 @@ import org.apache.commons.codec.binary.Hex;
 
 import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.ops.DalOperation;
+import com.diversityarrays.dal.ops.Filtering;
 import com.diversityarrays.dal.ops.OperationMatch;
 import com.diversityarrays.dal.ops.WordNode;
 import com.diversityarrays.dalclient.DalUtil;
@@ -84,6 +85,11 @@ public class DalDatabaseUtil {
 	static public OperationMatch findOperationMatch(
 			String dalcmd, WordNode root, StringBuilder errmsg) 
 	{
+		/**Need to avoid parsing the filtering clause as parameter and process FilteringClause*/
+		if(dalcmd.contains("?")){
+			String[] call = dalcmd.split("\\?");
+			dalcmd = call[0];
+		}
 		String[] parts = dalcmd.split("/");
 		
 		OperationMatch result = new OperationMatch();
@@ -217,8 +223,6 @@ public class DalDatabaseUtil {
 	}
 		
 	private DalDatabaseUtil() {
-	}
-
-
+	} 
 
 }
