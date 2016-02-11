@@ -73,13 +73,13 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 		}
 		else {*/
 			bmsPage = entityProvider.getEntityCountPage(filterClause);
-			context.setRecordCountCacheEntry(session, entityClass, filterClause, bmsPage.getTotalResults());
+			context.setRecordCountCacheEntry(session, entityClass, filterClause, bmsPage==null?0:bmsPage.getTotalResults());
 
-			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": CACHING value=" + bmsPage.getTotalResults());
+			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": CACHING value=" + (bmsPage==null?0:bmsPage.getTotalResults()));
 		//}
 			
 		int nPerPage = getIntParameter(0, dalOpParameters, "_nperpage", 1);
-		int numOfPages = (bmsPage.getTotalResults() + nPerPage - 1) / nPerPage;
+		int numOfPages = ((bmsPage==null?0:bmsPage.getTotalResults()) + nPerPage - 1) / nPerPage;
 		int pageNum  = getIntParameter(1, dalOpParameters, "_num",      1);
 		int firstRecord = (pageNum - 1) * nPerPage;
 		EntityIterator<? extends T> iter = null;
@@ -89,7 +89,7 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 		
 		responseBuilder.startTag(DALClient.TAG_PAGINATION)
 			.attribute(DALClient.ATTR_PAGE, Integer.toString(pageNum))
-			.attribute(DALClient.ATTR_NUM_OF_RECORDS, Integer.toString(bmsPage.getTotalResults()))
+			.attribute(DALClient.ATTR_NUM_OF_RECORDS, Integer.toString((bmsPage==null?0:bmsPage.getTotalResults())))
 			.attribute(DALClient.ATTR_NUM_OF_PAGES, Integer.toString(numOfPages))
 			.attribute(DALClient.ATTR_NUM_PER_PAGE, Integer.toString(nPerPage))
 			.endTag();

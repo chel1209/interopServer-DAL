@@ -5,9 +5,9 @@ import java.util.List;
 public class BMSApiDataConnection {
 	
 	
-	public  static final String IP                 = "bms-v4b5t-06";
+	public  static final String IP                 = "bms-v4b5t-03";
 	public  static final String PORT               = "48080";
-	public  static final String CROP               = "wheat";
+	public  static final String CROP               = "maize";
 	private static final String LOCATION_TYPE_ID   = "410";
 	public static final int BMS_MAX_PAGE_SIZE      = 200;
 	public static final String PAGE_DOES_NOT_EXIST = "The page number you requested is too big.";
@@ -149,7 +149,7 @@ public class BMSApiDataConnection {
     			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?location=" + location + "&season=" + season;
     		}
     		if(programUniqueId == null && principalInvestigator == null && location == null && season != null){
-    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?&season=" + season;
+    			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search?season=" + season;
     		}
     		if(programUniqueId == null && principalInvestigator == null && location == null && season == null){
     			call = "http://" + IP + ":" + PORT + "/bmsapi/study/" + CROP + "/search";

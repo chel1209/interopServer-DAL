@@ -224,8 +224,8 @@ public class TestDalDatabase {
 
 	private static DalDatabase createBMS_DalDatabase() throws UnknownHostException, DalDbException {
 		
-		USERNAME = "rulax";
-		PASSWORD = "rulax";
+		USERNAME = "celso";
+		PASSWORD = "celso";
 		
 		String where = null;
 		String hostname = InetAddress.getLocalHost().getCanonicalHostName();
@@ -1158,7 +1158,8 @@ public class TestDalDatabase {
 			@Override
 			public void execute(DalSession session) {
 				
-				String dalcmd = "list/trial/" + 1 + "/page/" + 1 + "?Filtering=ProjectId%3D63c50ebb-67d1-4b8d-a237-1b9fb6d28859";
+				//String dalcmd = "list/trial/" + 1 + "/page/" + 1 + "?Filtering=ProjectId%3D63c50ebb-67d1-4b8d-a237-1b9fb6d28859";
+				String dalcmd = "list/trial/" + 1 + "/page/" + 1 + "?Filtering=Season%3D2015 Winter";
 				Map<String, String> methodParams = new HashMap<String, String>();
 				System.out.println("FilteringClause>>>>>>" + dalcmd.split("\\?")[1]);
 				String[] filteringArray = dalcmd.split("\\?")[1].split("=",1);

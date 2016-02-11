@@ -74,7 +74,7 @@ public class SpecimenFactory implements SqlEntityFactory<Specimen> {
 	 * @author Raul Hernandez T.
 	 * @date   12/22/2015
 	 * @note   La API BMS no identifica cual es la historia de seleccion o el nombre en
-	 *         la respues del servicio. Se asigna el primer registro encontrado a la historia
+	 *         la respuesta del servicio. Se asigna el primer registro encontrado a la historia
 	 *         de seleccion y el siguiente al nombre.
 	 *         
 	 *         Segun el equipo de LeafNode, la nueva version del API tendra dichos identificadores
@@ -149,7 +149,31 @@ public class SpecimenFactory implements SqlEntityFactory<Specimen> {
 	}
 	
 	public void createEntity(TrialUnit trialUnit, JsonMap jsonMap,SampleMeasurementFactory sampleMeasurementFactory, List<TrialTrait> trialTraits, String sampleMeasurementURL)
-			throws DalDbException {}	
+			throws DalDbException {        
+		
+		List<Object> observations = sampleMeasurementFactory.getObservationsMap(sampleMeasurementURL);
+
+	    List<Object> germplasm = (List) jsonMap.get("germplasm");
+	    for (Object map : germplasm) {
+	    	Specimen result = new Specimen();
+            if (Integer.valueOf((String) ((JsonMap) map).get("entryNumber")) == Integer.valueOf(trialUnit.getUnitPositionText())) {
+                result.setSpecimenName((String) ((JsonMap) map).get("designation"));
+                result.setSpecimenId((String) ((JsonMap) map).get("gid"));
+                trialUnit.setSpecimen(result);
+                
+                if(observations!=null&&observations.size()>0){
+                    for(Object observationsMap : observations)
+                        if(Integer.valueOf((String)((JsonMap)observationsMap).get("entryNumber")) == Integer.valueOf(trialUnit.getUnitPositionText())){
+                            sampleMeasurementFactory.createEntity(trialUnit,(JsonMap)observationsMap, trialTraits);
+                            break;
+                        }
+                }
+                
+                break;
+            }
+        }
+	        
+}	
 
 
 }

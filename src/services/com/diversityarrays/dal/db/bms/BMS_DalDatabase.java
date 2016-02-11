@@ -809,14 +809,16 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 				BufferedReaderEntityIterator<Page> entityIterator =  new BufferedReaderEntityIterator<Page>(bufferedReader, pageFactory);
 				entityIterator.readLine();
 				result = entityIterator.nextEntity();
-				result.setTotalResults(entityIterator.getRecordCount());
-				result.setPageSize(BMSApiDataConnection.BMS_MAX_PAGE_SIZE);
-				result.setFirstPage(true);
-				result.setHasNextPage(false);
-				result.setHasPreviousPage(false);
-				result.setLastPage(false);
-				result.setPageNumber(1);
-				result.setTotalPages(1);
+				if(result!=null){
+					result.setTotalResults(entityIterator.getRecordCount());
+					result.setPageSize(BMSApiDataConnection.BMS_MAX_PAGE_SIZE);
+					result.setFirstPage(true);
+					result.setHasNextPage(false);
+					result.setHasPreviousPage(false);
+					result.setLastPage(false);
+					result.setPageNumber(1);
+					result.setTotalPages(1);
+				}
 			}catch(ClientProtocolException cpex){
 				throw new DalDbException("Protocol error: " + cpex);
 			}catch(IOException ioex){

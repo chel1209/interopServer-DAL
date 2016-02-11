@@ -29,6 +29,11 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 	private List<Object> environments;
 	private int index = 0;
 	private boolean pending = false;
+	private String programUniqueId = null;
+	private String location = null;
+	private String season = null;
+	private boolean processTraits;
+	private boolean processPlots;
 
 	private static final int OBSOLETE = 1;
 
@@ -102,44 +107,9 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 
 	@Override
 	public String createCountQuery(String filterClause) throws DalDbException {
-		String programUniqueId = null;
-		String location = null;
-		//String filterClauseSplit = filterClause.split("=")[1];
-		if(filterClause.contains("%26")){
-			String[] splitArray = filterClause.split("%26");
-			for(String arrayContents : splitArray){
-				//System.out.println("ArrayContents>>>>" + arrayContents);
-				if(arrayContents.contains("ProjectId")){
-					programUniqueId = splitArray[1];
-				}
-				if(arrayContents.contains("SiteId")){
-					location = splitArray[1];
-				}
-			}
-		}else{
-			if(filterClause.contains("%3D")){
-				String[] splitArray = filterClause.split("%3D");
-				for(String arrayContents : splitArray){
-					if(arrayContents.contains("ProjectId")){
-						programUniqueId = splitArray[1];
-					}
-					if(arrayContents.contains("SiteId")){
-						location = splitArray[1];
-						}
-				}
-			}else{
-				String[] splitArray = filterClause.split("=");
-				for(String arrayContents : splitArray){
-					if(arrayContents.contains("ProjectId")){
-						programUniqueId = splitArray[1];
-					}
-					if(arrayContents.contains("SiteId")){
-						location = splitArray[1];
-						}
-				}
-			}
-		}
-		return BMSApiDataConnection.getTrialSearchCall(programUniqueId,null,location,null);
+
+		splitFilterClause(filterClause);
+		return BMSApiDataConnection.getTrialSearchCall(programUniqueId,null,location,season);
 	}
 
 	@Override
@@ -304,8 +274,10 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 
 		}
 
-		//TrialTraitFactory trialTraitFactory = new TrialTraitFactory();
-		//trialTraitFactory.createEntity(result, jsonMap);
+		if(processTraits){
+			TrialTraitFactory trialTraitFactory = new TrialTraitFactory();
+			trialTraitFactory.createEntity(result, jsonMap);
+		}
 
 		if (environments == null) {
 			environments = (List) jsonMap.get("environments");
@@ -361,8 +333,10 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 						index = 0;
 					}
 					
-					//TrialUnitFactory trialUnitFactory = new TrialUnitFactory();
-					//trialUnitFactory.createEntity(result, jsonMap);				
+					if(processPlots){
+						TrialUnitFactory trialUnitFactory = new TrialUnitFactory();
+						trialUnitFactory.createEntity(result, jsonMap);
+					}
 					
 					if(((Trial)result).getSiteName() != null && ((Trial)result).getSiteNameID() != null){
 						return result;
@@ -377,44 +351,8 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 	}
 
 	public String createListStudiesURL(String filterClause) {
-		String programUniqueId = null;
-		String location = null;
-		//String filterClauseSplit = filterClause.split("=")[1];
-		if(filterClause.contains("%26")){
-			String[] splitArray = filterClause.split("%26");
-			for(String arrayContents : splitArray){
-				//System.out.println("ArrayContents>>>>" + arrayContents);
-				if(arrayContents.contains("ProjectId")){
-					programUniqueId = splitArray[1];
-				}
-				if(arrayContents.contains("SiteId")){
-					location = splitArray[1];
-				}
-			}
-		}else{
-			if(filterClause.contains("%3D")){
-				String[] splitArray = filterClause.split("%3D");
-				for(String arrayContents : splitArray){
-					if(arrayContents.contains("ProjectId")){
-						programUniqueId = splitArray[1];
-					}
-					if(arrayContents.contains("SiteId")){
-						location = splitArray[1];
-						}
-				}
-			}else{
-				String[] splitArray = filterClause.split("=");
-				for(String arrayContents : splitArray){
-					if(arrayContents.contains("ProjectId")){
-						programUniqueId = splitArray[1];
-					}
-					if(arrayContents.contains("SiteId")){
-						location = splitArray[1];
-						}
-				}
-			}
-		}
-		return BMSApiDataConnection.getTrialSearchCall(programUniqueId,null,location,null);
+		splitFilterClause(filterClause);
+		return BMSApiDataConnection.getTrialSearchCall(programUniqueId,null,location,season);
 	}
 
 	public String createListStudiesDetailsURL(String id) {
@@ -571,6 +509,61 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		
 		return entity;
 		
+	}
+	
+	private void splitFilterClause(String filterClause){
+		//String filterClauseSplit = filterClause.split("=")[1];
+		if(filterClause.contains("%26")){
+			String[] splitArray = filterClause.split("%26");
+			for(String arrayContents : splitArray){
+				//System.out.println("ArrayContents>>>>" + arrayContents);
+				if(arrayContents.contains("ProjectId")){
+					programUniqueId = splitArray[1];
+				}
+				if(arrayContents.contains("SiteId")){
+					location = splitArray[1];
+				}
+				if(arrayContents.contains("Season")){
+					season = splitArray[1].replaceAll(" ", "%20");
+				}				
+			}
+		}else{
+			if(filterClause.contains("%3D")){
+				String[] splitArray = filterClause.split("%3D");
+				for(String arrayContents : splitArray){
+					if(arrayContents.contains("ProjectId")){
+						programUniqueId = splitArray[1];
+					}
+					if(arrayContents.contains("SiteId")){
+						location = splitArray[1];
+					}
+					if(arrayContents.contains("Season")){
+						season = splitArray[1].replaceAll(" ", "%20");
+					}
+				}
+			}else{
+				String[] splitArray = filterClause.split("=");
+				for(String arrayContents : splitArray){
+					if(arrayContents.contains("ProjectId")){
+						programUniqueId = splitArray[1];
+					}
+					if(arrayContents.contains("SiteId")){
+						location = splitArray[1];
+					}
+					if(arrayContents.contains("Season")){
+						season = splitArray[1].replaceAll(" ", "%20");
+					}
+				}
+			}
+		}
+	}
+	
+	public void setProcessTraits(boolean processTraits){
+		this.processTraits = processTraits;
+	}
+	
+	public void setProcessPlots(boolean processPlots){
+		this.processPlots = processPlots;
 	}
 
 }
