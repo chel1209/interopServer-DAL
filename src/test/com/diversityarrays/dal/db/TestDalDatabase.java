@@ -1302,6 +1302,11 @@ public class TestDalDatabase {
 
 	}
 	
+	/**
+	 *  Test for getProject details service
+	 *  @author Raul Hernandez T.
+	 *  @date   14-NOV-2015
+	 */	
 	@Test
 	public void testGetProject(){
 		
@@ -1309,7 +1314,7 @@ public class TestDalDatabase {
 
 			@Override
 			public void execute(DalSession session) {
-				String dalcmd = "projects/";
+				String dalcmd = "list/project/" + 100 + "/page/" + 1;
 				
 				OperationMatch match = getOperationMatch(dalcmd);
 				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
@@ -1326,7 +1331,7 @@ public class TestDalDatabase {
 							null);	
 					
 					System.out.println("Reponse[testGetProject]" + responseBuilder.asString());
-					checkJsonResult("testGetProject", responseBuilder, "Project");
+					//checkJsonResult("testGetProject", responseBuilder, "Project");
 					if (NOISY) {
 						showResponse("testGetProject", responseBuilder);
 					}
@@ -2028,5 +2033,89 @@ public class TestDalDatabase {
 		};
 		doLoggedInTest(loggedInTest);			
 	}
+	
+	/**
+	 * Get season values
+	 */
+	public void testGetSeason(){
+		LoggedInTest loggedInTest = new LoggedInTest("season", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "to define...";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+
+					System.out.println("Reponse [testGetSeason]: " + responseBuilder.asString());
+
+					if (NOISY) {
+						showResponse("testGetSeason", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);			
+	}
+	
+	/**
+	 * @author Raul Hernandez T.
+	 * @date 2/9/2016
+	 */
+	@Test
+	public void testGetCrop(){
+		LoggedInTest loggedInTest = new LoggedInTest("crop", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "list/group";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				
+				
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.GET, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+
+					System.out.println("Reponse [testGetCrop] \n" + responseBuilder.asString() + "\n");
+
+					if (NOISY) {
+						showResponse("testGetCrop", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+	}
+	
 }
 

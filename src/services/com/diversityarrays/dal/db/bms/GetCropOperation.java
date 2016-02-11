@@ -11,27 +11,29 @@ import com.diversityarrays.dal.db.DalResponseBuilder;
 import com.diversityarrays.dal.db.EntityIterator;
 import com.diversityarrays.dal.db.EntityOperation;
 import com.diversityarrays.dal.db.EntityProvider;
+import com.diversityarrays.dal.entity.Crop;
 import com.diversityarrays.dal.entity.Project;
+import com.diversityarrays.dal.entity.SystemGroup;
 import com.diversityarrays.dal.server.DalSession;
 
 import fi.iki.elonen.NanoHTTPD.Method;
 
 
 
-/*
+
+/**
+ * 
  * @author Raul Hernandez T.
- * @date 10-07-2015
+ * @date 2/9/2016
+ *
  */
-
-
-public class GetProjectOperation extends EntityOperation<Project,BMS_DalDatabase>{
+public class GetCropOperation extends EntityOperation<SystemGroup,BMS_DalDatabase>{
 	
-	public static final Pattern PATTERN = Pattern.compile("^list/project/[a-z]*/page/[a-z]*");
-	public static final String  ENTITY_NAME = "Project";
+	public static final Pattern PATTERN = Pattern.compile("^list/group");
+	public static final String  ENTITY_NAME = "Crop";	
 	
-
-	public GetProjectOperation(BMS_DalDatabase db, EntityProvider<Project> provider){
-		super(db, ENTITY_NAME, "list/project/_nperpage/page/_num", Project.class, provider);
+	public GetCropOperation(BMS_DalDatabase db, EntityProvider<SystemGroup> provider){
+		super(db, ENTITY_NAME, "list/group", SystemGroup.class, provider);
 	}
 
 	@Override
@@ -41,16 +43,15 @@ public class GetProjectOperation extends EntityOperation<Project,BMS_DalDatabase
 			throws DalDbException {
 		
 		String filterClause = DalDatabaseUtil.getFilteringClause(methodParms);
-		String id = dalOpParameters.get(0);
 		
-		EntityIterator<? extends Project> iter = null;
+		EntityIterator<? extends SystemGroup> iter = null;
 		
 		try{
 			
-			iter = entityProvider.createIdIterator(id, 0, 0, filterClause);
+			iter = entityProvider.createIterator( 0, 0, filterClause);
 			responseBuilder.addResponseMeta(entityTagName);
 			
-			Project entity;
+			SystemGroup entity;
 			iter.readLine();
 			
 			while (null != (entity = iter.nextEntity())) {
@@ -63,5 +64,5 @@ public class GetProjectOperation extends EntityOperation<Project,BMS_DalDatabase
 				catch(IOException ignore){}
 			}
 		}
-	}
+	}		
 }

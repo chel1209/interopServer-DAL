@@ -163,4 +163,9 @@ public class BMSApiDataConnection {
     	return "http://" + IP + ":" + PORT + "/bmsapi/authenticate";
     }
     
+    public static String getCropURL(){
+    	return "http://" + IP + ":" + PORT + "/bmsapi/crop/list";
+    }
+    
+    
 }

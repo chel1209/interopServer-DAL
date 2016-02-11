@@ -17,11 +17,24 @@ import com.diversityarrays.dal.entity.Project;
 public class ProjectFactory implements SqlEntityFactory<Project>{
 	
 	
+	/*
 	private static final String USER_ID      = "userId";
 	private static final String START_DATE   = "startDate";
 	private static final String PROJECT_NAME = "projectName";
 	private static final String CROP_TYPE    = "cropType";
 	private static final String UNIQUE_ID    = "uniqueID";
+	*/
+	
+	private static final String ID         = "id";
+	private static final String UNIQUE_ID  = "uniqueID";
+	private static final String NAME       = "name";
+	private static final String CREATED_BY = "createdBy";
+	private static final String MEMBERS    = "members";
+	private static final String CROP       = "crop";
+	private static final String START_DATE = "startDate";
+	
+	
+	
 	
 	
 	
@@ -47,15 +60,32 @@ public class ProjectFactory implements SqlEntityFactory<Project>{
 		
 		Project project = new Project();
 		
-		project.setProjectManagerId(new Integer((jsonMap.get(USER_ID).toString())));
-		project.setProjectManagerName(null);
+		//no mapping
+		project.setProjectManagerId(null);
+		
+		//createdBy => projectManagerName
+		project.setProjectManagerName((String)jsonMap.get(CREATED_BY));
+		
+		//startDate => projectStartDate
 		project.setProjectStartDate((String)jsonMap.get(START_DATE));
-		project.setProjectName((String)jsonMap.get(PROJECT_NAME));
-		project.setProjectNote((String)jsonMap.get(CROP_TYPE));
+		
+		//name => projectName
+		project.setProjectName((String)jsonMap.get(NAME));
+		
+		//crop => projectNote
+		project.setProjectNote((String)jsonMap.get(CROP));
+		
+		//no mapping
 		project.setTypeId(null);
+		
+		//no mapping
 		project.setProjectStatus(null);
+		
+		//no mapping
 		project.setProjectEndDate(null);
-		project.setProjectId(UNIQUE_ID);
+		
+		//uniqueID => projectID
+		project.setProjectId((String)jsonMap.get(UNIQUE_ID));
 		
 		return project;
 	}
@@ -82,8 +112,7 @@ public class ProjectFactory implements SqlEntityFactory<Project>{
 	@Override
 	public String createPagedListQuery(int firstRecord, int nRecords,
 			String filterClause) throws DalDbException {
-		// TODO Auto-generated method stub
-		return null;
+		return BMSApiDataConnection.getProjectCall(filterClause);
 	}
 
 	@Override
