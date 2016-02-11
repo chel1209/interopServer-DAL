@@ -201,7 +201,7 @@ public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 				TrialUnit result = new TrialUnit();
 				result.setTrialId(trial.getTrialId());
 				sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialId()));
-				result.setUnitPositionText((String)((JsonMap)map).get("entryNo"));
+				result.setUnitPositionText((String)((JsonMap)map).get("entryNumber"));
 				specimenFactory.createEntity(result, jsonMap,sampleMeasurementFactory,trial.getTrialTraits(),sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialId())));
 				if(trial.getSiteName() != null ){
 					result.setSiteName(trial.getSiteName());

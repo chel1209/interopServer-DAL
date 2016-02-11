@@ -3,6 +3,7 @@ package com.diversityarrays.dal.db.bms;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,12 +12,15 @@ import java.util.List;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import net.pearcan.json.JsonMap;
 import net.pearcan.json.JsonParser;
 
+import com.diversityarrays.dal.db.BufferedReaderEntityIterator;
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.SqlEntityFactory;
 import com.diversityarrays.dal.entity.ColumnNameMapping;
@@ -24,6 +28,7 @@ import com.diversityarrays.dal.entity.DAL_Trait;
 import com.diversityarrays.dal.entity.GeneralType;
 import com.diversityarrays.dal.entity.ItemUnit;
 import com.diversityarrays.dal.entity.SampleMeasurement;
+import com.diversityarrays.dal.entity.SystemUser;
 import com.diversityarrays.dal.entity.Trait;
 import com.diversityarrays.dal.entity.TrialTrait;
 import com.diversityarrays.dal.entity.TrialUnit;
@@ -34,6 +39,9 @@ public class SampleMeasurementFactory implements SqlEntityFactory<SampleMeasurem
 	private static final int OBSOLETE = 1;
 	private String url;
 	private boolean pending = false;
+	private SystemUser systemUser;
+	private HttpPost post;
+	private UserFactory userFactory;
 	
 	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
 	
@@ -235,10 +243,51 @@ public class SampleMeasurementFactory implements SqlEntityFactory<SampleMeasurem
 		this.url = url;
 		CloseableHttpClient client = HttpClientBuilder.create().build();
 		HttpGet request = new HttpGet(url);
+		BufferedReader bufferedReader;
+		
+		if(userFactory == null){
+			userFactory = new UserFactory();
+		}
+		
+		if(systemUser == null){
+			post = new HttpPost(userFactory.createLoginQuery());
+			
+			StringEntity httpEntity = null;
+			try{
+				httpEntity = new StringEntity("username=" + BMSApiDataConnection.BMS_USER + "&password=" + BMSApiDataConnection.BMS_PASSWORD);
+				httpEntity.setContentType("application/x-www-form-urlencoded");
+			}catch(UnsupportedEncodingException uee){
+				System.out.println("Exception when setting login parameters" + uee);
+				throw new DalDbException(uee);
+			}catch(Exception e){
+				System.out.println("Exception when setting login parameters" + e);
+				throw new DalDbException(e);
+			}
+			
+			if(httpEntity!=null){
+				post.setEntity(httpEntity);
+			}
+					
+			try{
+				HttpResponse loginResponse = client.execute(post);
+				bufferedReader = new BufferedReader(new InputStreamReader(loginResponse.getEntity().getContent()));
+				BufferedReaderEntityIterator<SystemUser> entityIterator = new BufferedReaderEntityIterator<SystemUser>(bufferedReader, userFactory);
+				entityIterator.readLine();
+				systemUser = entityIterator.nextEntity();				
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+		}
+		
+		request.addHeader(BMSApiDataConnection.TOKEN_HEADER, systemUser.getPasswordSalt());		
 		
 		try{
 			HttpResponse response = client.execute(request);
-			BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 			JsonParser parser = new JsonParser(bufferedReader.readLine());
 			
 			return parser.getListResult();
