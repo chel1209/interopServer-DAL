@@ -39,6 +39,8 @@ import com.diversityarrays.dalclient.DALClient;
 import fi.iki.elonen.NanoHTTPD.Method;
 
 class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalDatabase> {
+	
+	private String entityName;
 
 	public static final Pattern PATTERN = Pattern.compile("^list/([a-z]+)/_nperpage/page/_num$");
 	
@@ -75,7 +77,7 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 			bmsPage = entityProvider.getEntityCountPage(filterClause);
 			context.setRecordCountCacheEntry(session, entityClass, filterClause, bmsPage==null?0:bmsPage.getTotalResults());
 
-			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": CACHING value=" + (bmsPage==null?0:bmsPage.getTotalResults()));
+			System.err.println(session.getUserName() + ":" + session.getUserId()+":"+entityClass.getName()+"."+filterClause+": CACHING value=" + (bmsPage==null?0:bmsPage.getTotalResults()));
 		//}
 			
 		int nPerPage = getIntParameter(0, dalOpParameters, "_nperpage", 1);

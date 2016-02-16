@@ -131,7 +131,10 @@ import com.google.gson.JsonPrimitive;
  */
 public class BMS_DalDatabase extends AbstractDalDatabase {
 	
+	private UserFactory userFactory;
+	private HttpPost post;
 	private static final String DATABASE_VERSION = "0.1";
+	private String password;
 	
 	static class BMS_SystemGroupInfo implements SystemGroupInfo {
 		
@@ -1351,11 +1354,12 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}		
 	};	
 
-	public BMS_DalDatabase(Closure<String> progress, boolean initialise, JdbcConnectionParameters localParams, JdbcConnectionParameters centralParams) throws DalDbException {
+	public BMS_DalDatabase(Closure<String> progress, boolean initialise, JdbcConnectionParameters localParams, JdbcConnectionParameters centralParams,String username, String password) throws DalDbException {
 		super("BMS-Interop[Central=" + centralParams + " Local=" + localParams + "]");
 		
 		this.localParams = localParams;
 		this.centralParams = centralParams;
+		this.password = password;
 		
 		if (localParams != null) {
 			String local   = StringUtil.substringBefore(localParams.connectionUrl, "?");
@@ -2253,11 +2257,59 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 	}
 	
+	private void createUserFactory(){
+		userFactory = new UserFactory();
+	}
+	
 	@Override
 	public UserInfo doLogin(String newSessionId, final String userName, SessionExpiryOption seo,
 			final Map<String, String> parms) throws AuthenticationException 
 	{
 		String sql = "SELECT userid, upswd, instalid, ustatus, uaccess, utype, personid, adate FROM users WHERE uname = '" + DbUtil.doubleUpSingleQuote(userName.toUpperCase()) + "'";
+		BufferedReader bufferedReader;
+		SystemUser systemUser = null;
+		CloseableHttpClient client = HttpClientBuilder.create().build() ;
+		
+		if(userFactory == null){
+			createUserFactory();
+		} 
+		
+		post = new HttpPost(userFactory.createLoginQuery());
+		
+		StringEntity httpEntity = null;
+		try{
+			httpEntity = new StringEntity("username=" + userName + "&password=" + password);
+			httpEntity.setContentType("application/x-www-form-urlencoded");
+		}catch(UnsupportedEncodingException uee){
+			System.out.println("Exception when setting login parameters" + uee);
+			//throw new DalDbException(uee);
+		}catch(Exception e){
+			System.out.println("Exception when setting login parameters" + e);
+			//throw new DalDbException(e);
+		}
+		
+		if(httpEntity!=null){
+			post.setEntity(httpEntity);
+		}
+				
+		try{
+			HttpResponse loginResponse = client.execute(post);
+			bufferedReader = new BufferedReader(new InputStreamReader(loginResponse.getEntity().getContent()));
+			BufferedReaderEntityIterator<SystemUser> entityIterator = new BufferedReaderEntityIterator<SystemUser>(bufferedReader, userFactory);
+			entityIterator.readLine();
+			systemUser = entityIterator.nextEntity();				
+		}catch(ClientProtocolException cpex){
+			//throw new DalDbException("Protocol error: " + cpex);
+		}catch(IOException ioex){
+			//throw new DalDbException("Input/Output error when executing request: " + ioex);
+		}catch(Exception ex){
+			//throw new DalDbException("Exception: " + ex);
+		}		
+		
+		BMS_UserInfo bmsCropUserInfo = new BMS_UserInfo(systemUser!=null?systemUser.getPasswordSalt():"", 0,0,0,0,0,0, null);
+		userInfoBySessionId.put(BMSApiDataConnection.TOKEN_HEADER, bmsCropUserInfo);
+		System.out.println("Token>>>" + bmsCropUserInfo.getUserName());
+		
 
 		final BMS_UserInfo[] result = new BMS_UserInfo[1];
 		ResultSetVisitor visitor = new ResultSetVisitor() {

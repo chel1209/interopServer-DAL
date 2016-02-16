@@ -46,6 +46,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.diversityarrays.dal.db.bms.BMSApiDataConnection;
 import com.diversityarrays.dal.db.bms.BMS_DalDatabase;
 import com.diversityarrays.dal.db.bms.GenotypeAliasFactory;
 import com.diversityarrays.dal.db.kddart.KddartDalDatabase;
@@ -261,7 +262,7 @@ public class TestDalDatabase {
 		}
 
 		@SuppressWarnings("unchecked")
-		DalDatabase result = new BMS_DalDatabase(ClosureUtils.nopClosure(), false, localParams, centralParams);
+		DalDatabase result = new BMS_DalDatabase(ClosureUtils.nopClosure(), false, localParams, centralParams,BMSApiDataConnection.BMS_USER,BMSApiDataConnection.BMS_PASSWORD);
 		
 		System.out.println(TestDalDatabase.class.getName()+" for KDDart: " + result.getDatabaseName());
 		return result;

@@ -17,6 +17,7 @@
  */
 package com.diversityarrays.dal.db.bms;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -29,6 +30,7 @@ import org.apache.commons.collections15.Closure;
 
 import com.diversityarrays.dal.db.DalDatabase;
 import com.diversityarrays.dal.db.DalDbException;
+import com.diversityarrays.dal.db.kddart.KddartDalDatabase;
 import com.diversityarrays.dal.service.AbstractJdbcDalDbProviderService;
 import com.diversityarrays.dal.service.Parameter;
 import com.diversityarrays.dal.service.ParameterValue;
@@ -54,6 +56,10 @@ public class BMS_DalDbProviderService extends AbstractJdbcDalDbProviderService {
 	
 	static private final StringParameter LOCAL_URL = new StringParameter("Local JDBC URL", "", Parameter.OPTIONAL);
 	
+	static private final Parameter<String> USERNAME = new StringParameter(KddartDalDatabase.PARAM_USERNAME, "Login as this user on the remote DAL service", Parameter.REQUIRED);
+	
+	static private final Parameter<String> PASSWORD = new StringParameter(KddartDalDatabase.PARAM_PASSWORD, "Use this password for the remote DAL service", Parameter.REQUIRED);
+	
 	private static final StringParameter[] PARAMETERS = {
 		CENTRAL_URL,
 //		LOCAL_URL, // TODO local incarnation delayed until I get a chance to talk to BMS folks
@@ -70,7 +76,7 @@ public class BMS_DalDbProviderService extends AbstractJdbcDalDbProviderService {
 
 	@Override
 	public Set<Parameter<?>> getParametersRequired() {
-		return new LinkedHashSet<Parameter<?>>(Arrays.asList(PARAMETERS));
+		return new LinkedHashSet<Parameter<?>>(Arrays.asList(CENTRAL_URL,LOCAL_URL,USERNAME,PASSWORD));
 	}
 
 	@Override
@@ -100,9 +106,13 @@ public class BMS_DalDbProviderService extends AbstractJdbcDalDbProviderService {
 		if (localUrl != null && ! localUrl.isEmpty()) {
 			local   = new JdbcConnectionParameters(localUrl,   null, null); // base.get(LOCAL_USERNAME),   base.get(LOCAL_PASSWORD));
 		}
-
 		
-		return new BMS_DalDatabase(progress, initialise, local, central);
+		//URI uri = ParameterValue.getValue(DAL_URL, parameterValues);
+		String username = ParameterValue.getValue(USERNAME, parameterValues);
+		String password = ParameterValue.getValue(PASSWORD, parameterValues);
+		//Boolean autoSwitchGroup = ParameterValue.getValue(AUTO_SWITCH_GROUP, parameterValues);
+
+		return new BMS_DalDatabase(progress, initialise, local, central,username,password);
 	}
 
 }

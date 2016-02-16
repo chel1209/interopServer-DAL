@@ -5,7 +5,7 @@ import java.util.List;
 public class BMSApiDataConnection {
 	
 	
-	public  static final String IP                 = "bms-v4b5t-03";
+	public  static final String IP                 = "bms-v4b5t-11";
 	public  static final String PORT               = "48080";
 	public  static final String CROP               = "maize";
 	private static final String LOCATION_TYPE_ID   = "410";

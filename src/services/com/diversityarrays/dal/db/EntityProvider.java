@@ -22,7 +22,6 @@ import java.util.Map;
 
 import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.entity.Page;
-import com.diversityarrays.dal.entity.Trial;
 
 
 public interface EntityProvider<T extends DalEntity> {
