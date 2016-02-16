@@ -2117,5 +2117,50 @@ public class TestDalDatabase {
 		doLoggedInTest(loggedInTest);		
 	}
 	
+	
+	/**
+	 * @author Raul Hernandez T.
+	 * @date 2/15/2016
+	 */
+	@Test
+	public void testSetCrop(){
+		LoggedInTest loggedInTest = new LoggedInTest("crop", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "set/group/1";
+				
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				
+				
+				try{
+					
+					match.node.getOperation().execute(session,
+							responseBuilder, 
+							Method.POST, 
+							dalcmd, 
+							match.getParameterValues(), 
+							mapaParametros, 
+							null);	
+
+					System.out.println("Reponse [testSetCrop] \n" + responseBuilder.asString() + "\n");
+
+					if (NOISY) {
+						showResponse("testSetCrop", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}				
+		};
+		doLoggedInTest(loggedInTest);		
+		
+	}
+	
 }
 

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -234,6 +235,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	private List<DalOperation> operations;
 	
 	private Map<String,BMS_UserInfo> userInfoBySessionId = new HashMap<String, BMS_UserInfo>();
+	
+	//Store User Crop
+	private List<Crop> cropUserSessionList = new ArrayList<Crop>(); 
 	
 	private Map<String,Class<? extends DalEntity>> entityClassByName = new HashMap<String,Class<? extends DalEntity>>();
 
@@ -1715,15 +1719,6 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			request = new HttpGet(projectFactory.createPagedListQuery(firstRecord, nRecords, filterClause));
 			request.addHeader(BMSApiDataConnection.TOKEN_HEADER, systemUser.getPasswordSalt());
 			
-
-			//Test code RHT
-			BMS_UserInfo cropInfo = userInfoBySessionId.get("CropUserInfo");
-			String crop = cropInfo.getUserName();
-			System.out.println("El crop a utilizar es: " + crop);
-			
-			
-			//fin code test
-			
 			try{
 				HttpResponse response = client.execute(request);
 				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
@@ -1870,6 +1865,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 					
 					//Crop catalog
 					tmp.add(createOperation("list/group", Crop.class, cropProvider));
+					
+					//Set crop
+					tmp.add(createOperation("set/group/_id",Crop.class,setCropProvider));
 					                           
 					operations = tmp;
 				}
@@ -2157,13 +2155,21 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			}
 		});	
 		
-		//Crop
+		//Get Crop
 		map.put(GetCropOperation.PATTERN, new MatcherToOperation() {
 			@Override
 			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
 				return new GetCropOperation(BMS_DalDatabase.this, (EntityProvider<SystemGroup>) provider);
 			}
 		});
+		
+		//Set Crop
+		map.put(SetCropOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new SetCropOperation(BMS_DalDatabase.this, (EntityProvider<Crop>) provider);
+			}
+		});		
 		
 		return map;
 	}
@@ -2248,7 +2254,107 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			.attribute("SystemGroupName", r.fcode)
 			.attribute("SystemGroupDescription", r.fname)
 			.endTag();
+			
+			//Set the crops in memory
+			getCropUser();
+			
+			//adding to the xml
+ 		    Iterator<Crop> it = cropUserSessionList.iterator();
+			   
+			while(it.hasNext()){
+	  			  Crop c = it.next();
+	  			  builder.startTag("SystemGroup")
+				  .attribute("SystemGroupId", c.getSystemGroupId())
+				  .attribute("SystemGroupName", c.getSystemGroupName())
+				  .attribute("SystemGroupDescription", c.getSystemGroupDescription())
+				  .endTag();
+			} 
 		}
+	}
+	
+	
+	public void getCropUser() throws DalDbException{
+		
+		    SystemUser          systemUser      = null;
+		    UserFactory         userFactory     = new UserFactory();
+		    CropFactory         cropFactory     = new CropFactory();
+		    CloseableHttpClient client          = HttpClientBuilder.create().build();
+		    HttpPost            post;
+		    BufferedReader      bufferedReader;
+		    HttpGet             request;
+		    
+			/**
+			 * BMS API Login
+			 */
+			if(systemUser == null){
+				post = new HttpPost(userFactory.createLoginQuery());
+				
+				StringEntity httpEntity = null;
+				try{
+					httpEntity = new StringEntity("username=" + BMSApiDataConnection.BMS_USER + "&password=" + BMSApiDataConnection.BMS_PASSWORD);
+					httpEntity.setContentType("application/x-www-form-urlencoded");
+				}catch(UnsupportedEncodingException uee){
+					System.out.println("Exception when setting login parameters" + uee);
+					throw new DalDbException(uee);
+				}catch(Exception e){
+					System.out.println("Exception when setting login parameters" + e);
+					throw new DalDbException(e);
+				}
+				
+				if(httpEntity!=null){
+					post.setEntity(httpEntity);
+				}
+						
+				try{
+					HttpResponse loginResponse = client.execute(post);
+					bufferedReader = new BufferedReader(new InputStreamReader(loginResponse.getEntity().getContent()));
+					BufferedReaderEntityIterator<SystemUser> entityIterator = new BufferedReaderEntityIterator<SystemUser>(bufferedReader, userFactory);
+					entityIterator.readLine();
+					systemUser = entityIterator.nextEntity();				
+				}catch(ClientProtocolException cpex){
+					throw new DalDbException("Protocol error: " + cpex);
+				}catch(IOException ioex){
+					throw new DalDbException("Input/Output error when executing request: " + ioex);
+				}catch(Exception ex){
+					throw new DalDbException("Exception: " + ex);
+				}
+			}
+			/**
+			 * End BMS API Login
+			 */
+			
+			try{
+				
+				request = new HttpGet(cropFactory.getURL());
+				request.addHeader(BMSApiDataConnection.TOKEN_HEADER, systemUser.getPasswordSalt());
+  		        HttpResponse response = client.execute(request);
+  		        bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+  		        
+  		        String value = bufferedReader.readLine();
+  		        StringTokenizer strTokenizer = new StringTokenizer(value.substring(1, value.length()-1),",");
+  		        
+  		        Crop cropObj = null;
+  		        List<Crop> objArrayCrop = new ArrayList<Crop>();
+  		        int cont=1;
+  		        
+  		        while(strTokenizer.hasMoreTokens()){
+  		        	  cropObj =new Crop();
+  		          	  cropObj.setSystemGroupId(String.valueOf(cont++));
+  		          	  cropObj.setSystemGroupName(strTokenizer.nextToken().replaceAll("\"", ""));
+  		          	  cropObj.setSystemGroupDescription("");
+  		        	  objArrayCrop.add(cropObj);
+  		        }
+  		        
+  		        //Set in memory all the crops from BMS API  
+  		        cropUserSessionList.addAll(objArrayCrop);
+  		        
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}		
 	}
 	
 	@Override
@@ -2312,6 +2418,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 		
 		userInfoBySessionId.put(newSessionId, ui);
+		
+		//reset user crop list
+		cropUserSessionList = new ArrayList<Crop>();
 		
 		return ui;	
 	}
@@ -2379,6 +2488,120 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	public void setRecordCountCacheEntry(DalSession session, Class<?> entityClass, String filterClause, int count) {
 		recordCountCache.setEntry(session, entityClass, filterClause, count);
 	}
+	
+	private EntityProvider<Crop> setCropProvider = new EntityProvider<Crop>(){
+		
+		private CloseableHttpClient client;
+		private HttpPut             httpPut;
+		private HttpEntity          entitySent;
+		private HttpResponse        response;
+		private CropFactory         cropFactory;
+		
+		private void createFactory(){
+			cropFactory = new CropFactory();
+		}
+		
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Crop getEntity(String id, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Crop> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Crop> createIterator(int firstRecord,
+				int nRecords, String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Crop> createIterator(int firstRecord,
+				int nRecords, String filterClause, Page pageNumber)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,
+				List<String> dalOpParameters, Map<String, String> filePathByName)
+				throws DalDbException {
+			
+			if(cropFactory == null){
+				createFactory();
+			}
+			
+			//Get parameter and set the crop in memory
+			List<String> dalparam = dalOpParameters;
+			String cropId = "";
+			
+			
+			if(dalparam.size() > 0){
+			   cropId = dalparam.get(0);
+			   //Keep in memory only the crop that was selected
+			   Iterator<Crop> it = cropUserSessionList.iterator();
+			   
+			   while(it.hasNext()){
+		  			  Crop c = it.next();
+					  if(!c.getSystemGroupId().equals(cropId)){
+						 it.remove();		
+					  }
+				}			   
+			   
+			}
+		}
+
+		@Override
+		public EntityIterator<? extends DalEntity> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	};
+	
 	
 	private EntityProvider<SystemGroup> cropProvider = new EntityProvider<SystemGroup>(){ 
 		
@@ -2498,6 +2721,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
   		        	  objArrayCrop.add(cropObj);
   		        }
   		        
+  		        //Set in memory all the crops from BMS API  
+  		        cropUserSessionList.addAll(objArrayCrop);
+  		        
   		        Gson g = new Gson();
   		        String result = g.toJson(objArrayCrop);
   		        
@@ -2520,6 +2746,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			
 			return new BufferedReaderEntityIterator<SystemGroup>(bufferedReader, cropFactory);
 		}
+		
 
 		@Override
 		public EntityIterator<? extends SystemGroup> createIterator(int firstRecord,
@@ -2764,11 +2991,6 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 				createFactories();
 			}
 			
-			//test code crop user info RHT
-			BMS_UserInfo cropInfo = userInfoBySessionId.get("CropUserInfo");
-			String crop = cropInfo.getUserName();
-			System.out.println("[Specimen call] El crop a utilizar es: " + crop);			
-			
             //Extract the id from filterClause
 			//I do not know if this is the best way
 			//filterClause = "SpecimenId+IN+(268069,268070)";
@@ -2895,11 +3117,6 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			
 			client = HttpClientBuilder.create().build();
 			//request = new HttpGet(trialTypeFactory.getURL(filterClause));
-			
-			//test code crop user info RHT
-			BMS_UserInfo bmsCropUserInfo = new BMS_UserInfo("maize", 0,0,0,0,0,0, null);
-			userInfoBySessionId.put("CropUserInfo", bmsCropUserInfo);
-			System.out.println("[traitgroupProvider] User Crop Info set to maize");				
 			
 			try{
 			     /*
