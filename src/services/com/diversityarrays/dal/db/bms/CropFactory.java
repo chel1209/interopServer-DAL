@@ -7,7 +7,6 @@ import net.pearcan.json.JsonMap;
 
 import com.diversityarrays.dal.db.DalDbException;
 import com.diversityarrays.dal.db.SqlEntityFactory;
-import com.diversityarrays.dal.entity.Crop;
 import com.diversityarrays.dal.entity.SystemGroup;
 
 

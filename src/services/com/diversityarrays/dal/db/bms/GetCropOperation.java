@@ -11,15 +11,10 @@ import com.diversityarrays.dal.db.DalResponseBuilder;
 import com.diversityarrays.dal.db.EntityIterator;
 import com.diversityarrays.dal.db.EntityOperation;
 import com.diversityarrays.dal.db.EntityProvider;
-import com.diversityarrays.dal.entity.Crop;
-import com.diversityarrays.dal.entity.Project;
 import com.diversityarrays.dal.entity.SystemGroup;
 import com.diversityarrays.dal.server.DalSession;
 
 import fi.iki.elonen.NanoHTTPD.Method;
-
-
-
 
 /**
  * 

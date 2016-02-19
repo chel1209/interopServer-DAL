@@ -228,11 +228,10 @@ public class TestDalDatabase {
 		DalServerUtil.buildWordTree(dalDatabase.getOperations(), wordNodeRoot);
 	}
 
-	private static DalDatabase createBMS_DalDatabase()
-			throws UnknownHostException, DalDbException {
+	private static DalDatabase createBMS_DalDatabase() throws UnknownHostException, DalDbException {
 
-		USERNAME = "celso";
-		PASSWORD = "celso";
+		USERNAME = "user1";
+		PASSWORD = "cimmyt";
 
 		String where = null;
 		String hostname = InetAddress.getLocalHost().getCanonicalHostName();
@@ -1040,9 +1039,9 @@ public class TestDalDatabase {
 
 	/**
 	 * Tests the operation to get GeneralType information
-	 * 
+	 *
 	 * @author CCARREIRO
-	 * 
+	 *
 	 */
 	@Test
 	public void testGetGeneralType() {
@@ -1085,9 +1084,9 @@ public class TestDalDatabase {
 
 	/**
 	 * Tests the operation to set GeneralType information
-	 * 
+	 *
 	 * @author CCARREIRO
-	 * 
+	 *
 	 */
 	@Test
 	public void testSetGeneralType() {
@@ -1132,9 +1131,9 @@ public class TestDalDatabase {
 
 	/**
 	 * Tests the operation to get GeneralType information
-	 * 
+	 *
 	 * @author CCARREIRO
-	 * 
+	 *
 	 */
 	@Test
 	public void testGetItemUnit() {
@@ -1177,9 +1176,9 @@ public class TestDalDatabase {
 
 	/**
 	 * Tests the operation to get Trial/Nursery basic information
-	 * 
+	 *
 	 * @author CCARREIRO
-	 * 
+	 *
 	 */
 	@Test
 	public void testGetTrial() {
@@ -1272,7 +1271,7 @@ public class TestDalDatabase {
 
 	/*
 	 * Test for SetObservation
-	 * 
+	 *
 	 * @author Raul Hernandez T.
 	 */
 
@@ -1338,7 +1337,7 @@ public class TestDalDatabase {
 
 	/**
 	 * Test for getProject details service
-	 * 
+	 *
 	 * @author Raul Hernandez T.
 	 * @date 14-NOV-2015
 	 */
@@ -1420,7 +1419,7 @@ public class TestDalDatabase {
 
 	/**
 	 * Test for trial type service
-	 * 
+	 *
 	 * @author Raul Hernandez T.
 	 * @date 14-DEC-2015
 	 */
@@ -1461,7 +1460,7 @@ public class TestDalDatabase {
 
 	/**
 	 * Test for trial type service
-	 * 
+	 *
 	 * @author Raul Hernandez T.
 	 * @date 14-DEC-2015
 	 */
@@ -1994,7 +1993,7 @@ public class TestDalDatabase {
 
 	/**
 	 * Get the specimen-gemplasm values
-	 * 
+	 *
 	 * @author Raul Hernandez T.
 	 * @date 12/18/2015
 	 */
@@ -2023,7 +2022,7 @@ public class TestDalDatabase {
 					// checkJsonResult("testGetTraitGroup", responseBuilder,
 					// "TraitGroup");
 					if (NOISY) {
-						showResponse("testGetSpecimen", responseBuilder);
+	com.diversityarrays.dal.db					showResponse("testGetSpecimen", responseBuilder);
 					}
 				} catch (DalDbException e) {
 					fail(e.getMessage());
@@ -2111,6 +2110,50 @@ public class TestDalDatabase {
 			}
 		};
 		doLoggedInTest(loggedInTest);
+	}
+
+	/**
+	 * @author Raul Hernandez T.
+	 * @date 2/15/2016
+	 */
+	@Test
+	public void testSetCrop(){
+		LoggedInTest loggedInTest = new LoggedInTest("crop", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "set/group/1";
+
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+
+
+				try{
+
+					match.node.getOperation().execute(session,
+							responseBuilder,
+							Method.POST,
+							dalcmd,
+							match.getParameterValues(),
+							mapaParametros,
+							null);
+
+					System.out.println("Reponse [testSetCrop] \n" + responseBuilder.asString() + "\n");
+
+					if (NOISY) {
+						showResponse("testSetCrop", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}
+		};
+		doLoggedInTest(loggedInTest);
+
 	}
 
 }
