@@ -3235,7 +3235,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			     HttpResponseFactory factory = new DefaultHttpResponseFactory();
 			     HttpResponse response =factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, null), null);
 			     response.setEntity(new StringEntity("[{\"isTypeActive\":1,\"typeId\":1,\"typeName\":\"\",\"typeNote\":\"\"}]",Consts.UTF_8));
-			     response.add.er("Content-type", "application/json");
+			     response.addHeader("Content-type", "application/json");
 
 			     //HttpResponse response = client.execute(request);
  				 bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));

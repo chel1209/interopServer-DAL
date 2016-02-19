@@ -2022,7 +2022,7 @@ public class TestDalDatabase {
 					// checkJsonResult("testGetTraitGroup", responseBuilder,
 					// "TraitGroup");
 					if (NOISY) {
-	com.diversityarrays.dal.db					showResponse("testGetSpecimen", responseBuilder);
+						showResponse("testGetSpecimen", responseBuilder);
 					}
 				} catch (DalDbException e) {
 					fail(e.getMessage());
