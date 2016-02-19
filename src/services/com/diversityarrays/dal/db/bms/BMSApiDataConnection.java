@@ -7,7 +7,7 @@ public class BMSApiDataConnection {
 	
 	public  static final String IP                 = "bms-v4b5t-11";
 	public  static final String PORT               = "48080";
-	public  static final String CROP               = "maize";
+	public  static final String CROP               = "wheat";
 	private static final String LOCATION_TYPE_ID   = "410";
 	public static final int BMS_MAX_PAGE_SIZE      = 200;
 	public static final String PAGE_DOES_NOT_EXIST = "The page number you requested is too big.";

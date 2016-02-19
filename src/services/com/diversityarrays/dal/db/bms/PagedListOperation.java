@@ -52,6 +52,7 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 			Class<? extends T> tclass, EntityProvider<T> provider) 
 	{
 		super(db, entityName, "list/" + entityName + "/_nperpage/page/_num", tclass, provider);
+		this.entityName = entityName;
 	}
 	
 	@Override
@@ -74,7 +75,11 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 			System.err.println(session.getUserId()+":"+entityClass.getName()+"."+filterClause+": cached value=" + nRecords);
 		}
 		else {*/
+		if(entityName.equals("trial")){
+			bmsPage = entityProvider.getEntityCountPage(session.getUserId());
+		}else{
 			bmsPage = entityProvider.getEntityCountPage(filterClause);
+		}
 			context.setRecordCountCacheEntry(session, entityClass, filterClause, bmsPage==null?0:bmsPage.getTotalResults());
 
 			System.err.println(session.getUserName() + ":" + session.getUserId()+":"+entityClass.getName()+"."+filterClause+": CACHING value=" + (bmsPage==null?0:bmsPage.getTotalResults()));
@@ -138,11 +143,17 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 				}
 			}
 		}else{
-			iter = entityProvider.createIterator(firstRecord, nPerPage, filterClause,bmsPage);
+			if(entityName.equals("trial")){
+				iter = entityProvider.createIterator(firstRecord, nPerPage, session.getUserId(),bmsPage);
+			}else{
+				iter = entityProvider.createIterator(firstRecord, nPerPage, filterClause,bmsPage);
+			}
 			
 			try {
 				T entity;
-				iter.readLine();
+				if(!entityName.equals("trial")){
+					iter.readLine();
+				}
 
 				EntityIterator<? extends DalEntity> iterator = null;
 				while (null != (entity = iter.nextEntity())) {

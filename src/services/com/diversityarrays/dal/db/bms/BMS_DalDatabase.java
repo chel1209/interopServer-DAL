@@ -231,8 +231,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	
 	private final JdbcConnectionParameters localParams;
 	private final JdbcConnectionParameters centralParams;
+	private final JdbcConnectionParameters interopParams;	
 	
 	private BmsConnectionInfo bmsConnections;
+	
+	private InteropConnectionInfo interopConnections;
 
 	private List<DalOperation> operations;
 	
@@ -762,6 +765,48 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			
 			int total = 0;
 			
+			if(trialFactory == null){
+				createFactory();
+			}
+			
+			if(pageFactory == null){
+				createPageFactory();
+			}
+			
+			String sql = trialFactory.createCountQuery(filterClause);
+			ResultSetEntityIterator<Page> entityIterator = null;
+						
+			try {
+				Statement stmt = SqlUtil.createQueryStatement(getInteropConnections(defaultProgress, true).connection);
+				ResultSet rs = stmt.executeQuery(sql);
+				
+				
+				entityIterator = new ResultSetEntityIterator<Page>(stmt, rs, pageFactory);
+				result = entityIterator.nextEntity();
+			} catch (SQLException e) {
+				throw new DalDbException(e);
+			}
+			finally{
+				try{
+					if(entityIterator!=null){
+						entityIterator.close();
+					}
+				}catch(IOException ex){
+					throw new DalDbException(ex.getMessage());
+				}
+			}
+					
+			return result;
+		}
+		
+		//CCB count usando el API
+		/*public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			BufferedReader bufferedReader;
+			Page result = null;
+			
+			int total = 0;
+			
 			if(pageFactory == null){
 				createPageFactory();
 			}
@@ -839,9 +884,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			}
 					
 			return result;
-		}
+		}*/
 
-		@Override
+		/*@Override
 		public EntityIterator<? extends Trial> createIterator(int firstRecord,
 				int nRecords, String filterClause, Page page)
 				throws DalDbException {
@@ -908,6 +953,35 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			}
 			
 			return new BufferedReaderEntityIterator<Trial>(bufferedReader, trialFactory);
+		}*/
+		
+		@Override
+		public EntityIterator<? extends Trial> createIterator(int firstRecord,
+				int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			BufferedReader bufferedReader;
+			
+			if(trialFactory == null){
+				createFactory();
+			}
+			
+			String sql = trialFactory.createPagedListQuery(firstRecord,nRecords,filterClause);
+			ResultSetEntityIterator<Trial> entityIterator = null;
+			Statement stmt = null;
+			ResultSet rs = null;
+						
+			try {
+				stmt = SqlUtil.createQueryStatement(getInteropConnections(defaultProgress, true).connection);
+				rs = stmt.executeQuery(sql);
+				
+				
+				entityIterator = new ResultSetEntityIterator<Trial>(stmt, rs, trialFactory);
+			} catch (SQLException e) {
+				throw new DalDbException(e);
+			} catch (Exception e) {
+				throw new DalDbException(e);
+			}
+			return entityIterator;
 		}
 		
 		@Override
@@ -1354,11 +1428,12 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}		
 	};	
 
-	public BMS_DalDatabase(Closure<String> progress, boolean initialise, JdbcConnectionParameters localParams, JdbcConnectionParameters centralParams,String username, String password) throws DalDbException {
+	public BMS_DalDatabase(Closure<String> progress, boolean initialise, JdbcConnectionParameters localParams, JdbcConnectionParameters centralParams,String username, String password, JdbcConnectionParameters interopParams) throws DalDbException {
 		super("BMS-Interop[Central=" + centralParams + " Local=" + localParams + "]");
 		
 		this.localParams = localParams;
 		this.centralParams = centralParams;
+		this.interopParams = interopParams;
 		this.password = password;
 		
 		if (localParams != null) {
@@ -1375,6 +1450,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		
 		if (initialise) {
 			getBmsConnections(progress, true);
+			getInteropConnections(progress, true);
 		}
 	}
 
@@ -1764,6 +1840,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	public void initialise(Closure<String> progress)
 	throws DalDbException {
 		getBmsConnections(progress, true);
+		getInteropConnections(progress, true);
 	}
 	
 	private BmsConnectionInfo getBmsConnections(Closure<String> progress, boolean createIfNotPresent) throws DalDbException {
@@ -1771,6 +1848,13 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			bmsConnections = new BmsConnectionInfo(localParams, centralParams, progress);
 		}
 		return bmsConnections;
+	}
+	
+	private InteropConnectionInfo getInteropConnections(Closure<String> progress, boolean createIfNotPresent) throws DalDbException {
+		if (interopConnections == null && createIfNotPresent) {
+			interopConnections = new InteropConnectionInfo(interopParams, progress);	
+		}
+		return interopConnections;
 	}
 
 	@Override
@@ -2386,6 +2470,13 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 				bmsConnections.closeConnections();
 			} finally {
 				bmsConnections = null;
+			}
+		}
+		if (interopConnections != null) {
+			try {
+				interopConnections.closeConnection();
+			} finally {
+				interopConnections = null;
 			}
 		}
 	}
@@ -5129,3 +5220,4 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	};	
 
 }
+

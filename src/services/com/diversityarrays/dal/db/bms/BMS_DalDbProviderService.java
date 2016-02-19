@@ -56,6 +56,8 @@ public class BMS_DalDbProviderService extends AbstractJdbcDalDbProviderService {
 	
 	static private final StringParameter LOCAL_URL = new StringParameter("Local JDBC URL", "", Parameter.OPTIONAL);
 	
+	static private final StringParameter INTEROP_URL = new StringParameter("INTEROP JDBC URL", "", Parameter.REQUIRED);
+	
 	static private final Parameter<String> USERNAME = new StringParameter(KddartDalDatabase.PARAM_USERNAME, "Login as this user on the remote DAL service", Parameter.REQUIRED);
 	
 	static private final Parameter<String> PASSWORD = new StringParameter(KddartDalDatabase.PARAM_PASSWORD, "Use this password for the remote DAL service", Parameter.REQUIRED);
@@ -84,6 +86,7 @@ public class BMS_DalDbProviderService extends AbstractJdbcDalDbProviderService {
 		List<ParameterValue<?>> result = new ArrayList<ParameterValue<?>>();
 		result.add(new ParameterValue<String>(CENTRAL_URL, "jdbc:mysql://localhost:13306/DBNAME_central?user=root"));
 		result.add(new ParameterValue<String>(LOCAL_URL,   "jdbc:mysql://localhost:13306/DBNAME_local?user=root"));
+		result.add(new ParameterValue<String>(INTEROP_URL, "jdbc:mysql://172.17.60.87:13306/siu_bms?user=bmsadmin&password=bms;2015*"));
 		return result;
 	}
 
@@ -107,12 +110,15 @@ public class BMS_DalDbProviderService extends AbstractJdbcDalDbProviderService {
 			local   = new JdbcConnectionParameters(localUrl,   null, null); // base.get(LOCAL_USERNAME),   base.get(LOCAL_PASSWORD));
 		}
 		
+		String interopUrl = base.get(INTEROP_URL);
+		JdbcConnectionParameters interopParams = new JdbcConnectionParameters(interopUrl, "bmsadmin", "bms;2015*");
+		
 		//URI uri = ParameterValue.getValue(DAL_URL, parameterValues);
 		String username = ParameterValue.getValue(USERNAME, parameterValues);
 		String password = ParameterValue.getValue(PASSWORD, parameterValues);
 		//Boolean autoSwitchGroup = ParameterValue.getValue(AUTO_SWITCH_GROUP, parameterValues);
 
-		return new BMS_DalDatabase(progress, initialise, local, central,username,password);
+		return new BMS_DalDatabase(progress, initialise, local, central,username,password,interopParams);
 	}
 
 }

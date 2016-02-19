@@ -105,12 +105,20 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		// Nothing to do
 	}
 
-	@Override
+	/*@Override
 	public String createCountQuery(String filterClause) throws DalDbException {
-
 		splitFilterClause(filterClause);
 		return BMSApiDataConnection.getTrialSearchCall(programUniqueId,null,location,season);
+	}*/
+	
+	@Override
+	public String createCountQuery(String filterClause) throws DalDbException {
+		StringBuilder sb = new StringBuilder("select count(1) from group_member gm,group_study gs where gm.user_id =").append(filterClause).append(" and gm.group_id = gs.group_id;");
+	
+		return sb.toString();
 	}
+	
+	
 
 	@Override
 	public String createGetQuery(String id, String filterClause)
@@ -160,19 +168,10 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 					+ "; nRecords=" + nRecords);
 		}
 
-		StringBuilder sb = new StringBuilder(
-				"SELECT cvterm_id, name, definition, is_obsolete FROM cvterm");
-		sb.append(" WHERE (is_obsolete!=").append(OBSOLETE).append(")");
-
-		// TODO test filterClause field name translation
-		if (filterClause != null) {
-			sb.append(" AND ( ")
-					.append(COLUMN_NAME_MAPPING.translate(filterClause))
-					.append(" )");
-		}
-
-		sb.append(" LIMIT ").append(nRecords).append(" OFFSET ")
-				.append(firstRecord);
+		StringBuilder sb = new StringBuilder("select project_id from group_member gm, group_study gs where gm.user_id = ").append(filterClause).append(" and gm.group_id = gs.group_id");
+		
+		//CCB validar la implementación de la paginación
+		sb.append(" LIMIT ").append(nRecords).append(" OFFSET ").append(firstRecord);
 
 		return sb.toString();
 	}
@@ -183,12 +182,12 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 
 		try {
 
-			result.setTrialId(rs.getInt("cvterm_id"));
-			result.setTrialName(rs.getString("name"));
-			result.setTrialNote(rs.getString("objective"));
+			result.setTrialId(rs.getInt(1));
 		} catch (SQLException e) {
 			throw new DalDbException(e);
-		}
+		} catch (Exception e) {
+			throw new DalDbException(e);
+		} 
 
 		return result;
 	}
@@ -202,7 +201,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		result.setTrialNote((String) jsonMap.get("objective"));
 		result.setTrialAcronym((String) jsonMap.get("title"));
 
-		if(((String) jsonMap.get("startDate")).length()>0){
+		if(((String) jsonMap.get("startDate")).length()>0 && !((String)jsonMap.get("startDate")).equals("null")){
 			try {
 				result.setTrialStartDate(new Date(formatter.parse(
 						(String) jsonMap.get("startDate")).getTime()));
@@ -261,10 +260,10 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 							} else {
 								if (((JsonMap) map).get("name").equals(
 										"LOCATION_ID")) {
-									((Trial) result)
-											.setSiteNameID((Integer) ((JsonMap) map)
-													.get("value"));
-									continue;
+									if(((String) ((JsonMap)map).get("value")).length() > 0 && !((String) ((JsonMap)map).get("value")).equals("null")){
+										((Trial) result).setSiteNameID((Integer) ((JsonMap) map).get("value"));
+										continue;
+									}
 								}
 							}
 						}

@@ -42,6 +42,11 @@ public class PageFactory implements SqlEntityFactory<Page> {
 		// Nothing to do
 	}
 
+	/*@Override
+	public String createCountQuery(String filterClause) throws DalDbException {
+		return BMSApiDataConnection.getLocationsCall(1,BMSApiDataConnection.BMS_MAX_PAGE_SIZE);
+	}*/
+	
 	@Override
 	public String createCountQuery(String filterClause) throws DalDbException {
 		return BMSApiDataConnection.getLocationsCall(1,BMSApiDataConnection.BMS_MAX_PAGE_SIZE);
@@ -66,7 +71,13 @@ public class PageFactory implements SqlEntityFactory<Page> {
 
 	@Override
 	public Page createEntity(ResultSet rs) throws DalDbException {
-		throw new UnsupportedOperationException();
+		Page result = new Page();
+		try{
+			result.setTotalResults(Integer.valueOf(rs.getInt(1)));
+		}catch(SQLException sqlex){
+			throw new DalDbException(sqlex.getMessage());
+		}
+		return result;
 	}
 
 	public Page createEntity(JsonMap jsonMap) throws DalDbException {
