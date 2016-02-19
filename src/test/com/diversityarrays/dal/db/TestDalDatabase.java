@@ -225,8 +225,8 @@ public class TestDalDatabase {
 
 	private static DalDatabase createBMS_DalDatabase() throws UnknownHostException, DalDbException {
 		
-		USERNAME = "celso";
-		PASSWORD = "celso";
+		USERNAME = "user1";
+		PASSWORD = "cimmyt";
 		
 		String where = null;
 		String hostname = InetAddress.getLocalHost().getCanonicalHostName();

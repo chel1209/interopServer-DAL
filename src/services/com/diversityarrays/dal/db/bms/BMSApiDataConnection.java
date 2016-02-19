@@ -9,11 +9,12 @@ public class BMSApiDataConnection {
 	public  static final String PORT               = "48080";
 	public  static final String CROP               = "maize";
 	private static final String LOCATION_TYPE_ID   = "410";
-	public static final int BMS_MAX_PAGE_SIZE      = 200;
-	public static final String PAGE_DOES_NOT_EXIST = "The page number you requested is too big.";
-	public static final String BMS_USER            = "user1";
-	public static final String BMS_PASSWORD        = "cimmyt";
-	public static final String TOKEN_HEADER        = "X-Auth-Token";
+	public  static final int BMS_MAX_PAGE_SIZE      = 200;
+	public  static final String PAGE_DOES_NOT_EXIST = "The page number you requested is too big.";
+	public  static final String BMS_USER            = "user1";
+	public  static final String BMS_PASSWORD        = "cimmyt";
+	public  static final String TOKEN_HEADER        = "X-Auth-Token";
+	public  static final String CONTENT_TYPE        = "application/x-www-form-urlencoded"; 
 
 	
 	/* 
