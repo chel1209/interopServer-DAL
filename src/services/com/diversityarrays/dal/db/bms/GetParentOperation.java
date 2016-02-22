@@ -24,11 +24,11 @@ import fi.iki.elonen.NanoHTTPD.Method;
 public class GetParentOperation extends EntityOperation<GeneralType,BMS_DalDatabase>{
 
 	
-	public static final Pattern PATTERN = Pattern.compile("^list/type/parent/active");
+	public static final Pattern PATTERN = Pattern.compile("^list/type/specimenParent/active");
 	public static final String  ENTITY_NAME = "Parent";
 	
 	public GetParentOperation(BMS_DalDatabase db, EntityProvider<GeneralType> provider){
-		super(db, ENTITY_NAME, "list/type/parent/active", GeneralType.class, provider);
+		super(db, ENTITY_NAME, "list/type/specimenParent/active", GeneralType.class, provider);
 	}
 
 	@Override

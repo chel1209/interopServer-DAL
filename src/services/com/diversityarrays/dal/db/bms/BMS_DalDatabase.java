@@ -1618,7 +1618,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 					tmp.add(createOperation("list/type/specimengroup/active", SpecimenGroup.class, specimengroupProvider));
 
 					//parent
-					tmp.add(createOperation("list/type/parent/active", Parent.class, parentProvider));
+					//RHT noticed this string could work.
+					//tmp.add(createOperation("list/type/parent/active", Parent.class, parentProvider));
+					tmp.add(createOperation("list/type/specimenParent/active", Parent.class, parentProvider));
 
 					//genotypealias
 					tmp.add(createOperation("list/type/genotypealias/active", GenotypeaAlias.class, genotypealiasProvider));
