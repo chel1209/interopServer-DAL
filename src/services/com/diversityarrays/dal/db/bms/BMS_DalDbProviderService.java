@@ -65,6 +65,7 @@ public class BMS_DalDbProviderService extends AbstractJdbcDalDbProviderService {
 	private static final StringParameter[] PARAMETERS = {
 		CENTRAL_URL,
 //		LOCAL_URL, // TODO local incarnation delayed until I get a chance to talk to BMS folks
+		INTEROP_URL
 	};
 	
 	public BMS_DalDbProviderService() {
@@ -78,7 +79,7 @@ public class BMS_DalDbProviderService extends AbstractJdbcDalDbProviderService {
 
 	@Override
 	public Set<Parameter<?>> getParametersRequired() {
-		return new LinkedHashSet<Parameter<?>>(Arrays.asList(CENTRAL_URL,LOCAL_URL,USERNAME,PASSWORD));
+		return new LinkedHashSet<Parameter<?>>(Arrays.asList(CENTRAL_URL,LOCAL_URL, INTEROP_URL,USERNAME,PASSWORD));
 	}
 
 	@Override
@@ -111,7 +112,7 @@ public class BMS_DalDbProviderService extends AbstractJdbcDalDbProviderService {
 		}
 		
 		String interopUrl = base.get(INTEROP_URL);
-		JdbcConnectionParameters interopParams = new JdbcConnectionParameters(interopUrl, "bmsadmin", "bms;2015*");
+		JdbcConnectionParameters interopParams = new JdbcConnectionParameters(base.get(INTEROP_URL), "bmsadmin", "bms;2015*");
 		
 		//URI uri = ParameterValue.getValue(DAL_URL, parameterValues);
 		String username = ParameterValue.getValue(USERNAME, parameterValues);
