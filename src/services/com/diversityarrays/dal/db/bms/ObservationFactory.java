@@ -70,6 +70,10 @@ public class ObservationFactory {
 		
 	}
 	
+	public void getDataFromCSVFile(String uri){
+		
+	}
+	
 	public Observation parseJson(JsonParser parser) throws Exception{
 		
 	 	  Observation observation = new Observation();

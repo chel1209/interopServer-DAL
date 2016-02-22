@@ -1583,8 +1583,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 					tmp.add(createOperation("list/trial/_nperpage/page/_num", Trial.class, trialProvider));
 					tmp.add(createOperation("trial/details/_program", Trial.class, trialProvider));
 
-					//SetOperations
-					tmp.add(createOperation("observation/_program/_trialid/_observationid", Observation.class, observationProvider));
+					/**
+					 * Using csv to import data collected
+					 */
+					//tmp.add(createOperation("observation/_program/_trialid/_observationid", Observation.class, observationProvider));
+					tmp.add(createOperation("trial/_id/import/datakapturetemplate/csv", Observation.class, observationProvider));
 
 					//Project Operations
 					tmp.add(createOperation("list/project/_nperpage/page/_num", Project.class,projectProvider));

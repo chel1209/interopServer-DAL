@@ -14,19 +14,22 @@ import com.diversityarrays.dal.server.DalSession;
 import fi.iki.elonen.NanoHTTPD.Method;
 
 
-/*
- * author: Raul Hernandez T.
- * date:   08-31-2015
+/**
+ * @author: Raul Hernandez T.
+ * @date:   08-31-2015
+ * 
+ * The call was changed to user csv files 
  */
 
 public class SetObservationOperation extends EntityOperation<Observation, BMS_DalDatabase> {
 	
-	public static final Pattern PATTERN = Pattern.compile("^observation/_[a-z]*/_[a-z]*/_[a-z]*");
+	public static final Pattern PATTERN = Pattern.compile("^trial/_[a-z]*/import/datakapturetemplate/csv");
+
 	public static final String ENTITY_NAME = "observation";
 
 	public SetObservationOperation(BMS_DalDatabase db, EntityProvider<Observation> provider) 
 	{
-		super(db, ENTITY_NAME, "observation/_program/_trialid/_observationid", Observation.class, provider);
+		super(db, ENTITY_NAME, "trial/_id/import/datakapturetemplate/csv", Observation.class, provider);
 	}
 
 	@Override
@@ -34,14 +37,10 @@ public class SetObservationOperation extends EntityOperation<Observation, BMS_Da
 			Method method, String dalcmd, List<String> dalOpParameters,
 			Map<String, String> methodParms, Map<String, String> filePathByName)
 			throws DalDbException {
-		// TODO Auto-generated method stub
-		System.out.println("SetObservationOperation [BEGIN execute]: " + methodParms);
 
+		System.out.println("SetObservationOperation [BEGIN execute]: " + methodParms);
 		entityProvider.sendDataUsingPut(methodParms,dalOpParameters,filePathByName);
-		
-		
-		
-		//BMS_DalDatabase.sendPutData(methodParms, StrjSON);
+
 	}
 	
 	
