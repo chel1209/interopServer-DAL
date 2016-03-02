@@ -158,7 +158,7 @@ class PagedListOperation<T extends DalEntity> extends EntityOperation<T,BMS_DalD
 				EntityIterator<? extends DalEntity> iterator = null;
 				while (null != (entity = iter.nextEntity())) {
 					if(entity instanceof Trial){
-						iterator = entityProvider.createIdIterator(String.valueOf(((Trial)entity).getTrialId()), firstRecord, BMSApiDataConnection.BMS_MAX_PAGE_SIZE, filterClause,bmsPage);
+						iterator = entityProvider.createIdIterator(String.valueOf(((Trial)entity).getTrialID()), firstRecord, BMSApiDataConnection.BMS_MAX_PAGE_SIZE, filterClause,bmsPage);
 						iterator.readLine();
 						do{
 							if (null != (entity = (T)iterator.nextEntity())) {

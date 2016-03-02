@@ -182,7 +182,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 
 		try {
 
-			result.setTrialId(rs.getInt(1));
+			result.setTrialID(rs.getInt(1));
 		} catch (SQLException e) {
 			throw new DalDbException(e);
 		} catch (Exception e) {
@@ -196,10 +196,14 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		Trial result = new Trial();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
 		System.out.println(jsonMap.get("id"));
-		result.setTrialId(new Integer((String) jsonMap.get("id")));
-		result.setTrialName((String) jsonMap.get("name"));
-		result.setTrialNote((String) jsonMap.get("objective"));
-		result.setTrialAcronym((String) jsonMap.get("title"));
+		result.setTrialID(new Integer((String) jsonMap.get("id")));
+		//result.setTrialName((String) jsonMap.get("name"));
+		result.setTrialName("nombre");
+		//result.setTrialNote((String) jsonMap.get("objective"));
+		result.setTrialNote("nota");
+		//result.setTrialAcronym((String) jsonMap.get("title"));
+		result.setTrialAcronym("titutlo");
+		
 
 		if(((String) jsonMap.get("startDate")).length()>0 && !((String)jsonMap.get("startDate")).equals("null")){
 			try {
@@ -214,7 +218,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 			}
 		}
 
-		if (((String) jsonMap.get("endDate")).length() > 0
+		/*if (((String) jsonMap.get("endDate")).length() > 0
 				&& !jsonMap.get("endDate").equals("null")) {
 			try {
 				result.setTrialEndDate(new Date(formatter.parse(
@@ -226,9 +230,17 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 				throw new DalDbException("Error parsing End Date"
 						+ e.getMessage());
 			}
-		}
+		}*/
+		
+		result.setTrialEndDate(new Date(0));
+		result.setTrialManagerName("investigador");
+		result.setTrialTypeName("estudio");
+		result.setTrialTypeId(1);
+		result.setTrialManagerId(1);
+		result.setSiteName("localidad");
+		result.setSiteID(1);
 
-		List<Object> generalInfo = (List) jsonMap.get("generalInfo");
+		/*List<Object> generalInfo = (List) jsonMap.get("generalInfo");
 		if (generalInfo != null) {
 			//System.out.println("Trial::" + ((Trial) result).getTrialId()
 			//		+ "generalInfo" + generalInfo);
@@ -261,7 +273,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 								if (((JsonMap) map).get("name").equals(
 										"LOCATION_ID")) {
 									if(((String) ((JsonMap)map).get("value")).length() > 0 && !((String) ((JsonMap)map).get("value")).equals("null")){
-										((Trial) result).setSiteNameID((Integer) ((JsonMap) map).get("value"));
+										((Trial) result).setSiteID((Integer) ((JsonMap) map).get("value"));
 										continue;
 									}
 								}
@@ -271,7 +283,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 				}
 			}
 
-		}
+		}*/
 
 		if(processTraits){
 			TrialTraitFactory trialTraitFactory = new TrialTraitFactory();
@@ -281,8 +293,11 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		if (environments == null) {
 			environments = (List) jsonMap.get("environments");
 		}
+		
+		
+		result.setDesignTypeName("aleatorio");
 	
-		if(environments != null){
+		/*if(environments != null){
 			if (environments.size() > 0) {
 				//System.out.println("Trial::" + ((Trial) result).getTrialId()
 					//	+ "environment details" + environments);
@@ -317,7 +332,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 									if (((JsonMap) mapDetails).get("name").equals(
 											"LOCATION_NAME_ID")) {
 										((Trial) result)
-												.setSiteNameID(Integer
+												.setSiteID(Integer
 														.valueOf((String) ((JsonMap) mapDetails)
 																.get("value")));
 										continue;
@@ -337,14 +352,14 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 						trialUnitFactory.createEntity(result, jsonMap);
 					}
 					
-					if(((Trial)result).getSiteName() != null && ((Trial)result).getSiteNameID() != null){
+					if(((Trial)result).getSiteName() != null && ((Trial)result).getSiteID() != null){
 						return result;
 					}
 				}
 			}else{
 				environments = null;
 			}
-		}
+		}*/
 
 		return result;
 	}
@@ -481,7 +496,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 									if (((JsonMap) mapDetails).get("name").equals(
 											"LOCATION_ID")) {
 										((Trial) entity)
-												.setSiteNameID(Integer
+												.setSiteID(Integer
 														.valueOf((String) ((JsonMap) mapDetails)
 																.get("value")));
 									}
@@ -498,7 +513,7 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 					/*TrialUnitFactory trialUnitFactory = new TrialUnitFactory();
 					trialUnitFactory.createEntity(entity, jsonMap);*/
 					
-					if(((Trial)entity).getSiteName() != null && ((Trial)entity).getSiteNameID() != null){
+					if(((Trial)entity).getSiteName() != null && ((Trial)entity).getSiteID() != null){
 						entity = new Trial(entity);
 						return entity;
 					}

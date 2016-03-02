@@ -92,6 +92,7 @@ import com.diversityarrays.dal.entity.Item;
 import com.diversityarrays.dal.entity.ItemParent;
 import com.diversityarrays.dal.entity.ItemUnit;
 import com.diversityarrays.dal.entity.Observation;
+import com.diversityarrays.dal.entity.OutputFile;
 import com.diversityarrays.dal.entity.Page;
 import com.diversityarrays.dal.entity.Parent;
 import com.diversityarrays.dal.entity.Project;
@@ -583,9 +584,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		@Override
 		public void getDetails(DalEntity entity) throws DalDbException {
-			((Trial)entity).getTrialId();
+			((Trial)entity).getTrialID();
 
-			request = new HttpGet(trialFactory.createListStudiesDetailsURL(String.valueOf(((Trial)entity).getTrialId())));
+			request = new HttpGet(trialFactory.createListStudiesDetailsURL(String.valueOf(((Trial)entity).getTrialID())));
 			request.addHeader(BMSApiDataConnection.TOKEN_HEADER, systemUserToken.getPasswordSalt());
 
 			try{
@@ -604,7 +605,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public void getFullDetails(DalEntity entity) throws DalDbException {
 
-			request = new HttpGet(trialFactory.createListStudiesDetailsURL(String.valueOf(((Trial)entity).getTrialId())));
+			request = new HttpGet(trialFactory.createListStudiesDetailsURL(String.valueOf(((Trial)entity).getTrialID())));
 			request.addHeader(BMSApiDataConnection.TOKEN_HEADER, systemUserToken.getPasswordSalt());
 
 			try{
@@ -1657,6 +1658,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 					//Set crop
 					tmp.add(createOperation("set/group/_id",Crop.class,setCropProvider));
 
+					//Export Samplemeasurments csv
+					tmp.add(createOperation("export/samplemeasurement/csv",OutputFile.class,trialProvider));
+
 					operations = tmp;
 				}
 			}
@@ -1958,6 +1962,14 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 				return new SetCropOperation(BMS_DalDatabase.this, (EntityProvider<Crop>) provider);
 			}
 		});
+		
+		//Export SampleMeasurements CSV
+		map.put(TrialExportOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new TrialExportOperation(BMS_DalDatabase.this, (EntityProvider<OutputFile>) provider);
+			}
+		});		
 
 		return map;
 	}
@@ -4980,6 +4992,87 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 
 	};
+	
+	
+	private EntityProvider<OutputFile> outputFileProvider = new EntityProvider<OutputFile>(){
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public OutputFile getEntity(String id, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends OutputFile> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends OutputFile> createIterator(
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends OutputFile> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page pageNumber) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,
+				List<String> dalOpParameters, Map<String, String> filePathByName)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public EntityIterator<? extends DalEntity> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}};
 
 }
 

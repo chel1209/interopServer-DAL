@@ -204,12 +204,12 @@ public class TrialTraitFactory implements SqlEntityFactory<Trial> {
 		if(traits != null){
 			for(Object map:traits){
 				TrialTrait result = new TrialTrait();
-				result.setTrialId(trial.getTrialId());
+				result.setTrialId(trial.getTrialID());
 				result.setTraitId(Integer.valueOf((String)((JsonMap)map).get("id")));
 				result.setTraitName((String)((JsonMap)map).get("name"));
 				trialTraits.add(result);
 			}
-			trial.setTrialTraits(trialTraits);
+			//trial.setTrialTraits(trialTraits);
 		}
 	}
 	
@@ -228,7 +228,7 @@ public class TrialTraitFactory implements SqlEntityFactory<Trial> {
 			if(line != null){
 				JsonParser parser = new JsonParser(line);
 				List<Object> generalInfo = (List)parser.getMapResult().get("generalInfo");
-				System.out.println("Trial::" + ((Trial)entity).getTrialId() + "generalInfo" + generalInfo);
+				System.out.println("Trial::" + ((Trial)entity).getTrialID() + "generalInfo" + generalInfo);
 				for(Object map:generalInfo){
 					if(((JsonMap)map).get("name").equals("PI_NAME")){
 						((Trial)entity).setTrialManagerName((String)((JsonMap)map).get("value"));

@@ -2156,4 +2156,45 @@ public class TestDalDatabase {
 
 	}
 
+	@Test
+	public void testExportTrialCSV(){
+		LoggedInTest loggedInTest = new LoggedInTest("crop", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "export/samplemeasurement/csv";
+
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+				mapaParametros.put("Filtering","TrialIdCSV=2008");
+				
+
+
+				try{
+
+					match.node.getOperation().execute(session,
+							responseBuilder,
+							Method.POST,
+							dalcmd,
+							match.getParameterValues(),
+							mapaParametros,
+							null);
+
+					System.out.println("Reponse [testExportSampleMeasurements] \n" + responseBuilder.asString() + "\n");
+
+					if (NOISY) {
+						showResponse("testExportTrialCSV", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}
+		};
+		doLoggedInTest(loggedInTest);
+
+	}
 }
