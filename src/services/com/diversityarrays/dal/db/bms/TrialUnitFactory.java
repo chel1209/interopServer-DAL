@@ -199,19 +199,19 @@ public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 		if(germplasm!=null){
 			for(Object map:germplasm){
 				TrialUnit result = new TrialUnit();
-				result.setTrialId(trial.getTrialId());
-				sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialId()));
+				result.setTrialId(trial.getTrialID());
+				sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialID()));
 				result.setUnitPositionText((String)((JsonMap)map).get("entryNumber"));
-				specimenFactory.createEntity(result, jsonMap,sampleMeasurementFactory,trial.getTrialTraits(),sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialId())));
+				//specimenFactory.createEntity(result, jsonMap,sampleMeasurementFactory,trial.getTrialTraits(),sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialId())));
 				if(trial.getSiteName() != null ){
 					result.setSiteName(trial.getSiteName());
 				}
-				if(trial.getSiteNameID() != null){
-					result.setSiteId(trial.getSiteNameID());
+				if(trial.getSiteID() != null){
+					result.setSiteId(trial.getSiteID());
 				}
 				trialUnits.add(result);
 			}
-			trial.setTrialUnits(trialUnits);
+			//trial.setTrialUnits(trialUnits);
 		}
 	}
 	
@@ -230,7 +230,7 @@ public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 			if(line != null){
 				JsonParser parser = new JsonParser(line);
 				List<Object> generalInfo = (List)parser.getMapResult().get("generalInfo");
-				System.out.println("Trial::" + ((Trial)entity).getTrialId() + "generalInfo" + generalInfo);
+				System.out.println("Trial::" + ((Trial)entity).getTrialID() + "generalInfo" + generalInfo);
 				for(Object map:generalInfo){
 					if(((JsonMap)map).get("name").equals("PI_NAME")){
 						((Trial)entity).setTrialManagerName((String)((JsonMap)map).get("value"));
