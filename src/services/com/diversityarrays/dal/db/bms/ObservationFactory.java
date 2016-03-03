@@ -1,9 +1,13 @@
 package com.diversityarrays.dal.db.bms;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.diversityarrays.dal.entity.CsvFile;
 import com.diversityarrays.dal.entity.MeasurementIdentifier;
 import com.diversityarrays.dal.entity.Measurements;
 import com.diversityarrays.dal.entity.Observation;
@@ -70,9 +74,94 @@ public class ObservationFactory {
 		
 	}
 	
-	public void getDataFromCSVFile(String uri){
+	/** 
+	 * Read the csv file and store in a matrix 
+	 */
+	public String[][] getDataFromCSVFile(String uri){
+		
+		BufferedReader brReader = null;
+		String line             = "";
+		ArrayList<String> data  = null;
+		String[][] dataCsv      = null;
+		int row=0;
+		int col=0;
+		int numHeaders = 0;
+		try{
+			brReader = new BufferedReader(new FileReader(uri));
+			data = new ArrayList<String>();
+			while((line= brReader.readLine()) != null){
+				   data.add(line);	
+			}
+			
+			if(!data.isEmpty()){
+				
+				String[] headers = data.get(0).split(" ");
+				numHeaders = headers.length;
+				dataCsv = new String[data.size()][numHeaders];
+				
+				col=0;
+				for(String head : headers){
+					dataCsv[0][col++] = head;
+				}
+				
+				if(data.size()>1){
+				   
+				   for(row=1;row<data.size();row++){
+					   col=0;
+					   for(String det : data.get(row).split(",")){
+						   dataCsv[row][col++] = det;
+					   }
+				   }
+				}
+			}
+			
+			setCsvFileObj(dataCsv);
+
+			
+			
+		}catch(ArrayIndexOutOfBoundsException ae){
+			System.out.println("The CSV file is not correct in line " + (row+1));
+			System.out.println("Number of headers " + numHeaders + " Number of data columns " + col);
+		}
+		catch(Exception e){
+			System.out.println("Error al leer el archivo: " + e.toString());
+		}
+		
+		return dataCsv;
+		
 		
 	}
+	
+	public List<CsvFile> setCsvFileObj(String[][] values){
+		
+		Map<String,String> headersValues = new HashMap<String,String>();
+		Map<String,String> traitValues   = new HashMap<String,String>();
+		
+		List<CsvFile> lCFiles = new ArrayList<CsvFile>();
+		CsvFile cFile = new CsvFile();
+		
+		for(int z=1;z<values.length;z++){
+			for(int y=0;y<values[z].length;y++){
+				String header = values[0][y];
+				String value  = values[z][y];
+				if(cFile.getColNumHeaders() > y){				
+			 	   headersValues.put(header, value);
+				}else{
+				   traitValues.put(header, value);
+				}
+				
+			}
+			cFile = new CsvFile();
+			cFile.setHeaders(headersValues);
+			cFile.setTraitValues(traitValues);
+			lCFiles.add(cFile);
+		}
+		System.out.println();
+		System.out.println("Total " + lCFiles.size());
+		
+		
+		return lCFiles;
+	}	
 	
 	public Observation parseJson(JsonParser parser) throws Exception{
 		
