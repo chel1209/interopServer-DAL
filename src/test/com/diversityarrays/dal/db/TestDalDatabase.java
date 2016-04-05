@@ -1930,8 +1930,8 @@ public class TestDalDatabase {
 				String dalcmd = "list/type/workflow/active";
 
 				OperationMatch match = getOperationMatch(dalcmd);
-				DalResponseBuilder responseBuilder = DalServerUtil
-						.createBuilder(WANT_JSON);
+				//DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(false); //RHT borrar
 
 				Map<String, String> mapaParametros = new HashMap<String, String>();
 				try {
@@ -2197,4 +2197,176 @@ public class TestDalDatabase {
 		doLoggedInTest(loggedInTest);
 
 	}
+	
+	/**
+	 * @author Raul Hernandez T.
+	 * @date 3/08/2016
+	 */
+	@Test
+	public void testGetGeneralUnit(){
+		LoggedInTest loggedInTest = new LoggedInTest("generalUnit", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "list/generalunit/" + 1000 + "/page/" + 1;
+
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+
+
+				try{
+
+					match.node.getOperation().execute(session,
+							responseBuilder,
+							Method.POST,
+							dalcmd,
+							match.getParameterValues(),
+							mapaParametros,
+							null);
+
+					System.out.println("Reponse [testGetGeneralUnit] \n" + responseBuilder.asString() + "\n");
+
+					if (NOISY) {
+						showResponse("testGetGeneralUnit", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}
+		};
+		doLoggedInTest(loggedInTest);
+	}	
+	
+	/**
+	 * @author Raul Hernandez T.
+	 * @date 3/11/2016
+	 */
+	@Test
+	public void testGetTriallUnit(){
+		LoggedInTest loggedInTest = new LoggedInTest("trialUnit", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "trial/15935/list/trialunit";
+
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+
+
+				try{
+
+					match.node.getOperation().execute(session,
+							responseBuilder,
+							Method.POST,
+							dalcmd,
+							match.getParameterValues(),
+							mapaParametros,
+							null);
+
+					System.out.println("Reponse [testGetTriallUnit] \n" + responseBuilder.asString() + "\n");
+
+					if (NOISY) {
+						showResponse("testGetTriallUnit", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}
+		};
+		doLoggedInTest(loggedInTest);
+	}	
+	
+	/**
+	 * @author Raul Hernandez T.
+	 * @date 3/15/2016
+	 */
+	@Test
+	public void testGetTraits(){
+		LoggedInTest loggedInTest = new LoggedInTest("traits", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "trial/15935/list/trait";
+
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+
+
+				try{
+
+					match.node.getOperation().execute(session,
+							responseBuilder,
+							Method.POST,
+							dalcmd,
+							match.getParameterValues(),
+							mapaParametros,
+							null);
+
+					System.out.println("Reponse [testGetTraits] \n" + responseBuilder.asString() + "\n");
+
+					if (NOISY) {
+						showResponse("testGetTraits", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}
+		};
+		doLoggedInTest(loggedInTest);
+	}
+	
+	/**
+	 * @author Raul Hernandez T.
+	 * @date 3/16/2016
+	 */
+	@Test
+	public void testGetCSV(){
+		LoggedInTest loggedInTest = new LoggedInTest("csv", true) {
+
+			@Override
+			public void execute(DalSession session) {
+
+				String dalcmd = "export/samplemeasurement/csv";
+
+				OperationMatch match = getOperationMatch(dalcmd);
+				DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(WANT_JSON);
+				Map<String, String> mapaParametros = new HashMap<String, String>();
+
+				try{
+
+					match.node.getOperation().execute(session,
+							responseBuilder,
+							Method.POST,
+							dalcmd,
+							match.getParameterValues(),
+							mapaParametros,
+							null);
+
+					System.out.println("Reponse [testGetCSV] \n" + responseBuilder.asString() + "\n");
+
+					if (NOISY) {
+						showResponse("testGetCSV", responseBuilder);
+					}
+				}catch (DalDbException e) {
+					fail(e.getMessage());
+				}catch (ParseException e) {
+					fail(e.getMessage());
+				}
+			}
+		};
+		doLoggedInTest(loggedInTest);
+	}	
+	
 }

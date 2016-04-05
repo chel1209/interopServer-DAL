@@ -9,7 +9,7 @@ public class BMSApiDataConnection {
 	public  static final String PORT               = "48080";
 	public  static final String CROP               = "wheat";
 	private static final String LOCATION_TYPE_ID   = "410";
-	public  static final int BMS_MAX_PAGE_SIZE      = 200;
+	public  static final int BMS_MAX_PAGE_SIZE      = 1000;
 	public  static final String PAGE_DOES_NOT_EXIST = "The page number you requested is too big.";
 	public  static final String BMS_USER            = "user1";
 	public  static final String BMS_PASSWORD        = "cimmyt";
@@ -168,5 +168,12 @@ public class BMSApiDataConnection {
     	return "http://" + IP + ":" + PORT + "/bmsapi/crop/list";
     }
     
+    public static String getGeneralUnit(){
+    	return "No implemented yet";
+    }
+    
+    public static String getTrialUnit(){
+    	return "No implemented yet";
+    }
     
 }

@@ -11,26 +11,25 @@ import com.diversityarrays.dal.db.DalResponseBuilder;
 import com.diversityarrays.dal.db.EntityIterator;
 import com.diversityarrays.dal.db.EntityOperation;
 import com.diversityarrays.dal.db.EntityProvider;
-import com.diversityarrays.dal.entity.GeneralType;
+import com.diversityarrays.dal.entity.TrialUnits;
 import com.diversityarrays.dal.server.DalSession;
 
 import fi.iki.elonen.NanoHTTPD.Method;
 
-
-
-/*
+/**
  * @author Raul Hernandez T.
- * @date 12-NOV-2015
+ * @date 03-11-2016 
  */
-public class GetWorkflowOperation extends EntityOperation<GeneralType,BMS_DalDatabase>{
+
+public class GetTrialUnitOperation extends EntityOperation<TrialUnits,BMS_DalDatabase>{
 	
-	public static final Pattern PATTERN = Pattern.compile("^list/type/workflow/active");
-	public static final String  ENTITY_NAME = "Workflow";
+	public static final Pattern PATTERN = Pattern.compile("^trial/_[a-z]*/list/trialunit");
+	public static final String  ENTITY_NAME = "TrialUnits";	
 	
-	public GetWorkflowOperation(BMS_DalDatabase db, EntityProvider<GeneralType> provider){
-		super(db, ENTITY_NAME, "list/type/workflow/active", GeneralType.class, provider);
+	public GetTrialUnitOperation(BMS_DalDatabase db, EntityProvider<TrialUnits> provider){
+		super(db, ENTITY_NAME, "trial/_id/list/trialunit", TrialUnits.class, provider);
 	}
-	
+
 	@Override
 	public void execute(DalSession session, DalResponseBuilder responseBuilder,
 			Method method, String dalcmd, List<String> dalOpParameters,
@@ -38,25 +37,21 @@ public class GetWorkflowOperation extends EntityOperation<GeneralType,BMS_DalDat
 			throws DalDbException {
 
 		String filterClause = DalDatabaseUtil.getFilteringClause(methodParms);
+		String id = dalOpParameters.get(0);
 		
-		EntityIterator<? extends GeneralType> iter = null;
+		EntityIterator<? extends TrialUnits> iter = null;
 		
 		try{
 			
-			iter = entityProvider.createIdIterator("", 0, 0, filterClause);
+			iter = entityProvider.createIdIterator(id, 0, 0, filterClause);
+			responseBuilder.addResponseMeta(entityTagName);
 			
-			responseBuilder.startTag("VCol");
-			responseBuilder.endTag();	
-			
-			responseBuilder.addResponseMeta("GeneralType");
-			
-			GeneralType entity;
+			TrialUnits entity;
 			iter.readLine();
 			
 			while (null != (entity = iter.nextEntity())) {
-				appendEmptyEntity(responseBuilder, entity);
-			}
-
+				appendEntity(responseBuilder, entity);
+			} 
 			
 		} finally{
 			if(iter != null){

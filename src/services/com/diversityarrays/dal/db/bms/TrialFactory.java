@@ -2,10 +2,12 @@ package com.diversityarrays.dal.db.bms;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 import net.pearcan.json.JsonMap;
 import net.pearcan.json.JsonParser;
@@ -16,13 +18,6 @@ import com.diversityarrays.dal.entity.ColumnNameMapping;
 import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.entity.Trial;
 import com.diversityarrays.dal.ops.FilteringTerm;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.http.HttpEntity;
 
 public class TrialFactory implements SqlEntityFactory<Trial> {
 
@@ -38,6 +33,10 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 	private static final int OBSOLETE = 1;
 
 	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
+	static private final String  MISSING_STRING       = "MISSING VALUE"; 
+	static private final String  MISSING_INTEGER      = "0";
+	static private final Integer MISSING_TYPE_TRIAL   = 1;
+	static private final Integer NUMBERDATAFROMDETAIL = 5;
 
 	static {
 		// Ensure the EntityColumn initializers get called !
@@ -173,7 +172,11 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 		//CCB validar la implementación de la paginación
 		sb.append(" LIMIT ").append(nRecords).append(" OFFSET ").append(firstRecord);
 
-		return sb.toString();
+		String sql = sb.toString();
+		
+		System.out.println("TrialFactory [createPagedListQuery] sql = " + sql);
+		
+		return sql;
 	}
 
 	@Override
@@ -191,99 +194,148 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 
 		return result;
 	}
+	
+	public String getStringValue(JsonMap jsonMap,String key){
+		String value = jsonMap.get(key).toString().trim();
+		if(!value.isEmpty())
+			return value;
+		else
+			return MISSING_STRING;
+	}
+	
+	public Integer getIntegerValue(JsonMap jsonMap,String key){
+		String value = jsonMap.get(key).toString().trim();
+		if(!value.isEmpty())
+			return Integer.parseInt(value);
+		else
+			return Integer.parseInt(MISSING_INTEGER);
+	}
 
 	public Trial createEntity(JsonMap jsonMap) throws DalDbException {
+
+		System.out.println("TrialFactory [createEntity]");
+		String strValue = "";
 		Trial result = new Trial();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMdd");
-		System.out.println(jsonMap.get("id"));
-		result.setTrialID(new Integer((String) jsonMap.get("id")));
-		//result.setTrialName((String) jsonMap.get("name"));
-		result.setTrialName("nombre");
-		//result.setTrialNote((String) jsonMap.get("objective"));
-		result.setTrialNote("nota");
-		//result.setTrialAcronym((String) jsonMap.get("title"));
-		result.setTrialAcronym("titutlo");
 		
+		//TrialID => id
+		result.setTrialID(getIntegerValue(jsonMap,"id"));
+		
+		//TrialName => name
+		result.setTrialName(getStringValue(jsonMap,"name"));
+		
+		//TrialNote => objective
+		result.setTrialNote(getStringValue(jsonMap,"objective"));
+		
+		//TrialAcronym => title
+		result.setTrialAcronym(getStringValue(jsonMap,"title"));
 
 		if(((String) jsonMap.get("startDate")).length()>0 && !((String)jsonMap.get("startDate")).equals("null")){
 			try {
-				result.setTrialStartDate(new Date(formatter.parse(
-						(String) jsonMap.get("startDate")).getTime()));
+				result.setTrialStartDate(new Date(formatter.parse((String) jsonMap.get("startDate")).getTime()));
 			} catch (ParseException pe) {
-				throw new DalDbException("Error parsing Start Date"
-						+ pe.getMessage());
+				throw new DalDbException("Error parsing Start Date" + pe.getMessage());
 			} catch (Exception e) {
-				throw new DalDbException("Error parsing Start Date"
-						+ e.getMessage());
+				throw new DalDbException("Error parsing Start Date" + e.getMessage());
 			}
 		}
 
-		/*if (((String) jsonMap.get("endDate")).length() > 0
-				&& !jsonMap.get("endDate").equals("null")) {
+		if (((String) jsonMap.get("endDate")).length() > 0 && !jsonMap.get("endDate").equals("null")) {
 			try {
-				result.setTrialEndDate(new Date(formatter.parse(
-						(String) jsonMap.get("endDate")).getTime()));
+ 				result.setTrialEndDate(new Date(formatter.parse((String) jsonMap.get("endDate")).getTime()));
 			} catch (ParseException pe) {
-				throw new DalDbException("Error parsing End Date"
-						+ pe.getMessage());
+				throw new DalDbException("Error parsing End Date" + pe.getMessage());
 			} catch (Exception e) {
-				throw new DalDbException("Error parsing End Date"
-						+ e.getMessage());
+				throw new DalDbException("Error parsing End Date" + e.getMessage());
 			}
-		}*/
+		}
 		
-		result.setTrialEndDate(new Date(0));
-		result.setTrialManagerName("investigador");
-		result.setTrialTypeName("estudio");
-		result.setTrialTypeId(1);
-		result.setTrialManagerId(1);
-		result.setSiteName("localidad");
-		result.setSiteID(1);
+        //TrialTypeId
+		result.setTrialTypeId(MISSING_TYPE_TRIAL);
 
-		/*List<Object> generalInfo = (List) jsonMap.get("generalInfo");
+		List<Object> generalInfo = (List) jsonMap.get("generalInfo");
+
 		if (generalInfo != null) {
-			//System.out.println("Trial::" + ((Trial) result).getTrialId()
-			//		+ "generalInfo" + generalInfo);
 
+			int count=0;
 			for (Object map : generalInfo) {
+				
+				if(count==NUMBERDATAFROMDETAIL){
+					break;
+				}
+				
 				if (((JsonMap) map).get("name").equals("PI_NAME")) {
-					((Trial) result)
-							.setTrialManagerName((String) ((JsonMap) map)
-									.get("value"));
+					//TrialManagerName
+					strValue = ((JsonMap) map).get("value").toString().trim();
+				    result.setTrialManagerName(strValue);
+				    count++;
 					continue;
 				} else {
 					if (((JsonMap) map).get("name").equals("LOCATION_NAME")) {
-						((Trial) result).setSiteName((String) ((JsonMap) map)
-								.get("value"));
+						//SiteName
+						strValue = ((JsonMap) map).get("value").toString().trim();
+					    result.setSiteName(strValue);
+					    count++;
 						continue;
 					} else {
 						if (((JsonMap) map).get("name").equals("PI_NAME_ID")) {
-							((Trial) result).setTrialManagerId(Integer
-									.valueOf((String) ((JsonMap) map)
-											.get("value")));
+                            //TrialManagerId							
+							strValue = ((JsonMap) map).get("value").toString().trim();
+							if(!strValue.isEmpty())
+							   result.setTrialManagerId(Integer.valueOf(strValue));
+							count++;
 							continue;
 						} else {
-							if (((JsonMap) map).get("name")
-									.equals("STUDY_TYPE")) {
-								((Trial) result)
-										.setTrialTypeName((String) ((JsonMap) map)
-												.get("value"));
+							if (((JsonMap) map).get("name").equals("STUDY_TYPE")) {
+								//TrialTypeName
+								strValue = ((JsonMap) map).get("value").toString().trim();
+ 							    result.setTrialTypeName(strValue);
+ 							    count++;
 								continue;
 							} else {
-								if (((JsonMap) map).get("name").equals(
-										"LOCATION_ID")) {
-									if(((String) ((JsonMap)map).get("value")).length() > 0 && !((String) ((JsonMap)map).get("value")).equals("null")){
-										((Trial) result).setSiteID((Integer) ((JsonMap) map).get("value"));
-										continue;
-									}
+								if (((JsonMap) map).get("name").equals("LOCATION_ID")) {
+									//SiteId
+									strValue = ((JsonMap) map).get("value").toString().trim();
+									if(!strValue.isEmpty())
+									   result.setSiteID(Integer.valueOf(strValue));
+									count++;
+									continue;
 								}
 							}
 						}
 					}
 				}
 			}
-
-		}*/
+			
+			//Filling the missing values
+			if(result.getTrialManagerName()==null)
+			   result.setTrialManagerName(MISSING_STRING);
+			
+			if(result.getSiteName()==null)
+			   result.setSiteName(MISSING_STRING);
+			
+			if(result.getTrialManagerId()==null)
+				result.setTrialManagerId(Integer.valueOf(MISSING_INTEGER));
+			
+			if(result.getTrialTypeName()==null)
+				result.setTrialTypeName(MISSING_STRING);
+			
+			if(result.getSiteId()==null)
+				result.setSiteID(Integer.valueOf(MISSING_INTEGER));	
+			
+			if(result.getTrialEndDate()==null){
+				try{
+				  result.setTrialEndDate(new Date(formatter.parse("1999-01-01").getTime()));
+				}catch(Exception e){}
+			}
+			
+			//Delete this RHT
+			try{
+			   result.setTrialStartDate(new Date(formatter.parse("2016-01-01").getTime()));
+			}catch(Exception we){}
+			//end Delete
+			
+		}
 
 		if(processTraits){
 			TrialTraitFactory trialTraitFactory = new TrialTraitFactory();
@@ -294,8 +346,8 @@ public class TrialFactory implements SqlEntityFactory<Trial> {
 			environments = (List) jsonMap.get("environments");
 		}
 		
-		
-		result.setDesignTypeName("aleatorio");
+		//DesingTypeName
+		result.setDesignTypeName(MISSING_STRING);
 	
 		/*if(environments != null){
 			if (environments.size() > 0) {

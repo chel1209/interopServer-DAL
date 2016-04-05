@@ -10,7 +10,7 @@ import com.diversityarrays.dal.entity.Project;
 
 
 
-/*
+/**
  * @author Raul Hernandez T.
  * @date   10/07/2015
  */

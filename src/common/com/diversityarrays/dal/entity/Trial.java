@@ -1,8 +1,6 @@
 package com.diversityarrays.dal.entity;
 
 import java.sql.Date;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -30,7 +28,7 @@ public class Trial extends DalEntity{
 	private String trialName;
 
 	@Id
-	@Column(name="TrialID", nullable=false)		
+	@Column(name="TrialId", nullable=false)		
 	private Integer trialID;
 
 	@Column(name="TrialManagerId", nullable=false)		
@@ -66,7 +64,7 @@ public class Trial extends DalEntity{
 	@Column(name="AccessGroupId", nullable=false, length=(100))
 	private Integer accessGroupId;
 	
-	@Column(name="AcessGroupName", nullable=false, length=(100))
+	@Column(name="accessGroupName", nullable=false, length=(100))
 	private String accessGroupName;
 	
 	@Column(name="AccessGroupPermission", nullable=false, length=(100))
@@ -203,13 +201,13 @@ public class Trial extends DalEntity{
 		this.currentWorkflowId     = 0;
 		this.ownGroupPermission    = "Read/Write/Link";
 		this.listTrialUnit         = "trial/11/list/trialunit"; 
-		this.accessGroupId         = 0;
+		this.accessGroupId         = 1;
 		this.accessGroupName       = "admin";
 		this.accessGroupPermission = "Read/Link";
 		this.accessGroupPerm       = 5;
 		this.map                   = "trial/11/on/map";
 		this.addTrait              = "trial/11/add/trait";
-		this.ownGroupId            = 0;
+		this.ownGroupId            = 1;
 		this.trialLocation         = "POLYGON((149.092666904502 -35.3047819041308,149.092784921705 -35.3047819041308,149.09276882845 -35.3049745290585,149.092650811256 -35.3049745290585,149.092666904502 -35.3047819041308))";
 		this.ownGroupPerm          = 7;
 		this.ownGroupName          = "admin";
@@ -220,10 +218,10 @@ public class Trial extends DalEntity{
 		this.chgPerm               = "trial/11/change/permission";
 		this.ultimatePermission    = "Read/Write/Link";
 		this.otherPermission       = "Read/Link";
-		this.projectName           = null;
+		this.projectName           = "Test Project";
 		this.latitude              = -35.3048782165934;
 		this.chgOwner              = "trial/11/change/owner";
-		this.projectId             = null;
+		this.projectId             = 1;
 		this.otherPerm             = 5;
 		
 	}

@@ -91,7 +91,7 @@ public interface EntityProvider<T extends DalEntity> {
 	
 	public void getFullDetails(DalEntity entity) throws DalDbException;
 	
-	/*
+	/**
 	 * Send data to BMS using PUT method
 	 * @param Entity to which the information will be sent.
 	 * @throws DalDbException
@@ -101,5 +101,9 @@ public interface EntityProvider<T extends DalEntity> {
 	EntityIterator<? extends DalEntity> createIdIterator(String id,
 			int firstRecord, int nRecords, String filterClause, Page page)
 			throws DalDbException;
+	/**
+	 * All the providers need to create a factory.
+	 */
+	public void createFactory();
 	
 }

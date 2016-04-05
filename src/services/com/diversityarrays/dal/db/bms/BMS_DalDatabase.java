@@ -82,6 +82,7 @@ import com.diversityarrays.dal.entity.Crop;
 import com.diversityarrays.dal.entity.DalEntity;
 import com.diversityarrays.dal.entity.GenParent;
 import com.diversityarrays.dal.entity.GeneralType;
+import com.diversityarrays.dal.entity.GeneralUnit;
 import com.diversityarrays.dal.entity.GenoTypeAliasStatus;
 import com.diversityarrays.dal.entity.GenoTypeSpecimen;
 import com.diversityarrays.dal.entity.Genotype;
@@ -105,9 +106,12 @@ import com.diversityarrays.dal.entity.State;
 import com.diversityarrays.dal.entity.SystemGroup;
 import com.diversityarrays.dal.entity.SystemUser;
 import com.diversityarrays.dal.entity.TraitGroup;
+import com.diversityarrays.dal.entity.Traits;
 import com.diversityarrays.dal.entity.Trial;
 import com.diversityarrays.dal.entity.TrialEvent;
 import com.diversityarrays.dal.entity.TrialType;
+import com.diversityarrays.dal.entity.TrialUnit;
+import com.diversityarrays.dal.entity.TrialUnits;
 import com.diversityarrays.dal.entity.UnitType;
 import com.diversityarrays.dal.entity.Workflow;
 import com.diversityarrays.dal.ops.DalOperation;
@@ -264,6 +268,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	private EntityProvider<Genus> genusProvider = new EntityProvider<Genus>() {
 
 		@Override
+		public void createFactory(){}
+		
+		@Override
 		public Genus getEntity(String id, String filterClause) throws DalDbNotYetImplementedException {
 			if (filterClause != null) {
 				throw new DalDbNotYetImplementedException("Filtering clause for genus");
@@ -345,13 +352,22 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 	private EntityProvider<Genotype> genotypeProvider = new EntityProvider<Genotype>() {
 
-		private GenotypeFactory createFactory() {
-			return new GenotypeFactory(bmsConnections.genusStore);
+		
+		private GenotypeFactory genotypeFactory;
+		
+		//@Override
+		//public GenotypeFactory createFactory() {
+		//	return new GenotypeFactory(bmsConnections.genusStore);
+		//}
+		
+		@Override
+		public void createFactory(){
+			genotypeFactory = new GenotypeFactory(bmsConnections.genusStore);
 		}
 
 		@Override
 		public int getEntityCount(String filterClause) throws DalDbException {
-			String sql = createFactory().createCountQuery(filterClause);
+			String sql = genotypeFactory.createCountQuery(filterClause);
 			int total = 0;
 			for (Connection c : bmsConnections.getConnections()) {
 				total += SqlUtil.getSingleInteger(c, sql);
@@ -362,7 +378,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public Genotype getEntity(String id, String filterClause) throws DalDbException {
 
-			final GenotypeFactory factory = createFactory();
+			if(genotypeFactory == null){
+				createFactory();
+			}
+			
+			final GenotypeFactory factory = genotypeFactory;
 
 			try {
 				final Genotype[] result = new Genotype[1];
@@ -410,7 +430,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 			String sql = sb.toString();
 
-			GenotypeFactory factory = createFactory();
+			if(genotypeFactory == null){
+				createFactory();
+			}			
+			
+			GenotypeFactory factory = genotypeFactory;
 
 			try {
 				Statement stmt = SqlUtil.createQueryStatement(bmsConnections.centralConnection);
@@ -480,6 +504,558 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 
 	};
+	
+	
+	private EntityProvider<Traits> traitProvider = new EntityProvider<Traits>(){
+		
+		private CloseableHttpClient client;
+		private HttpGet             request;
+		private TraitsFactory       traitsFactory;		
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Traits getEntity(String id, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Traits> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			
+			BufferedReader bufferedReader;
+
+			if(traitsFactory == null){
+				createFactory();
+			}
+
+			try{
+			     /**
+			      * Simulating call 
+			      * @author Raul Hernandez T.
+			      * @date   15-MAR-2016
+			      */
+			     HttpResponseFactory factory = new DefaultHttpResponseFactory();
+			     HttpResponse response = factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, null), null);
+			     
+			     StringBuffer strBuffer = new StringBuffer();
+			     strBuffer.append("[{\"OtherPermission\" : \"None\",\"TraitUnitName\" : \"U_8793656\",\"TraitValRuleErrMsg\" : \"invalid value\",\"AccessGroupName\" : \"admin\",\"AccessGroupId\" : \"0\",");
+			     strBuffer.append("\"TraitGroupTypeId\" : \"\",\"UltimatePermission\" : \"Read/Write/Link\",\"TraitDescription\" : \"Trait used for automatic testing\",\"chgPerm\" : \"trait/14/change/permission\",");
+			     strBuffer.append("\"AccessGroupPermission\" : \"Read/Link\",\"UltimatePerm\" : \"7\",\"TraitDataType\" : \"INTEGER\",\"AccessGroupPerm\" : \"5\",\"OwnGroupPermission\" : \"Read/Write/Link\",");
+			     strBuffer.append("\"update\" : \"update/trait/14\",\"TraitUnit\" : \"30\",\"OtherPerm\" : \"0\",\"OwnGroupName\" : \"admin\",\"OwnGroupPerm\" : \"7\",\"TraitId\" : \"14\",\"TraitValueMaxLength\" : \"20\",");
+			     strBuffer.append("\"chgOwner\" : \"trait/14/change/owner\",\"TraitCaption\" : \"Automatic testing trait\",\"TraitValRule\" : \"boolex(x > 0 and x < 500)\",\"addAlias\" : \"trait/14/add/alias\",");
+			     strBuffer.append("\"TraitName\" : \"Trait_6006712\",\"IsTraitUsedForAnalysis\" : \"0\",\"OwnGroupId\" : \"0\",\"delete\" : \"delete/trait/14\"}]");
+			     
+			     response.setEntity(new StringEntity(strBuffer.toString(),Consts.UTF_8));
+			     response.addHeader("Content-type", "application/json");
+
+			     //HttpResponse response = client.execute(request);
+ 				 bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+
+			return new BufferedReaderEntityIterator<Traits>(bufferedReader, traitsFactory);
+
+		}
+
+		@Override
+		public EntityIterator<? extends Traits> createIterator(int firstRecord,
+				int nRecords, String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends Traits> createIterator(int firstRecord,
+				int nRecords, String filterClause, Page pageNumber)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,
+				List<String> dalOpParameters, Map<String, String> filePathByName)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public EntityIterator<? extends DalEntity> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void createFactory() {
+			traitsFactory = new TraitsFactory();
+			
+		}
+		
+	};
+	
+	private EntityProvider<TrialUnits> trialUnitProvider = new EntityProvider<TrialUnits>(){
+		
+		private CloseableHttpClient client;
+		private HttpGet             request;
+		private TrialUnitFactory    tUnitFactory;
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public TrialUnits getEntity(String id, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends TrialUnits> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+
+			BufferedReader bufferedReader;
+
+			if(tUnitFactory == null){
+				createFactory();
+			}
+
+			try{
+			     /**
+			      * Simulating call 
+			      * @author Raul Hernandez T.
+			      * @date   10-MAR-2016
+			      */
+			     HttpResponseFactory factory = new DefaultHttpResponseFactory();
+			     HttpResponse response = factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, null), null);
+			     
+			     StringBuffer strBuffer = new StringBuffer();
+			     strBuffer.append("[{\"UltimatePerm\": \"7\",\"addSpecimen\": \"trialunit/76/add/specimen\",\"UltimatePermission\": \"Read/Write/Link\",\"TrialUnitBarcode\": \"4118705\",\"update\": \"update/trialunit/76\",\"SourceTrialUnitId\": \"0\",");
+			     strBuffer.append("\"TrialUnitId\": \"76\",\"Longitude\": \"149.09269513468\",\"ReplicateNumber\": \"2\",\"listSpecimen\": \"trialunit/76/list/specimen\",\"TrialUnitNote\": \"Trial unit part of automatic testing\",\"TreatmentText\": \"Removing weeds\",");
+			     strBuffer.append("\"SiteId\": \"16\",\"TreatmentId\": \"11\",\"UnitPositionId\": \"2\",\"SampleSupplierId\": \"1\",\"TrialId\": \"13\",\"Latitude\": \"-35.3048528069633\",\"UnitPositionText\": \"block01|row1|column1\",");
+			     strBuffer.append("\"Specimen\": [{\"SpecimenName\": \"Specimen_0435994\",\"PlantDate\": \"0000-00-00\",\"TrialUnitId\": \"76\",\"HasDied\": \"0\",\"ItemId\": \"0\",\"SpecimenId\": \"477\",\"Notes\": \"None\",\"HarvestDate\": \"0000-00-00\",");
+			     strBuffer.append("\"TrialUnitSpecimenId\": \"109\"}],\"SiteName\": \"DArT Test Site\"}]");
+			     
+			     response.setEntity(new StringEntity(strBuffer.toString(),Consts.UTF_8));
+			     response.addHeader("Content-type", "application/json");
+
+			     //HttpResponse response = client.execute(request);
+ 				 bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+
+			return new BufferedReaderEntityIterator<TrialUnits>(bufferedReader, tUnitFactory);			
+
+		}
+
+		@Override
+		public EntityIterator<? extends TrialUnits> createIterator(
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends TrialUnits> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page pageNumber) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,
+				List<String> dalOpParameters, Map<String, String> filePathByName)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public EntityIterator<? extends DalEntity> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void createFactory() {
+			tUnitFactory = new TrialUnitFactory();
+		}
+	};
+	
+	private EntityProvider<OutputFile> exportSampleProvider = new EntityProvider<OutputFile>(){
+		
+		private CloseableHttpClient client;
+		private HttpGet             request;
+		private TrialExportFactory  tExportFactory;
+
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public OutputFile getEntity(String id, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends OutputFile> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends OutputFile> createIterator(
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			BufferedReader bufferedReader;
+
+			if(tExportFactory == null){
+				createFactory();
+			}
+
+			try{
+			     /**
+			      * @author Raul Hernandez T.
+			      * @date   03-16-2016
+			      */
+			     HttpResponseFactory factory = new DefaultHttpResponseFactory();
+			     HttpResponse response =factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, null), null);
+			     response.setEntity(new StringEntity("{\"OutputFile\": [{\"csv\": \"http://asdev.cimmyt.org:1000/test.csv\"}]}",Consts.UTF_8));
+			     response.addHeader("Content-type", "application/json");
+
+				 bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+
+			return new BufferedReaderEntityIterator<OutputFile>(bufferedReader, tExportFactory);
+		}
+
+		@Override
+		public EntityIterator<? extends OutputFile> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page pageNumber) throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,
+				List<String> dalOpParameters, Map<String, String> filePathByName)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public EntityIterator<? extends DalEntity> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public void createFactory() {
+			tExportFactory = new TrialExportFactory();
+			
+		}
+		
+		
+	};
+	
+	
+	private EntityProvider<GeneralUnit> generalUnitProvider = new EntityProvider<GeneralUnit>() {
+
+		private CloseableHttpClient client;
+		private HttpGet             request;
+		private GeneralUnitFactory  generalUnitFactory;
+		private PageFactory         pageFactory;
+		
+		@Override
+		public void createFactory() {
+			generalUnitFactory = new GeneralUnitFactory();
+			pageFactory        = new PageFactory();
+		}		
+		
+		@Override
+		public int getEntityCount(String filterClause) throws DalDbException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public Page getEntityCountPage(String filterClause)
+				throws DalDbException {
+			
+			System.out.println("===");
+			System.out.println("getEntityCountPage");
+			System.out.println("===");			
+
+			//Simulate the pagination
+			BufferedReader bufferedReader;
+			Page           result;
+
+			if(pageFactory==null || generalUnitFactory == null){
+				createFactory();
+			}
+
+			client = HttpClientBuilder.create().build();
+
+			try{
+				HttpResponseFactory factory = new DefaultHttpResponseFactory();
+				HttpResponse response =factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, null), null);
+				response.setEntity(new StringEntity("{\"pageResults\": [{\"germplasmId\": \"2\",\"pedigreeString\": \"C\",\"names\": [\"R\",\"C\"],\"breedingMethod\": \"S\",\"location\": \"C\",\"parent1Id\": \"2\",\"parent1Url\": \"a\",\"parent2Id\": \"1\",\"parent2Url\": \"b\"}],\"pageNumber\": 1,\"pageSize\": 1000,\"totalResults\": 1,\"hasPreviousPage\": false,\"firstPage\": true,\"hasNextPage\": true,\"lastPage\": false,\"totalPages\": 1}"));
+				response.addHeader("Content-type", "application/json");
+
+				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+				BufferedReaderEntityIterator<Page> entityIterator =  new BufferedReaderEntityIterator<Page>(bufferedReader, pageFactory);
+				entityIterator.readLine();
+				result = entityIterator.nextEntity();
+
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+
+
+			return result;			
+		}
+
+		@Override
+		public GeneralUnit getEntity(String id, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends GeneralUnit> createIdIterator(
+				String id, int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+            return null;
+		}
+
+		@Override
+		public EntityIterator<? extends GeneralUnit> createIterator(
+				int firstRecord, int nRecords, String filterClause)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public EntityIterator<? extends GeneralUnit> createIterator(
+				int firstRecord, int nRecords, String filterClause,
+				Page pageNumber) throws DalDbException {
+			
+			System.out.println("===");
+			System.out.println("Create Iterator B");
+			System.out.println("===");			
+			
+			BufferedReader bufferedReader;
+
+			if(generalUnitFactory==null || pageFactory==null){
+				createFactory();
+			}
+
+
+			/*client  = HttpClientBuilder.create().build();
+			request = new HttpGet(generalUnitFactory.createPagedListQuery(firstRecord, nRecords, filterClause));
+			request.addHeader(BMSApiDataConnection.TOKEN_HEADER, systemUserToken.getPasswordSalt());
+
+			try{
+				HttpResponse response = client.execute(request);
+				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+
+			return new BufferedReaderEntityIterator<GeneralUnit>(bufferedReader, generalUnitFactory, pageNumber);*/
+			
+			try{
+			     /*
+			      * Simulate call, when BMS API is ready, uncomment the code above
+			      * @author Raul Hernandez T.
+			      * @date   08-MAR-2016
+			      */
+			     HttpResponseFactory factory = new DefaultHttpResponseFactory();
+			     HttpResponse response =factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, null), null);
+			     response.setEntity(new StringEntity("[{\"isTypeActive\":1,\"typeId\":1,\"typeName\":\"\",\"typeNote\":\"\"}]",Consts.UTF_8));
+			     response.addHeader("Content-type", "application/json");
+
+				 bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			}catch(ClientProtocolException cpex){
+				throw new DalDbException("Protocol error: " + cpex);
+			}catch(IOException ioex){
+				throw new DalDbException("Input/Output error when executing request: " + ioex);
+			}catch(Exception ex){
+				throw new DalDbException("Exception: " + ex);
+			}
+
+			return new BufferedReaderEntityIterator<GeneralUnit>(bufferedReader, generalUnitFactory, pageNumber);			
+			
+			
+			
+		}
+
+		@Override
+		public void prepareDetailsSearch() throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void getFullDetails(DalEntity entity) throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void sendDataUsingPut(Map<String, String> parameters,
+				List<String> dalOpParameters, Map<String, String> filePathByName)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public EntityIterator<? extends DalEntity> createIdIterator(String id,
+				int firstRecord, int nRecords, String filterClause, Page page)
+				throws DalDbException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+	};
+	
 
 	private EntityProvider<Trial> trialProvider = new EntityProvider<Trial>() {
 
@@ -488,7 +1064,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		private TrialFactory trialFactory;
 		private PageFactory pageFactory;
 
-		private void createFactory() {
+		@Override
+		public void createFactory() {
 			trialFactory = new TrialFactory();
 		}
 
@@ -552,7 +1129,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public EntityIterator<? extends Trial> createIdIterator(String id,int firstRecord, int nRecords, String filterClause) throws DalDbException {
 
-
+			System.out.println("Create IdIterator E");
 			BufferedReader bufferedReader;
 
 			if(trialFactory == null){
@@ -624,6 +1201,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public EntityIterator<? extends Trial> createIterator(int firstRecord,
 				int nRecords, String filterClause) throws DalDbException {
+			
+			System.out.println("Create IdIterator D");
+			
 			BufferedReader bufferedReader;
 
 			if(trialFactory == null){
@@ -662,10 +1242,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public Page getEntityCountPage(String filterClause)
 				throws DalDbException {
-			BufferedReader bufferedReader;
-			Page result = null;
 
-			int total = 0;
+			Page result = null;
 
 			if(trialFactory == null){
 				createFactory();
@@ -681,8 +1259,6 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			try {
 				Statement stmt = SqlUtil.createQueryStatement(getInteropConnections(defaultProgress, true).connection);
 				ResultSet rs = stmt.executeQuery(sql);
-
-
 				entityIterator = new ResultSetEntityIterator<Page>(stmt, rs, pageFactory);
 				result = entityIterator.nextEntity();
 			} catch (SQLException e) {
@@ -781,8 +1357,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		public EntityIterator<? extends Trial> createIterator(int firstRecord,
 				int nRecords, String filterClause, Page page)
 				throws DalDbException {
-			BufferedReader bufferedReader;
-
+			
+			System.out.println("TrialProvider [CreateIterator] filtering trials...");
+			
 			if(trialFactory == null){
 				createFactory();
 			}
@@ -795,8 +1372,6 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			try {
 				stmt = SqlUtil.createQueryStatement(getInteropConnections(defaultProgress, true).connection);
 				rs = stmt.executeQuery(sql);
-
-
 				entityIterator = new ResultSetEntityIterator<Trial>(stmt, rs, trialFactory);
 			} catch (SQLException e) {
 				throw new DalDbException(e);
@@ -809,20 +1384,19 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		@Override
 		public EntityIterator<? extends Trial> createIdIterator(String id,int firstRecord, int nRecords, String filterClause, Page page) throws DalDbException {
 
-			//System.out.println("BEGIN createIdIterator (TRIAL) in BMS_DalDatabase class====");
+			System.out.println("TrialProvider [CreateIterator] Get Details for Trial " + id);
 			BufferedReader bufferedReader;
 
 			if(trialFactory == null){
 				createFactory();
 			}
 
-			client = HttpClientBuilder.create().build();
+			client  = HttpClientBuilder.create().build();
 			request = new HttpGet(trialFactory.createListStudiesDetailsURL(id));
 			request.addHeader(BMSApiDataConnection.TOKEN_HEADER, systemUserToken.getPasswordSalt());
 
 			try{
 				HttpResponse response = client.execute(request);
-				//System.out.println(request.getURI());
 				bufferedReader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 			}catch(ClientProtocolException cpex){
 				throw new DalDbException("Protocol error: " + cpex);
@@ -831,7 +1405,6 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			}catch(Exception ex){
 				throw new DalDbException("Exception: " + ex);
 			}
-			//System.out.println("END createIdIterator (TRIAL) in BMS_DalDatabase class ====");
 			return new BufferedReaderEntityIterator<Trial>(bufferedReader, trialFactory);
 		}
 	};
@@ -839,6 +1412,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	private EntityProvider<GeneralType> generalTypeProvider = new EntityProvider<GeneralType>() {
 
 		GeneralTypeFactory generalTypeFactory = new GeneralTypeFactory();
+		
+		@Override
+		public void createFactory(){
+			generalTypeFactory = new GeneralTypeFactory();
+		}
 
 		@Override
 		public int getEntityCount(String filterClause) throws DalDbException {
@@ -884,11 +1462,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		}
 
 		@Override
-		public EntityIterator<? extends GeneralType> createIdIterator(
-				String id, int firstRecord, int nRecords, String filterClause)
+		public EntityIterator<? extends GeneralType> createIdIterator(String id, int firstRecord, int nRecords, String filterClause)
 				throws DalDbException {
-			BufferedReader bufferedReader;
 
+			System.out.println("Create IdIterator A");
+			BufferedReader bufferedReader;
 			HttpClient client = HttpClientBuilder.create().build();
 			HttpGet request = new HttpGet(generalTypeFactory.createListTermsURL(id));
 			request.addHeader(BMSApiDataConnection.TOKEN_HEADER, systemUserToken.getPasswordSalt());
@@ -963,6 +1541,11 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	private EntityProvider<GenotypeAlias> genotypeAliasProvider = new EntityProvider<GenotypeAlias>() {
 
 		GenotypeAliasFactory genotypeAliasFactory = new GenotypeAliasFactory();
+		
+		@Override
+		public void createFactory(){
+			genotypeAliasFactory = new GenotypeAliasFactory();
+		}
 
 		@Override
 		public int getEntityCount(String filterClause) throws DalDbException {
@@ -1090,6 +1673,10 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	private EntityProvider<ItemUnit> itemUnitProvider = new EntityProvider<ItemUnit>() {
 
 		ItemUnitFactory itemUnitFactory = new ItemUnitFactory();
+		
+		public void createFactory(){
+			itemUnitFactory = new ItemUnitFactory();
+		}
 
 		@Override
 		public int getEntityCount(String filterClause) throws DalDbException {
@@ -1248,7 +1835,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		private HttpEntity          entitySent;
 		private HttpResponse        response;
 
-		private void createFactory() {
+		@Override
+		public void createFactory() {
 			observationFactory = new ObservationFactory();
 		}
 
@@ -1350,7 +1938,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	};
 
 	/**
-	 * Modified by Raul Hernandez
+	 * Modified by Raul Hernandez T.
 	 * @date 1/25/2016
 	 */
 	private EntityProvider<Project> projectProvider = new EntityProvider<Project>() {
@@ -1360,7 +1948,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		private CloseableHttpClient client;
 		private HttpGet             request;
 
-		private void createFactory() {
+		@Override
+		public void createFactory() {
 			projectFactory = new ProjectFactory();
 			pageFactory    = new PageFactory();
 		}
@@ -1582,6 +2171,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 					//Trial operations
 					tmp.add(createOperation("list/trial/_nperpage/page/_num", Trial.class, trialProvider));
+					
 					tmp.add(createOperation("trial/details/_program", Trial.class, trialProvider));
 
 					/**
@@ -1662,7 +2252,18 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 					tmp.add(createOperation("set/group/_id",Crop.class,setCropProvider));
 
 					//Export Samplemeasurments csv
-					tmp.add(createOperation("export/samplemeasurement/csv",OutputFile.class,trialProvider));
+					tmp.add(createOperation("export/samplemeasurement/csv",OutputFile.class,exportSampleProvider));
+					
+					//generalUnit call
+					tmp.add(createOperation("list/generalunit/_nperpage/page/_num",GeneralUnit.class,generalUnitProvider));
+					
+					//list trialunit
+					//3-10-2016
+					tmp.add(createOperation("trial/_id/list/trialunit",TrialUnits.class,trialUnitProvider));
+					
+					//traits
+					//3-14-2016
+					tmp.add(createOperation("trial/_id/list/trait",Traits.class,traitProvider));
 
 					operations = tmp;
 				}
@@ -1973,6 +2574,31 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 				return new TrialExportOperation(BMS_DalDatabase.this, (EntityProvider<OutputFile>) provider);
 			}
 		});		
+		
+		//GeneralUnit
+		map.put(GetGeneralUnitOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new GetGeneralUnitOperation(BMS_DalDatabase.this, (EntityProvider<GeneralUnit>) provider);
+			}
+		});
+		
+		//TrialUnits
+		map.put(GetTrialUnitOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new GetTrialUnitOperation(BMS_DalDatabase.this, (EntityProvider<TrialUnits>) provider);
+			}
+		});
+		
+		//Traits
+		map.put(GetTraitOperation.PATTERN, new MatcherToOperation() {
+			@Override
+			public DalOperation makeOperation(Matcher m, Class<? extends DalEntity> entityClass, EntityProvider<? extends DalEntity> provider) {
+				return new GetTraitOperation(BMS_DalDatabase.this, (EntityProvider<Traits>) provider);
+			}
+		});		
+	
 
 		return map;
 	}
@@ -2203,7 +2829,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		post        = new HttpPost(userFactory.createLoginQuery());
 
 		try{
-			System.out.println("Connecting to BMS API with " + "username = " + ui.getUserName() + ", password = " + ui.getUserPsw());
+			System.out.println(">>>> BMS API Connection " + "server = " + userFactory.createLoginQuery());
+			System.out.println(">>>> BMS API Connection " + "username = " + ui.getUserName() + ", password = " + ui.getUserPsw());
+			
 			httpEntity = new StringEntity("username=" + ui.getUserName() + "&password=" + ui.getUserPsw());
 			httpEntity.setContentType(BMSApiDataConnection.CONTENT_TYPE);
 		}catch(UnsupportedEncodingException uee){
@@ -2230,7 +2858,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		}
 
-		System.out.println("Token>>>" + systemUserToken.getPasswordSalt());
+		System.out.println(">>>> BMS API Connection " + " token= " + systemUserToken.getPasswordSalt());
 		/**
 		 * End BMS API Login
 		 */
@@ -2319,6 +2947,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	private EntityProvider<Crop> setCropProvider = new EntityProvider<Crop>(){
 
 
+		@Override
+		public void createFactory(){}
+		
 		@Override
 		public int getEntityCount(String filterClause) throws DalDbException {
 			// TODO Auto-generated method stub
@@ -2422,8 +3053,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		private CloseableHttpClient client;
 		private HttpGet             request;
 
-
-        private void createFactory(){
+		@Override
+        public void createFactory(){
         	cropFactory = new CropFactory();
         }
 
@@ -2565,6 +3196,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	private EntityProvider<Season> seasonProvider = new EntityProvider<Season>(){
 
 		@Override
+		public void createFactory(){}
+		
+		@Override
 		public int getEntityCount(String filterClause) throws DalDbException {
 			// TODO Auto-generated method stub
 			return 0;
@@ -2643,7 +3277,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 	};
 
-	/*
+	/**
 	 * @author Raul Hernandez T.
 	 * @date   17-DEC-2015
 	 */
@@ -2654,7 +3288,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		private CloseableHttpClient client;
 		private HttpGet             request;
 
-		private void createFactories(){
+		@Override
+		public void createFactory(){
 			specimenFactory = new SpecimenFactory();
 			pageFactory     = new PageFactory();
 		}
@@ -2675,7 +3310,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			Page result = null;
 
 			if(pageFactory==null || specimenFactory==null){
-				createFactories();
+				createFactory();
 			}
 
 			client = HttpClientBuilder.create().build();
@@ -2717,7 +3352,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 			BufferedReader bufferedReader;
 
 			if(specimenFactory == null || pageFactory == null){
-				createFactories();
+				createFactory();
 			}
 
 			client  = HttpClientBuilder.create().build();
@@ -2757,7 +3392,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 			BufferedReader bufferedReader;
 			if(specimenFactory == null || pageFactory == null){
-				createFactories();
+				createFactory();
 			}
 
             //Extract the id from filterClause
@@ -2849,7 +3484,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private TraitGroupFactory    traitGroupFactory;
 
-		private void createFactory(){
+		public void createFactory(){
 			traitGroupFactory = new TraitGroupFactory();
 		}
 
@@ -2966,10 +3601,10 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	 */
 	private EntityProvider<GeneralType> workflowProvider = new EntityProvider<GeneralType>(){
 
-
 		private WorkflowFactory      workflowFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			workflowFactory = new WorkflowFactory();
 		}
 
@@ -3089,7 +3724,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private TrialEventFactory    trialEventFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			trialEventFactory = new TrialEventFactory();
 		}
 
@@ -3208,7 +3844,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private GenotypeSpecimenFactory genotypeSpecimenFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			genotypeSpecimenFactory = new GenotypeSpecimenFactory();
 		}
 
@@ -3327,7 +3964,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private GenParentFactory    genParentFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			genParentFactory = new GenParentFactory();
 		}
 
@@ -3446,7 +4084,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private GenoTypeAliasStatusFactory genoTypeAliasStatusFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			genoTypeAliasStatusFactory = new GenoTypeAliasStatusFactory();
 		}
 
@@ -3567,7 +4206,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private GenoTypeAFactory     genoTypeAFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			genoTypeAFactory = new GenoTypeAFactory();
 		}
 
@@ -3677,7 +4317,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 	};
 
-	/*
+	/**
 	 * @author Raul Hernandez T.
 	 * @date   12/10/2015
 	 */
@@ -3685,7 +4325,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private ParentFactory        parentFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			parentFactory = new ParentFactory();
 		}
 
@@ -3794,7 +4435,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 	};
 
-	/*
+	/**
 	 * @author Raul Hernandez T.
 	 * @date   12/10/2015
 	 */
@@ -3802,7 +4443,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private SpecimenGroupFactory specimenGroupFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			specimenGroupFactory = new SpecimenGroupFactory();
 		}
 
@@ -3914,7 +4556,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 	};
 
-	/*
+	/**
 	 * @author Raul Hernandez T.
 	 * @date   12/10/2015
 	 */
@@ -3922,7 +4564,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private ContainerFactory    containerFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			containerFactory = new ContainerFactory();
 		}
 
@@ -4032,7 +4675,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 	};
 
-	/*
+	/**
 	 * @author Raul Hernandez T.
 	 * @date   12/10/2015
 	 */
@@ -4040,7 +4683,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private StateFactory        stateFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			stateFactory = new StateFactory();
 		}
 
@@ -4159,7 +4803,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private UnitTypeFactory     unitTypeFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			unitTypeFactory = new UnitTypeFactory();
 		}
 
@@ -4280,7 +4925,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private ItemParentFactory   itemParentFactory;
 
-		private void createFactory(){
+		public void createFactory(){
 			itemParentFactory = new ItemParentFactory();
 		}
 
@@ -4393,7 +5038,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 	};
 
-	/*
+	/**
 	 * @author Raul Hernandez T.
 	 * @date   12/10/2015
 	 */
@@ -4402,7 +5047,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private ItemFactory         itemFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			itemFactory = new ItemFactory();
 		}
 
@@ -4521,7 +5167,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private SampleFactory       sampleFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			sampleFactory = new SampleFactory();
 		}
 
@@ -4631,7 +5278,7 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 	};
 
-	/*
+	/**
 	 * @author Raul Hernandez T.
 	 * @date   12/10/2015
 	 */
@@ -4640,7 +5287,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 
 		private TrialTypeFactory trialTypeFactory;
 
-		private void createFactory(){
+		@Override
+		public void createFactory(){
 			trialTypeFactory = new TrialTypeFactory();
 		}
 
@@ -4761,7 +5409,8 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 		private SiteFactory siteFactory;
 		private PageFactory pageFactory;
 
-		private void createFactory() {
+		@Override
+		public void createFactory() {
 			siteFactory = new SiteFactory();
 		}
 
@@ -4999,6 +5648,9 @@ public class BMS_DalDatabase extends AbstractDalDatabase {
 	
 	private EntityProvider<OutputFile> outputFileProvider = new EntityProvider<OutputFile>(){
 
+		@Override
+		public void createFactory(){}
+		
 		@Override
 		public int getEntityCount(String filterClause) throws DalDbException {
 			// TODO Auto-generated method stub

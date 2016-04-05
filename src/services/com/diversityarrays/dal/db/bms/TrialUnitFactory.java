@@ -1,301 +1,190 @@
 package com.diversityarrays.dal.db.bms;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import net.pearcan.json.JsonMap;
-import net.pearcan.json.JsonParser;
-
-import com.diversityarrays.dal.db.DalDbException;
-import com.diversityarrays.dal.db.SqlEntityFactory;
-import com.diversityarrays.dal.entity.ColumnNameMapping;
-import com.diversityarrays.dal.entity.DalEntity;
-import com.diversityarrays.dal.entity.Trial;
-import com.diversityarrays.dal.entity.TrialUnit;
-import com.diversityarrays.dal.ops.FilteringTerm;
-
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TrialUnitFactory implements SqlEntityFactory<Trial> {
+import net.pearcan.json.JsonMap;
+
+import com.diversityarrays.dal.db.DalDbException;
+import com.diversityarrays.dal.db.SqlEntityFactory;
+import com.diversityarrays.dal.entity.TrialUnitSpecimen;
+import com.diversityarrays.dal.entity.TrialUnits;
+
+/**
+ * @author Raul Hernandez T.
+ * @date 03-10-2016
+ */
+public class TrialUnitFactory implements SqlEntityFactory<TrialUnits> {
+
+	/**
+	 * TODO: Acompletar el mapeo cuando se tenga la info de BMS
+	 */
 	
-	private static final int OBSOLETE = 1;
-	private boolean pending = false;
+	private String ULTIMATEPERM        = "UltimatePerm";
+	private String ADDSPECIMEN         = "addSpecimen";
+	private String ULTIMATEPERMISSION  = "UltimatePermission";
+	private String TRIALUNITBARCODE    = "TrialUnitBarcode";
+	private String UPDATE              = "update";
+	private String SOURCETRIALUNITID   = "SourceTrialUnitId";
+	private String TRIALUNITID         = "TrialUnitId";
+	private String LONGITUDE           = "Longitude";
+	private String REPLICATENUMBER     = "ReplicateNumber";
+	private String LISTSPECIMEN        = "listSpecimen";
+	private String TRIALUNITNOTE       = "TrialUnitNote";
+	private String TREATMENTTEXT       = "TreatmentText";
+	private String SITEID              = "SiteId";
+	private String TREATMENTID         = "TreatmentId";
+	private String UNITPOSITIONID      = "UnitPositionId";
+	private String SAMPLESUPPLIERID    = "SampleSupplierId";
+	private String TRIALID             = "TrialId";
+	private String LATITUDE            = "Latitude";
+	private String UNITPOSITIONTEXT    = "UnitPositionText";
+    private String SITENAME            = "SiteName";	
+	//SPECIMEN
+	private String SPECIMENNAME        = "SpecimenName";
+	private String PLANTDATE           = "PlantDate";
+	private String HASDIED             = "HasDied";
+	private String ITEMID              = "ItemId";
+	private String SPECIMENID          = "SpecimenId";
+	private String NOTES               = "Notes";
+	private String HARVESTDATE         = "HarvestDate";
+	private String TRIALUNITSPECIMENID = "TrialUnitSpecimenId";
+	//
+	private String SPECIMEN            = "Specimen";
 	
-	static private final ColumnNameMapping COLUMN_NAME_MAPPING;
 	
-	static {
-		// Ensure the EntityColumn initializers get called !
-		new Trial();
-		
-		COLUMN_NAME_MAPPING = new ColumnNameMapping(Trial.class) {
-
-			@Override
-			public FilteringTerm createReplacement(FilteringTerm term, String xqueryColumn) throws DalDbException {
-			//	if (! "GenotypeAliasLang".equalsIgnoreCase(term.columnName)) {
-					return super.createReplacement(term, xqueryColumn);
-				//}
-
-				/*String queryColumn = "is_obsolote";
-				if (term.multiple) {
-					// TODO support IN (see TODO in FilteringTerm for splitting out values)
-					throw new DalDbException("operator " + term.operator + " not yet supported for " + term.columnName);
-				}
-
-				if (FilteringTerm.OPERATOR_LIKE.equals(term.operator)) {
-					throw new DalDbException("operator " + term.operator + " not yet supported for " + term.columnName);
-				}
-
-				// Only normal "comparison" operators now ...
-				try {
-					// Let's handle a numeric value specially.
-					// Not sure if I should really do this but...
-					Integer.parseInt(term.value);
-					return new FilteringTerm("nstat " + term.operator + term.value);
-				} catch (NumberFormatException e) {
-
-					// TODO handle quotes in term.value
-
-					if (matching.isEmpty()) {
-						throw new DalDbException("No matching NSTAT values for expression: " + term.rawExpression);
-					}
-
-					StringBuilder expr = new StringBuilder(queryColumn);
-					if (matching.size() == 1) {
-						expr.append(' ').append(term.operator).append(' ').append(matching.get(0).value);
-					}
-					else {
-						expr.append(" IN ");
-						String sep = " (";
-						for (NamesNSTAT nn : matching) {
-							expr.append(sep).append(nn.value);
-							sep = ",";
-						}
-						expr.append(')');
-					}
-					FilteringTerm result = new FilteringTerm(expr.toString());
-					if (result.error != null) {
-						throw new DalDbException("Internal error: " + result.error + " for expression '" + expr.toString() + "'");
-					}
-					return null;
-				}*/
-			}
-			
-		};
-		
-		COLUMN_NAME_MAPPING
-			.addColumn(Trial.TRIAL_NOTE, "objective")
-			.addColumn(Trial.TRIAL_NAME, "name")
-			.addColumn(Trial.TRIAL_ACRONYM, "title")
-			.addColumn(Trial.TRIAL_ID, "id")
-		;	
-	}
-	
-	public TrialUnitFactory() {
+	@Override
+	public boolean isPending() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	@Override
-	public void close() throws IOException {
-		// Nothing to do
-	}
-	
-	@Override
-	public String createCountQuery(String filterClause) throws DalDbException {
-		StringBuilder sb = new StringBuilder("SELECT COUNT(*) FROM cvterm");
-		sb.append(" WHERE (is_obsolete!=").append(NamesNSTAT.DELETED.value).append(")");
-		
-		// TODO test filterClause field name translation
-		if (filterClause != null) {
-			sb.append(" AND ( ").append(COLUMN_NAME_MAPPING.translate(filterClause)).append(" )");
-		}
-		return sb.toString();
-	}
-
-	@Override
-	public String createGetQuery(String id, String filterClause) throws DalDbException {
-		StringBuilder sb = new StringBuilder(
-				"SELECT cvterm_id, name, definition, is_obsolete FROM cvterm");
-		sb.append(" WHERE (is_obsolete!=").append(OBSOLETE).append(")");
-		sb.append(" AND (cvterm_id=").append(id).append(")");
-		
-		// TODO test filterClause field name translation
-		if (filterClause != null) {
-			sb.append(" AND ( ").append(COLUMN_NAME_MAPPING.translate(filterClause)).append(" )");
-		}
-		return sb.toString();
-	}
-	
-	public String createListTermsQuery(String id, 
-			int firstRecord,
-			int nRecords, 
-			String filterClause) throws DalDbException 
-	{
-		StringBuilder sb = new StringBuilder(
-				"SELECT cvterm_id, name, definition, is_obsolete FROM cvterm");
-		sb.append(" WHERE (is_obsolete!=").append(OBSOLETE).append(")");
-		sb.append(" AND (cvterm_id=").append(id).append(")");
-		
-		// TODO test filterClause field name translation
-		if (filterClause != null) {
-			sb.append(" AND ( ").append(COLUMN_NAME_MAPPING.translate(filterClause)).append(" )");
-		}
-		
-		if (nRecords > 0) {
-			sb.append(" LIMIT ").append(nRecords)
-			.append(" OFFSET ").append(firstRecord);
-		}
-		
-		return sb.toString();
-	}
-
-	
-	@Override
-	public String createPagedListQuery(int firstRecord, int nRecords, String filterClause) throws DalDbException {
-		
-		if (firstRecord < 0 || nRecords <= 0) {
-			throw new IllegalArgumentException("firstRecord="+firstRecord+"; nRecords="+nRecords);
-		}
-		
-		StringBuilder sb = new StringBuilder("SELECT cvterm_id, name, definition, is_obsolete FROM cvterm");
-		sb.append(" WHERE (is_obsolete!=").append(OBSOLETE).append(")");
-
-		// TODO test filterClause field name translation
-		if (filterClause != null) {
-			sb.append(" AND ( ").append(COLUMN_NAME_MAPPING.translate(filterClause)).append(" )");
-		}
-		
-		sb.append(" LIMIT ").append(nRecords)
-			.append(" OFFSET ").append(firstRecord);
-		
-		return sb.toString();
-	}
-
-	@Override
-	public Trial createEntity(ResultSet rs) throws DalDbException {
-		Trial result = new Trial();
-		
-	
-		try {
-	
-			result.setTrialId(rs.getInt("cvterm_id"));
-			result.setTrialName(rs.getString("name"));
-			result.setTrialNote(rs.getString("objective"));		
-		} catch (SQLException e) {
-			throw new DalDbException(e);
-		}
-		
-		return result;
-	}
-	
-	public void createEntity(Trial trial,JsonMap jsonMap) throws DalDbException {
-
-		SpecimenFactory specimenFactory = new SpecimenFactory();
-		SampleMeasurementFactory sampleMeasurementFactory = new SampleMeasurementFactory();
-		System.out.println(jsonMap.get("id"));
-		List<TrialUnit> trialUnits = new ArrayList<TrialUnit>();			
-		List<Object> germplasm = (List)jsonMap.get("germplasm");
-		if(germplasm!=null){
-			for(Object map:germplasm){
-				TrialUnit result = new TrialUnit();
-				result.setTrialId(trial.getTrialID());
-				sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialID()));
-				result.setUnitPositionText((String)((JsonMap)map).get("entryNumber"));
-				//specimenFactory.createEntity(result, jsonMap,sampleMeasurementFactory,trial.getTrialTraits(),sampleMeasurementFactory.createURL(String.valueOf(trial.getTrialId())));
-				if(trial.getSiteName() != null ){
-					result.setSiteName(trial.getSiteName());
-				}
-				if(trial.getSiteID() != null){
-					result.setSiteId(trial.getSiteID());
-				}
-				trialUnits.add(result);
-			}
-			//trial.setTrialUnits(trialUnits);
-		}
-	}
-	
-	public String createListStudiesURL(String filterClause){
-		return BMSApiDataConnection.getListStudiesCall(filterClause);
-	}
-	
-	public String createListStudiesDetailsURL(String id){
-		return BMSApiDataConnection.getListStudiesDetails(id);
-	}
-	
-	public void processDetails(DalEntity entity, BufferedReader reader) throws DalDbException {
-		try{
-			String line = reader.readLine();
-			
-			if(line != null){
-				JsonParser parser = new JsonParser(line);
-				List<Object> generalInfo = (List)parser.getMapResult().get("generalInfo");
-				System.out.println("Trial::" + ((Trial)entity).getTrialID() + "generalInfo" + generalInfo);
-				for(Object map:generalInfo){
-					if(((JsonMap)map).get("name").equals("PI_NAME")){
-						((Trial)entity).setTrialManagerName((String)((JsonMap)map).get("value"));
-						System.out.println(" PINAME:: " + ((Trial)entity).getTrialManagerName());
-					}else{
-						if(((JsonMap)map).get("name").equals("LOCATION_NAME")){
-							((Trial)entity).setTrialManagerName((String)((JsonMap)map).get("value"));
-							System.out.println(" Location:: " + ((Trial)entity).getSiteName());
-						}
-					}
-				}
-				
-				//((Trial)entity).setTrialManagerName();
-				//System.out.println("::::ENTITY::::" + ((Trial)entity).getTrialManagerName());
-				//((Trial)entity).setTrialLocation(generalInfo.get("LOCATION_NAME"));
-				//System.out.println("::::ENTITY::::" + ((Trial)entity).getTrialLocation());
-			}
-			
-			
-		}catch(ParseException peex){
-			throw new DalDbException("Error parsing json: " + peex);
-		}catch(IOException ioex){
-			throw new DalDbException("Input/Output error while processing details: " + ioex);
-		}catch(Exception ex){
-			throw new DalDbException("Error iterating buffered reader: " + ex);
-		}
-	}
-	
-	public void processTrial(DalEntity entity, BufferedReader reader) throws DalDbException {
-		try{
-			String line = reader.readLine();
-			if(line != null){
-				JsonParser parser = new JsonParser(line);
-				((Trial)entity).setTrialManagerName((String)parser.getMapResult().get("PI_NAME"));
-				((Trial)entity).setSiteName((String)parser.getMapResult().get("LOCATION_NAME"));
-			}
-			
-			
-		}catch(ParseException peex){
-			throw new DalDbException("Error parsing json: " + peex);
-		}catch(IOException ioex){
-			throw new DalDbException("Input/Output error while processing details: " + ioex);
-		}catch(Exception ex){
-			throw new DalDbException("Error iterating buffered reader: " + ex);
-		}		
-	}
-
-	@Override
-	public Trial createEntity(JsonMap jsonMap) throws DalDbException {
+	public TrialUnits createEntity(ResultSet rs) throws DalDbException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/**
-	 * @return the pending
-	 */
-	public boolean isPending() {
-		return pending;
+	@Override
+	public TrialUnits createEntity(JsonMap jsonMap) throws DalDbException {
+
+		
+		TrialUnits trialUnit = new TrialUnits();
+		
+		//no mapping yet
+		trialUnit.setUltimatePerm((String) jsonMap.get(ULTIMATEPERM));
+		//no mapping yet
+		trialUnit.setAddSpecimen((String) jsonMap.get(ADDSPECIMEN));
+		//no mapping yet
+		trialUnit.setUltimatePermission((String) jsonMap.get(ULTIMATEPERMISSION));
+		//no mapping yet
+		trialUnit.setTrialUnitBarcode((String) jsonMap.get(TRIALUNITBARCODE));
+		//no mapping yet
+		trialUnit.setUpdate((String) jsonMap.get(UPDATE));
+		//no mapping yet
+		trialUnit.setSourceTrialUnitId((String) jsonMap.get(SOURCETRIALUNITID));
+		//no mapping yet
+		trialUnit.setTrialUnitId((String) jsonMap.get(TRIALUNITID));
+		//no mapping yet
+		trialUnit.setLongitude((String) jsonMap.get(LONGITUDE));
+		//no mapping yet
+		trialUnit.setReplicateNumber((String) jsonMap.get(REPLICATENUMBER));
+		//no mapping yet
+		trialUnit.setListSpecimen((String) jsonMap.get(LISTSPECIMEN));
+		//no mapping yet
+		trialUnit.setTrialUnitNote((String) jsonMap.get(TRIALUNITNOTE));
+		//no mapping yet
+		trialUnit.setTreatmentText((String) jsonMap.get(TREATMENTTEXT));
+		//no mapping yet
+		trialUnit.setSiteId((String) jsonMap.get(SITEID));
+		//no mapping yet
+		trialUnit.setTreatmentId((String) jsonMap.get(TREATMENTID));
+		//no mapping yet
+		trialUnit.setUnitPositionId((String) jsonMap.get(UNITPOSITIONID));
+		//no mapping yet
+		trialUnit.setSampleSupplierId((String) jsonMap.get(SAMPLESUPPLIERID));
+		//no mapping yet
+		trialUnit.setTrialId((String) jsonMap.get(TRIALID));
+		//no mapping yet
+		trialUnit.setLatitude((String) jsonMap.get(LATITUDE));
+		//no mapping yet
+		trialUnit.setUnitPositionText((String) jsonMap.get(UNITPOSITIONTEXT));
+		//no mapping yet
+		trialUnit.setSiteName((String) jsonMap.get(SITENAME));
+		
+		TrialUnitSpecimen tUnitSpecimen = new TrialUnitSpecimen();
+		
+		
+		List<Object> specimenList = (List) jsonMap.get(SPECIMEN);
+		String strValue="";
+		if(specimenList!=null){
+		   for(Object map : specimenList){
+			   
+               strValue = ((JsonMap) map).get(SPECIMENNAME).toString();
+               tUnitSpecimen.setSpecimenName(strValue);
+               
+               strValue = ((JsonMap) map).get(PLANTDATE).toString();
+               tUnitSpecimen.setPlantDate(strValue);
+
+               strValue = ((JsonMap) map).get(TRIALUNITID).toString();
+               tUnitSpecimen.setTrialUnitId(strValue);
+               
+               strValue = ((JsonMap) map).get(HASDIED).toString();
+               tUnitSpecimen.setHasDied(strValue);
+               
+               strValue = ((JsonMap) map).get(ITEMID).toString();
+               tUnitSpecimen.setItemId(strValue);
+			   
+               strValue = ((JsonMap) map).get(SPECIMENID).toString();
+               tUnitSpecimen.setSpecimenId(strValue);
+               
+               strValue = ((JsonMap) map).get(NOTES).toString();
+               tUnitSpecimen.setNotes(strValue);
+               
+               strValue = ((JsonMap) map).get(HARVESTDATE).toString();
+               tUnitSpecimen.setHarvestDate(strValue);
+               
+               strValue = ((JsonMap) map).get(TRIALUNITSPECIMENID).toString();
+               tUnitSpecimen.setTrialUnitSpecimenId(strValue);
+               
+		   }	
+			
+		}
+		
+		List<TrialUnitSpecimen> lSpecimens = new ArrayList<TrialUnitSpecimen>();
+		lSpecimens.add(tUnitSpecimen);
+		trialUnit.setSpecimen(lSpecimens);
+		
+		
+		return trialUnit;
 	}
 
-	/**
-	 * @param pending the pending to set
-	 */
-	public void setPending(boolean pending) {
-		this.pending = pending;
+	@Override
+	public void close() throws IOException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String createCountQuery(String filterClause) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String createGetQuery(String id, String filterClause)
+			throws DalDbException {
+
+		return BMSApiDataConnection.getTrialUnit();
+	}
+
+	@Override
+	public String createPagedListQuery(int firstRecord, int nRecords,
+			String filterClause) throws DalDbException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -304,5 +193,6 @@ public class TrialUnitFactory implements SqlEntityFactory<Trial> {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 		
 }

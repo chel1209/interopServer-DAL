@@ -4,9 +4,9 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 
 
-/*
- * author: Raul Hernandez T.
- * date:   10-06-2015
+/**
+ * @author: Raul Hernandez T.
+ * @date:   10-06-2015
  */
 
 @Table(name="Project")

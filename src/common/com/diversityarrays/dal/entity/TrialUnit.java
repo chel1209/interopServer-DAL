@@ -6,9 +6,18 @@ import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * 
+ * @author Raul Hernandez T.
+ * @date 3-10-2016
+ *
+ */
+
+
 @Table(name="TrialUnit")
 @EntityTag("TrialUnit")
 public class TrialUnit extends DalEntity{
+
 
 	@Id
 	@Column(name="TrialUnitId", length=(6000))
@@ -220,6 +229,4 @@ public class TrialUnit extends DalEntity{
 	public void setUnitPositionId(Integer unitPositionId) {
 		this.unitPositionId = unitPositionId;
 	}
-			
 }
-

@@ -12,6 +12,7 @@ import com.diversityarrays.dal.db.EntityIterator;
 import com.diversityarrays.dal.db.EntityOperation;
 import com.diversityarrays.dal.db.EntityProvider;
 import com.diversityarrays.dal.entity.OutputFile;
+import com.diversityarrays.dal.entity.TrialUnits;
 import com.diversityarrays.dal.server.DalSession;
 
 import fi.iki.elonen.NanoHTTPD.Method;
@@ -35,10 +36,10 @@ public class TrialExportOperation extends EntityOperation<OutputFile, BMS_DalDat
 	throws DalDbException {
 		
 		String filterClause = DalDatabaseUtil.getFilteringClause(methodParms);
-		
+		//String id = dalOpParameters.get(0);
 		EntityIterator<? extends OutputFile> iter = null;
 		try {
-			//Probar parametros que vienen desde IHttpSession
+/*			//Probar parametros que vienen desde IHttpSession
 			//System.out.println("mapa dentro: " + methodParms);
 			
 			//String[] trialIds = dalOpParameters.get(0).split("&");
@@ -47,9 +48,9 @@ public class TrialExportOperation extends EntityOperation<OutputFile, BMS_DalDat
 			String id = methodParms.get("TrialIdCSV");
 			
 			responseBuilder.addResponseMeta(entityTagName);
-			/*for(String id : trialIds){
+			for(String id : trialIds){
 				String[] ids = id.split("=");
-				id = ids[1];*/
+				id = ids[1];
 				iter = entityProvider.createIdIterator(id,0, 0, filterClause);
 							
 				OutputFile entity;
@@ -60,6 +61,19 @@ public class TrialExportOperation extends EntityOperation<OutputFile, BMS_DalDat
 					}
 				}while(iter.isPending());
 			//}
+*/			
+			iter = entityProvider.createIterator(0, 0, filterClause);
+			responseBuilder.addResponseMeta(entityTagName);
+			
+			OutputFile entity;
+			iter.readLine();
+			
+			while (null != (entity = iter.nextEntity())) {
+				appendEntity(responseBuilder, entity);
+			} 
+			
+			
+			
 			
 		} finally {
 			if (iter != null) {

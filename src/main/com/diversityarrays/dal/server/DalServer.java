@@ -82,6 +82,8 @@ public class DalServer extends SimpleWebServer implements IDalServer {
 	private static final String YOU_NEED_TO_LOGIN_FIRST = "You need to login first";
 
 	static final private String DAL_SERVER_VERSION = "1.0.1";
+	
+	public String contentType;
 
 	static private void fatal(String msg) {
 		System.err.println("?" + msg);
@@ -473,6 +475,11 @@ public class DalServer extends SimpleWebServer implements IDalServer {
 		Response result;
 
 		boolean wantJson = "application/json".equals(session.getHeaders().get("content-type"));
+		/**
+		 * Added by Raul Hernandez T.
+		 * Used when is necessary to return cvs responses 
+		 */
+		contentType = session.getHeaders().get("content-type");
 
 		if (verbose) {
 			System.out.println(method + " '" + uri + "' ");
@@ -1022,9 +1029,8 @@ public class DalServer extends SimpleWebServer implements IDalServer {
 			// NOT "list/operation"
 			DalOperation dalop = match.node.getOperation();
 			List<String> dalOpParameters = collectDalOperationParameters(match, dalop);
-
-			DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(wantJson);
-
+		    DalResponseBuilder responseBuilder = DalServerUtil.createBuilder(wantJson);
+			
 			try {
 				dalop.execute(dalSession,
 						responseBuilder, method, uri, 

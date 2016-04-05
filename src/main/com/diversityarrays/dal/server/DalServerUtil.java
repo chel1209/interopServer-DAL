@@ -216,7 +216,7 @@ public class DalServerUtil {
 	static public DalResponseBuilder createBuilder(boolean wantJson) {
 		return wantJson ? new JsonResponseBuilder() : new XmlResponseBuilder();
 	}
-
+	
 	static public boolean doInitSql(Connection conn, String sql, boolean asHtml, List<String> messages) {
 		boolean result = true;
 
