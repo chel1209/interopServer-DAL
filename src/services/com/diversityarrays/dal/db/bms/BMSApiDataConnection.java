@@ -1,6 +1,9 @@
 package com.diversityarrays.dal.db.bms;
 
 import java.util.List;
+import java.util.Map;
+
+import com.diversityarrays.dal.entity.Crop;
 
 public class BMSApiDataConnection {
 	
@@ -174,6 +177,26 @@ public class BMSApiDataConnection {
     
     public static String getTrialUnit(){
     	return "No implemented yet";
+    }
+    
+    /**
+     * 
+     * @param cropParam
+     * @param programId
+     * @param traitsId
+     * @return
+     */
+    public static String getListTrait(Crop cropParam, String programId, List<String> traitsId){
+    	
+    	StringBuilder sBuilder = new StringBuilder();
+    	for(String s : traitsId){
+    		sBuilder.append("&variableIds=").append(s);
+    	}
+
+    	String call = "http://" + IP + ":" + PORT + "/bmsapi/ontology/" + cropParam.getSystemGroupName() + "/" + "filtervariables?programId=" + programId + sBuilder.toString(); 
+    	System.out.println("BMSApiDataConnection [getListTrait]: " + call);
+    	return 	call;
+
     }
     
 }
